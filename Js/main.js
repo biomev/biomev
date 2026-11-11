@@ -4,12 +4,19 @@
 const JSONBIN_BIN_ID = "6af3bb10ac6210605a7e6704";
 const JSONBIN_MASTER_KEY = "$2a$10$BtD7QMk6j3JClPIfDBURW.FLSEpP1qijxKujFCc79bRZuu/daHxa";
 
-// Objeto de dados globais na nuvem
+// Objeto de dados globais na nuvem (incluindo o utilizador ativo)
 let cloudData = {
     team: [],
     notifs: [],
     events: {},
-    knowledge: {}
+    knowledge: {},
+    currentUser: {
+        name: "",
+        role: "Gerente de Marketing",
+        password: "",
+        photo: "",
+        isLoggedIn: false
+    }
 };
 
 let currentUser = {
@@ -54,19 +61,29 @@ async function loadFromCloud(isInitial = false) {
                 notifications = cloudData.notifs || [];
                 calendarEvents = cloudData.events || {};
                 knowledgeData = cloudData.knowledge || {};
+
+                if (cloudData.currentUser) {
+                    currentUser = cloudData.currentUser;
+                }
             }
         }
     } catch (e) {
         console.error("Erro ao carregar da nuvem:", e);
     }
 
+    if (currentUser.isLoggedIn) {
+        updateHeaderAvatar(currentUser.name, currentUser.photo);
+    }
+
     if (isInitial) {
         updateNotifDot();
         renderCalendars();
     } else {
-        // Atualiza telas ativas periodicamente sem quebrar inputs
         if (typeof renderCalendars === 'function') renderCalendars();
         if (typeof updateNotifDot === 'function') updateNotifDot();
+        if (currentUser.isLoggedIn && document.getElementById('profileView').classList.contains('active')) {
+            renderTasksGrid();
+        }
     }
 }
 
@@ -76,6 +93,7 @@ async function saveToCloud() {
     cloudData.notifs = notifications;
     cloudData.events = calendarEvents;
     cloudData.knowledge = knowledgeData;
+    cloudData.currentUser = currentUser;
 
     try {
         await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`, {
@@ -589,6 +607,7 @@ function verifyProfilePassword() {
         currentUser.photo = member.photo || "";
         currentUser.isLoggedIn = true;
 
+        saveToCloud();
         updateHeaderAvatar(member.name, member.photo);
         document.getElementById('passwordModal').classList.remove('active');
         showProfileView();
@@ -632,13 +651,15 @@ function updateHeaderAvatar(name, photo) {
     const trigger = document.getElementById('profileTrigger');
     const avatarText = document.getElementById('profileAvatarText');
 
+    if (!trigger || !avatarText) return;
+
     if (photo) {
         trigger.classList.add('logged-in');
         avatarText.innerHTML = `<img src="${photo}" alt="Foto">`;
         trigger.style.backgroundColor = "transparent";
     } else {
         trigger.classList.remove('logged-in');
-        const initials = name.split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase();
+        const initials = name ? name.split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase() : '';
         avatarText.innerText = initials;
         trigger.style.backgroundColor = "var(--vanilla)";
     }
@@ -714,7 +735,7 @@ function showProfileView() {
         if (currentUser.photo) {
             profileBigAvatar.innerHTML = `<img src="${currentUser.photo}" alt="Foto">`;
         } else {
-            const initials = currentUser.name.split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase();
+            const initials = currentUser.name ? currentUser.name.split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase() : '';
             profileBigAvatar.innerText = initials;
         }
     }
@@ -1082,14 +1103,12 @@ function toggleNotificationsModal(show) {
     }
 }
 
-// Inicialização e polling de sincronização em tempo real com carregamento visual garantido
+// Inicialização e sincronização contínua (a cada 5 segundos)
 document.addEventListener("DOMContentLoaded", async () => {
-    // Aguarda carregar da nuvem e força a renderização imediata
     await loadFromCloud(true);
 
     if (typeof renderCalendars === 'function') renderCalendars();
 
-    // Intervalo de verificação em nuvem para sincronizar alterações feitas por outros dispositivos
     setInterval(async () => {
         await loadFromCloud(false);
     }, 5000);
