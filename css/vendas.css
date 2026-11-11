@@ -1,0 +1,261 @@
+.vendas-theme,
+#vendas,
+#vendas-menu {
+    background-color: var(--dark-green) !important;
+    width: 100%;
+}
+
+.vds-top-section {
+    background-color: var(--dark-green) !important;
+    padding: 40px 40px 40px 40px;
+    color: #ffffff;
+    width: 100%;
+}
+
+.vds-bottom-knowledge-section {
+    background-color: var(--dark-green) !important;
+    padding: 48px 40px;
+    color: #ffffff;
+    width: 100%;
+}
+
+.vendas-theme .section-label-white {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #ffffff;
+    opacity: 0.95;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 20px;
+}
+
+/* Cores específicas para as células de eventos no calendário de Vendas */
+.vendas-theme .cal-cell.event-green,
+.vendas-theme .cal-cell.event-vendas,
+.vendas-theme .cal-cell.has-event {
+    background-color: var(--moss-green) !important;
+    color: #ffffff !important;
+    border-color: var(--moss-green) !important;
+}
+
+.vendas-theme .cal-cell.event-green .cal-label-sub,
+.vendas-theme .cal-cell.event-vendas .cal-label-sub,
+.vendas-theme .cal-cell.has-event .cal-label-sub {
+    color: #ffffff !important;
+    opacity: 0.9;
+}
+
+/* Estilo Planilha Excel / Tabela Interativa de Clientes */
+.excel-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #ffffff;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+    border: 1px solid #e2e8f0;
+}
+
+.excel-table th {
+    background: #f1f5f9;
+    color: var(--text-dark);
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    padding: 14px 16px;
+    text-align: left;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.excel-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid #f1f5f9;
+    font-size: 0.85rem;
+    color: var(--text-dark);
+    vertical-align: middle;
+}
+
+.excel-table input,
+.excel-table select {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid transparent;
+    background: transparent;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    color: var(--text-dark);
+    transition: all 0.2s;
+}
+
+.excel-table input:focus,
+.excel-table select:focus {
+    background: #ffffff;
+    border-color: var(--moss-green);
+    box-shadow: 0 0 0 2px rgba(122, 148, 69, 0.15);
+    outline: none;
+}
+
+/* Indicadores de Cores Baseados no Prazo */
+.status-badge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    display: inline-block;
+    text-align: center;
+}
+
+.status-green {
+    background-color: #dcfce7;
+    color: #166534;
+}
+
+.status-yellow {
+    background-color: #fef9c3;
+    color: #854d0e;
+}
+
+.status-red {
+    background-color: #fee2e2;
+    color: #991b1b;
+}
+
+.btn-delete-row {
+    background: none;
+    border: none;
+    color: #ef4444;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 0.9rem;
+    padding: 4px 8px;
+    border-radius: 6px;
+}
+
+.btn-delete-row:hover {
+    background: #fee2e2;
+}
+
+/* ==========================================
+   AJUSTE DE CORES DA ABA DE VENDAS (PADRÃO CORRETO)
+   ========================================== */
+
+/* Ícone/letra do cartão ativo de Vendas em verde mais claro com texto em verde escuro */
+#vendas .widget-card.highlight .widget-icon-box,
+#vendas .tool-card.highlight .widget-icon-box {
+    background: var(--moss-green) !important;
+    color: var(--vanilla) !important;
+}
+
+#vendas .widget-card.highlight,
+#vendas .tool-card.highlight {
+    background: #ffffff !important;
+    color: var(--text-dark) !important;
+}
+
+#vendas .widget-card.highlight .widget-info p,
+#vendas .tool-card.highlight .widget-info p {
+    color: var(--text-muted) !important;
+}
+
+/* Cartões "Em Breve" de Vendas mantêm o fundo transparente original */
+#vendas .widget-card:not(.highlight),
+#vendas .tool-card:not(.highlight) {
+    background: rgba(255, 255, 255, 0.15) !important;
+    border: 1px solid rgba(255, 255, 255, 0.25) !important;
+    color: #ffffff !important;
+}
+
+#vendas .widget-card:not(.highlight) .widget-icon-box {
+    background: rgba(255, 255, 255, 0.25) !important;
+    color: #ffffff !important;
+}
+
+/* ==========================================
+   CORREÇÃO DEFINITIVA DA TABELA DE VENDAS NO MOBILE
+   ========================================== */
+@media (max-width: 768px) {
+
+    /* Libera o container da ferramenta de vendas para expandir */
+    #tool-pipeline-leads {
+        width: 100% !important;
+        padding: 20px 8px !important;
+        box-sizing: border-box;
+    }
+
+    /* Força o container da tabela a ter scroll horizontal fluido */
+    #tool-pipeline-leads div[style*="overflow-x"] {
+        width: 100% !important;
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch;
+        display: block !important;
+        white-space: nowrap !important;
+        padding-bottom: 15px !important;
+    }
+
+    /* Trava a tabela com largura ideal para caber todas as colunas sem amassar */
+    .excel-table {
+        width: 800px !important;
+        min-width: 800px !important;
+        background: #ffffff !important;
+        border-radius: 12px;
+    }
+
+    /* Mantém os títulos e células alinhados e sem quebras feias */
+    .excel-table th,
+    .excel-table td {
+        padding: 12px 10px !important;
+        font-size: 0.78rem !important;
+        white-space: nowrap !important;
+    }
+
+    .excel-table input,
+    .excel-table select {
+        min-width: 110px !important;
+    }
+}
+
+/* ==========================================
+   CORREÇÃO DEFINITIVA DE COLISÃO DE ELEMENTOS (MOBILE)
+   ========================================== */
+@media (max-width: 768px) {
+
+    /* Garante espaçamento lateral folGado entre as colunas da tabela */
+    .excel-table th,
+    .excel-table td {
+        padding: 12px 16px !important;
+        vertical-align: middle !important;
+    }
+
+    /* Impede que o seletor ou status interno colida com a coluna de ações */
+    .excel-table td:nth-child(7),
+    .excel-table th:nth-child(7) {
+        min-width: 200px !important;
+        max-width: 250px !important;
+        white-space: normal !important;
+        /* Permite que o status quebre linha se necessário dentro da célula dele */
+    }
+
+    /* Garante que a coluna de Ações tenha espaço isolado e limpo */
+    .excel-table td:nth-child(8),
+    .excel-table th:nth-child(8) {
+        min-width: 120px !important;
+        text-align: center !important;
+    }
+
+    /* Estiliza o botão de excluir para ficar perfeitamente legível sem sobreposições */
+    .excel-table td button,
+    .excel-table td .btn-delete-row,
+    .btn-delete-row {
+        position: relative !important;
+        z-index: 5 !important;
+        background: #fee2e2 !important;
+        color: #dc2626 !important;
+        padding: 6px 12px !important;
+        border-radius: 8px !important;
+        font-weight: 700 !important;
+        font-size: 0.78rem !important;
+        border: none !important;
+        display: inline-block !important;
+        width: auto !important;
+    }
+}

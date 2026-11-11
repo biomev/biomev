@@ -1,0 +1,151 @@
+.biomev-header-top {
+    background: #ffffff;
+    border-bottom: 1px solid #e2e8f0;
+    padding: 16px 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.header-brand {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    letter-spacing: 0.5px;
+    cursor: pointer;
+}
+
+.header-center-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-muted);
+}
+
+.header-actions-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.team-btn-header {
+    background: #f1f5f9;
+    border: 1px solid #e2e8f0;
+    padding: 8px 16px;
+    border-radius: var(--radius-pill);
+    font-size: 0.8rem;
+    font-weight: 700;
+    cursor: pointer;
+    color: var(--text-dark);
+    transition: background 0.2s;
+}
+
+.team-btn-header:hover {
+    background: #e2e8f0;
+}
+
+/* Botão de Notificação: Fundo Verde Claro da Paleta, SEM BORDA, Ícone Verde Escuro */
+.notification-btn-minimal {
+    background-color: #e2ebcf !important;
+    border: none !important;
+    /* Sem borda conforme solicitado */
+    cursor: pointer;
+    position: relative;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.notification-btn-minimal:hover {
+    background-color: #d4e2b9 !important;
+}
+
+.notification-btn-minimal svg {
+    width: 20px;
+    height: 20px;
+    fill: none;
+    stroke: var(--dark-green) !important;
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.notification-dot {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 4px;
+    background: #ef4444;
+    color: #ffffff;
+    font-size: 0.65rem;
+    font-weight: 700;
+    border-radius: 10px;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #ffffff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+}
+
+.notification-dot.active {
+    display: flex !important;
+}
+
+.profile-avatar {
+    padding: 0 16px;
+    width: auto;
+    height: 38px;
+    border-radius: var(--radius-pill);
+    background: var(--vanilla);
+    color: #5c5314;
+    font-weight: 700;
+    font-size: 0.8rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border: 1px solid #e2e8f0;
+    white-space: nowrap;
+    overflow: hidden;
+    transition: all 0.2s ease;
+}
+
+.profile-avatar.logged-in {
+    width: 38px;
+    height: 38px;
+    padding: 0;
+    border-radius: 50%;
+    background: transparent;
+    border: 2px solid var(--glaucous);
+}
+
+.profile-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* Ajustes Responsivos do Header no Celular */
+@media (max-width: 768px) {
+    .biomev-header-top {
+        padding: 12px 16px !important;
+    }
+
+    .header-center-title {
+        display: none;
+    }
+
+    .header-actions-right {
+        gap: 10px !important;
+    }
+}
