@@ -81,7 +81,7 @@ async function loadFromCloud(isInitial = false) {
     } else {
         if (typeof renderCalendars === 'function') renderCalendars();
         if (typeof updateNotifDot === 'function') updateNotifDot();
-        if (currentUser.isLoggedIn && document.getElementById('profileView').classList.contains('active')) {
+        if (currentUser.isLoggedIn && document.getElementById('profileView') && document.getElementById('profileView').classList.contains('active')) {
             renderTasksGrid();
         }
     }
@@ -157,7 +157,7 @@ function openTool(toolName) {
 
     const toolContainer = document.getElementById(`tool-${toolName}`);
     if (toolContainer) toolContainer.classList.add('active');
-    if (toolName === 'certificado') renderCertificate();
+    if (toolName === 'certificado' && typeof renderCertificate === 'function') renderCertificate();
 }
 
 function closeTool(toolName) {
@@ -554,6 +554,7 @@ function handleProfileClick() {
 
 function openSelectProfileModal() {
     const list = document.getElementById('selectProfileList');
+    if (!list) return;
     let html = '';
     teamMembers.forEach(m => {
         html += `
