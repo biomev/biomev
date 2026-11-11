@@ -4,27 +4,21 @@
 const JSONBIN_BIN_ID = "6af3e22bffd5d16053b85278";
 const JSONBIN_MASTER_KEY = "$2a$10$BtD7QMk6q3JClPIfDBURW.ELsEpfP1qijxKujFCc79bRZuu/daHxa";
 
-// Objeto de dados globais na nuvem (incluindo o utilizador ativo)
+// Objeto de dados globais na nuvem (apenas dados partilhados da equipa)
 let cloudData = {
     team: [],
     notifs: [],
     events: {},
-    knowledge: {},
-    currentUser: {
-        name: "",
-        role: "Gerente de Marketing",
-        password: "",
-        photo: "",
-        isLoggedIn: false
-    }
+    knowledge: {}
 };
 
+// Utilizador atual armazenado localmente para não afetar outros membros no link
 let currentUser = {
-    name: "",
-    role: "Gerente de Marketing",
-    password: "",
-    photo: "",
-    isLoggedIn: false
+    name: localStorage.getItem("biomev_my_name") || "",
+    role: localStorage.getItem("biomev_my_role") || "Gerente de Marketing",
+    password: localStorage.getItem("biomev_my_pass") || "",
+    photo: localStorage.getItem("biomev_my_photo") || "",
+    isLoggedIn: localStorage.getItem("biomev_logged") === "true"
 };
 
 let teamMembers = [];
@@ -61,10 +55,6 @@ async function loadFromCloud(isInitial = false) {
                 notifications = cloudData.notifs || [];
                 calendarEvents = cloudData.events || {};
                 knowledgeData = cloudData.knowledge || {};
-
-                if (cloudData.currentUser) {
-                    currentUser = cloudData.currentUser;
-                }
             }
         }
     } catch (e) {
@@ -87,13 +77,12 @@ async function loadFromCloud(isInitial = false) {
     }
 }
 
-// Sincronização com a Nuvem (Salvar com alerta de erro)
+// Sincronização com a Nuvem (Salvar)
 async function saveToCloud() {
     cloudData.team = teamMembers;
     cloudData.notifs = notifications;
     cloudData.events = calendarEvents;
     cloudData.knowledge = knowledgeData;
-    cloudData.currentUser = currentUser;
 
     try {
         let response = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`, {
@@ -108,14 +97,19 @@ async function saveToCloud() {
         if (!response.ok) {
             let errText = await response.text();
             console.error("Erro ao salvar no JSONbin:", response.status, errText);
-            alert(`Erro ao salvar na nuvem (${response.status}): Verifique a consola (F12)`);
-        } else {
-            console.log("Dados salvos com sucesso na nuvem!");
         }
     } catch (e) {
         console.error("Erro de rede ao salvar na nuvem:", e);
-        alert("Erro de rede ao tentar salvar na nuvem.");
     }
+}
+
+// Salvar sessão localmente no dispositivo do utilizador
+function saveSessionLocal() {
+    localStorage.setItem("biomev_my_name", currentUser.name);
+    localStorage.setItem("biomev_my_role", currentUser.role);
+    localStorage.setItem("biomev_my_pass", currentUser.password);
+    localStorage.setItem("biomev_my_photo", currentUser.photo);
+    localStorage.setItem("biomev_logged", currentUser.isLoggedIn ? "true" : "false");
 }
 
 function openTab(tabName) {
@@ -617,7 +611,7 @@ async function verifyProfilePassword() {
         currentUser.photo = member.photo || "";
         currentUser.isLoggedIn = true;
 
-        await saveToCloud();
+        saveSessionLocal();
         updateHeaderAvatar(member.name, member.photo);
         document.getElementById('passwordModal').classList.remove('active');
         showProfileView();
@@ -709,6 +703,7 @@ async function saveProfileData() {
             });
         }
 
+        saveSessionLocal();
         await saveToCloud();
 
         updateHeaderAvatar(nameInput, currentUser.photo);
