@@ -87,7 +87,7 @@ async function loadFromCloud(isInitial = false) {
     }
 }
 
-// Sincronização com a Nuvem (Salvar)
+// Sincronização com a Nuvem (Salvar com alerta de erro)
 async function saveToCloud() {
     cloudData.team = teamMembers;
     cloudData.notifs = notifications;
@@ -96,7 +96,7 @@ async function saveToCloud() {
     cloudData.currentUser = currentUser;
 
     try {
-        await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`, {
+        let response = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
@@ -104,8 +104,17 @@ async function saveToCloud() {
             },
             body: JSON.stringify({ biomev_payload: cloudData })
         });
+
+        if (!response.ok) {
+            let errText = await response.text();
+            console.error("Erro ao salvar no JSONbin:", response.status, errText);
+            alert(`Erro ao salvar na nuvem (${response.status}): Verifique a consola (F12)`);
+        } else {
+            console.log("Dados salvos com sucesso na nuvem!");
+        }
     } catch (e) {
-        console.error("Erro ao salvar na nuvem:", e);
+        console.error("Erro de rede ao salvar na nuvem:", e);
+        alert("Erro de rede ao tentar salvar na nuvem.");
     }
 }
 
@@ -700,7 +709,6 @@ async function saveProfileData() {
             });
         }
 
-        // Garante que espera salvar na nuvem antes de prosseguir
         await saveToCloud();
 
         updateHeaderAvatar(nameInput, currentUser.photo);
