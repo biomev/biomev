@@ -2,7 +2,8 @@
    CONFIGURAÇÃO DA NUVEM (JSONbin.io) - BIOMEV
    ========================================== */
 const JSONBIN_BIN_ID = "6af3bb10ac6210605a7e6704";
-const JSONBIN_ACCESS_KEY = "$2a$10$AA4YZ7A71SfpIuBRUo13NOioH4YhrQEqSAy.XOAoxMdqrqQqI9GY.";
+const JSONBIN_ACCESS_KEY = "$2a$10$BtD7QMk6q3JClPIfDBURW.ELsEpfP1qijxKujFCc79bRZuu/daHxa";
+const JSONBIN_MASTER_KEY = "$2a$10$AA4YZ7A71SfpIuBRUo13NOioH4YhrQEqSAy.XOAoxMdqrqQqI9GY.";
 
 // Objeto de dados globais na nuvem (incluindo o utilizador ativo)
 let cloudData = {
