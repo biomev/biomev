@@ -211,7 +211,7 @@ function closeKnowledgeTool(sectionTheme) {
     }
 }
 
-function createFolder(sectionTheme) {
+async function createFolder(sectionTheme) {
     let inputId = sectionTheme === 'marketing' ? 'newFolderNameMkt' : 'newFolderNameVds';
     let folderName = document.getElementById(inputId).value.trim();
 
@@ -223,7 +223,7 @@ function createFolder(sectionTheme) {
     let fullKey = `${currentKnowledgeSection}_${folderName}`;
     if (!knowledgeData[fullKey]) {
         knowledgeData[fullKey] = [];
-        saveToCloud();
+        await saveToCloud();
     }
 
     document.getElementById(inputId).value = "";
@@ -266,11 +266,11 @@ function renderFoldersGrid(sectionTheme) {
     container.innerHTML = html;
 }
 
-function deleteFolder(folderKey, sectionTheme, event) {
+async function deleteFolder(folderKey, sectionTheme, event) {
     event.stopPropagation();
     if (confirm("Deseja realmente excluir esta pasta e seus arquivos?")) {
         delete knowledgeData[folderKey];
-        saveToCloud();
+        await saveToCloud();
         renderFoldersGrid(sectionTheme);
     }
 }
@@ -308,7 +308,7 @@ function handleFileUpload(event, sectionTheme) {
     if (!file) return;
 
     const reader = new FileReader();
-    reader.onload = function (e) {
+    reader.onload = async function (e) {
         let fileData = {
             name: file.name,
             type: file.type,
@@ -317,7 +317,7 @@ function handleFileUpload(event, sectionTheme) {
 
         if (!knowledgeData[activeOpenFolderKey]) knowledgeData[activeOpenFolderKey] = [];
         knowledgeData[activeOpenFolderKey].push(fileData);
-        saveToCloud();
+        await saveToCloud();
 
         renderFilesInFolder(sectionTheme);
         event.target.value = "";
@@ -361,9 +361,9 @@ function renderFilesInFolder(sectionTheme) {
     container.innerHTML = html;
 }
 
-function removeFileFromFolder(fileIndex, sectionTheme) {
+async function removeFileFromFolder(fileIndex, sectionTheme) {
     knowledgeData[activeOpenFolderKey].splice(fileIndex, 1);
-    saveToCloud();
+    await saveToCloud();
     renderFilesInFolder(sectionTheme);
 }
 
@@ -470,7 +470,7 @@ function closeCalendarModal() {
     document.getElementById('calEventModal').classList.remove('active');
 }
 
-function saveCalendarTask() {
+async function saveCalendarTask() {
     const title = document.getElementById('calTaskTitle').value.trim();
     const desc = document.getElementById('calTaskDesc').value.trim();
     const assignedMember = document.getElementById('calTaskMember').value;
@@ -501,17 +501,17 @@ function saveCalendarTask() {
                 file: null,
                 status: "Pendente"
             });
-            addNotification(`Nova tarefa atribuída a ${assignedMember} para o dia ${selectedCalendarDate}: "${title}"`);
+            await addNotification(`Nova tarefa atribuída a ${assignedMember} para o dia ${selectedCalendarDate}: "${title}"`);
         }
     }
 
-    saveToCloud();
+    await saveToCloud();
     closeCalendarModal();
     renderCalendars();
     alert("Tarefa salva no calendário e integrada ao perfil!");
 }
 
-function saveNewTask() {
+async function saveNewTask() {
     const title = document.getElementById('taskTitle').value.trim();
     const desc = document.getElementById('taskDesc').value.trim();
     const date = document.getElementById('taskDate').value.trim();
@@ -535,8 +535,8 @@ function saveNewTask() {
         });
     }
 
-    addNotification(`Nova tarefa criada para ${targetMember ? targetMember.name : 'Equipe'}: "${title}" (${date})`);
-    saveToCloud();
+    await addNotification(`Nova tarefa criada para ${targetMember ? targetMember.name : 'Equipe'}: "${title}" (${date})`);
+    await saveToCloud();
     toggleTaskModal(false);
     renderTasksGrid();
     renderCalendars();
@@ -593,7 +593,7 @@ function closePasswordModal() {
     openSelectProfileModal();
 }
 
-function verifyProfilePassword() {
+async function verifyProfilePassword() {
     const passwordInput = document.getElementById('loginPasswordInput').value;
     let member = teamMembers.find(m => m.id === pendingLoginMemberId);
 
@@ -608,7 +608,7 @@ function verifyProfilePassword() {
         currentUser.photo = member.photo || "";
         currentUser.isLoggedIn = true;
 
-        saveToCloud();
+        await saveToCloud();
         updateHeaderAvatar(member.name, member.photo);
         document.getElementById('passwordModal').classList.remove('active');
         showProfileView();
@@ -666,7 +666,7 @@ function updateHeaderAvatar(name, photo) {
     }
 }
 
-function saveProfileData() {
+async function saveProfileData() {
     const nameInput = document.getElementById('inputName').value.trim();
     const roleInput = document.getElementById('inputRole').value;
     const passInput = document.getElementById('inputPassword').value.trim();
@@ -677,7 +677,7 @@ function saveProfileData() {
         return;
     }
 
-    const finalizeSave = (photoDataUrl) => {
+    const finalizeSave = async (photoDataUrl) => {
         currentUser.name = nameInput;
         currentUser.role = roleInput;
         currentUser.password = passInput;
@@ -699,7 +699,9 @@ function saveProfileData() {
                 tasks: []
             });
         }
-        saveToCloud();
+
+        // Garante que espera salvar na nuvem antes de prosseguir
+        await saveToCloud();
 
         updateHeaderAvatar(nameInput, currentUser.photo);
         toggleAuthModal(false);
@@ -709,10 +711,10 @@ function saveProfileData() {
 
     if (photoFileInput.files && photoFileInput.files[0]) {
         const reader = new FileReader();
-        reader.onload = function (e) { finalizeSave(e.target.result); };
+        reader.onload = async function (e) { await finalizeSave(e.target.result); };
         reader.readAsDataURL(photoFileInput.files[0]);
     } else {
-        finalizeSave(currentUser.photo || "");
+        await finalizeSave(currentUser.photo || "");
     }
 }
 
@@ -845,21 +847,21 @@ function renderTasksGrid() {
     }
 }
 
-function completeTask(index) {
+async function completeTask(index) {
     let member = teamMembers.find(m => m.name === currentUser.name);
     if (member && member.tasks[index]) {
         member.tasks[index].status = "Concluída";
-        saveToCloud();
+        await saveToCloud();
         renderTasksGrid();
         renderCalendars();
     }
 }
 
-function deleteCompletedTask(index) {
+async function deleteCompletedTask(index) {
     let member = teamMembers.find(m => m.name === currentUser.name);
     if (member && member.tasks) {
         member.tasks.splice(index, 1);
-        saveToCloud();
+        await saveToCloud();
         renderTasksGrid();
     }
 }
@@ -975,11 +977,11 @@ function renderMemberTasksInModal() {
     container.innerHTML = html;
 }
 
-function removeMemberTaskFromModal(taskIndex) {
+async function removeMemberTaskFromModal(taskIndex) {
     let member = teamMembers.find(m => m.id === selectedMemberId);
     if (member && member.tasks) {
         member.tasks.splice(taskIndex, 1);
-        saveToCloud();
+        await saveToCloud();
         renderMemberTasksInModal();
         renderCalendars();
     }
@@ -994,7 +996,7 @@ function submitMemberMessage() {
     closeMemberActionModal();
 }
 
-function submitMemberTask() {
+async function submitMemberTask() {
     let title = document.getElementById('memberTaskTitle').value.trim();
     let desc = document.getElementById('memberTaskDesc').value.trim();
     let date = document.getElementById('memberTaskDate').value.trim();
@@ -1016,14 +1018,14 @@ function submitMemberTask() {
         });
     }
 
-    addNotification(`Tarefa atribuída a ${member.name}: "${title}" (${date})`);
-    saveToCloud();
+    await addNotification(`Tarefa atribuída a ${member.name}: "${title}" (${date})`);
+    await saveToCloud();
     alert("Tarefa atribuída com sucesso e integrada ao calendário!");
     closeMemberActionModal();
     renderCalendars();
 }
 
-function addNotification(text) {
+async function addNotification(text) {
     if (!currentUser || !currentUser.isLoggedIn) return;
 
     notifications.unshift({
@@ -1031,7 +1033,7 @@ function addNotification(text) {
         time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
         readBy: []
     });
-    saveToCloud();
+    await saveToCloud();
     updateNotifDot();
 }
 
@@ -1059,7 +1061,7 @@ function updateNotifDot() {
     }
 }
 
-function openNotificationsModal() {
+async function openNotificationsModal() {
     const list = document.getElementById('notificationsList');
 
     if (!currentUser || !currentUser.isLoggedIn) {
@@ -1084,7 +1086,7 @@ function openNotificationsModal() {
             n.readBy.push(currentUser.name);
         }
     });
-    saveToCloud();
+    await saveToCloud();
 
     const dot = document.getElementById('notifDot');
     if (dot) {
