@@ -1082,9 +1082,12 @@ function toggleNotificationsModal(show) {
     }
 }
 
-// Inicialização e polling de sincronização em tempo real (a cada 5 segundos)
+// Inicialização e polling de sincronização em tempo real com carregamento visual garantido
 document.addEventListener("DOMContentLoaded", async () => {
+    // Aguarda carregar da nuvem e força a renderização imediata
     await loadFromCloud(true);
+
+    if (typeof renderCalendars === 'function') renderCalendars();
 
     // Intervalo de verificação em nuvem para sincronizar alterações feitas por outros dispositivos
     setInterval(async () => {
