@@ -4,7 +4,7 @@
 const JSONBIN_BIN_ID = "6af3e22bffd5d16053b85278";
 const JSONBIN_MASTER_KEY = "$2a$10$BtD7QMk6q3JClPIfDBURW.ELsEpfP1qijxKujFCc79bRZuu/daHxa";
 
-// Objeto de dados globais na nuvem (incluindo equipa, conhecimento, eventos e notificações)
+// Objeto de dados globais na nuvem
 let cloudData = {
     team: [],
     notifs: [],
@@ -12,7 +12,7 @@ let cloudData = {
     knowledge: {}
 };
 
-// Utilizador atual armazenado localmente apenas para manter a sessão ativa neste dispositivo
+// Utilizador atual armazenado localmente
 let currentUser = {
     name: localStorage.getItem("biomev_my_name") || "",
     role: localStorage.getItem("biomev_my_role") || "Gerente de Marketing",
@@ -56,7 +56,6 @@ async function loadFromCloud(isInitial = false) {
                 calendarEvents = cloudData.events || {};
                 knowledgeData = cloudData.knowledge || {};
 
-                // Atualiza a foto do utilizador atual caso tenha sido alterada noutro dispositivo
                 if (currentUser.isLoggedIn) {
                     let me = teamMembers.find(m => m.name.toLowerCase() === currentUser.name.toLowerCase());
                     if (me && me.photo) {
@@ -81,7 +80,6 @@ async function loadFromCloud(isInitial = false) {
         if (typeof renderCalendars === 'function') renderCalendars();
         if (typeof updateNotifDot === 'function') updateNotifDot();
 
-        // Se estiver dentro de uma pasta de conhecimento, atualiza os arquivos em tempo real para todos
         if (activeOpenFolderKey) {
             if (document.getElementById('folderViewMkt') && document.getElementById('folderViewMkt').style.display === 'block') {
                 renderFilesInFolder('marketing');
@@ -117,19 +115,58 @@ async function saveToCloud() {
         if (!response.ok) {
             let errText = await response.text();
             console.error("Erro ao salvar no JSONbin:", response.status, errText);
+            alert(`Erro ao salvar na nuvem (${response.status}): Imagem pode ser muito grande ou Bin bloqueado.`);
         }
     } catch (e) {
         console.error("Erro de rede ao salvar na nuvem:", e);
     }
 }
 
-// Salvar sessão localmente no dispositivo do utilizador
+// Salvar sessão localmente
 function saveSessionLocal() {
     localStorage.setItem("biomev_my_name", currentUser.name);
     localStorage.setItem("biomev_my_role", currentUser.role);
     localStorage.setItem("biomev_my_pass", currentUser.password);
     localStorage.setItem("biomev_my_photo", currentUser.photo);
     localStorage.setItem("biomev_logged", currentUser.isLoggedIn ? "true" : "false");
+}
+
+// Redimensionar e comprimir imagem para caber perfeitamente no JSON
+function compressImage(file, callback) {
+    const reader = new FileReader();
+    reader.onload = function (e) {
+        const img = new Image();
+        img.onload = function () {
+            const canvas = document.createElement('canvas');
+            const MAX_WIDTH = 150;
+            const MAX_HEIGHT = 150;
+            let width = img.width;
+            let height = img.height;
+
+            if (width > height) {
+                if (width > MAX_WIDTH) {
+                    height *= MAX_WIDTH / width;
+                    width = MAX_WIDTH;
+                }
+            } else {
+                if (height > MAX_HEIGHT) {
+                    width *= MAX_HEIGHT / height;
+                    height = MAX_HEIGHT;
+                }
+            }
+
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, width, height);
+
+            // Comprime para JPEG com qualidade 0.7 (bastante leve e nítido para avatares)
+            const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
+            callback(dataUrl);
+        };
+        img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
 }
 
 function openTab(tabName) {
@@ -736,9 +773,9 @@ async function saveProfileData() {
     };
 
     if (photoFileInput.files && photoFileInput.files[0]) {
-        const reader = new FileReader();
-        reader.onload = async function (e) { await finalizeSave(e.target.result); };
-        reader.readAsDataURL(photoFileInput.files[0]);
+        compressImage(photoFileInput.files[0], async function (compressedDataUrl) {
+            await finalizeSave(compressedDataUrl);
+        });
     } else {
         await finalizeSave(currentUser.photo || "");
     }
