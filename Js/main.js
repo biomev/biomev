@@ -4,7 +4,7 @@
 const JSONBIN_BIN_ID = "6af3e22bffd5d16053b85278";
 const JSONBIN_MASTER_KEY = "$2a$10$BtD7QMk6q3JClPIfDBURW.ELsEpfP1qijxKujFCc79bRZuu/daHxa";
 
-// Objeto de dados globais na nuvem (apenas dados partilhados da equipa)
+// Objeto de dados globais na nuvem (incluindo equipa, conhecimento, eventos e notificações)
 let cloudData = {
     team: [],
     notifs: [],
@@ -12,7 +12,7 @@ let cloudData = {
     knowledge: {}
 };
 
-// Utilizador atual armazenado localmente para não afetar outros membros no link
+// Utilizador atual armazenado localmente apenas para manter a sessão ativa neste dispositivo
 let currentUser = {
     name: localStorage.getItem("biomev_my_name") || "",
     role: localStorage.getItem("biomev_my_role") || "Gerente de Marketing",
@@ -55,6 +55,15 @@ async function loadFromCloud(isInitial = false) {
                 notifications = cloudData.notifs || [];
                 calendarEvents = cloudData.events || {};
                 knowledgeData = cloudData.knowledge || {};
+
+                // Atualiza a foto do utilizador atual caso tenha sido alterada noutro dispositivo
+                if (currentUser.isLoggedIn) {
+                    let me = teamMembers.find(m => m.name.toLowerCase() === currentUser.name.toLowerCase());
+                    if (me && me.photo) {
+                        currentUser.photo = me.photo;
+                        localStorage.setItem("biomev_my_photo", me.photo);
+                    }
+                }
             }
         }
     } catch (e) {
@@ -71,6 +80,17 @@ async function loadFromCloud(isInitial = false) {
     } else {
         if (typeof renderCalendars === 'function') renderCalendars();
         if (typeof updateNotifDot === 'function') updateNotifDot();
+
+        // Se estiver dentro de uma pasta de conhecimento, atualiza os arquivos em tempo real para todos
+        if (activeOpenFolderKey) {
+            if (document.getElementById('folderViewMkt') && document.getElementById('folderViewMkt').style.display === 'block') {
+                renderFilesInFolder('marketing');
+            }
+            if (document.getElementById('folderViewVds') && document.getElementById('folderViewVds').style.display === 'block') {
+                renderFilesInFolder('vendas');
+            }
+        }
+
         if (currentUser.isLoggedIn && document.getElementById('profileView') && document.getElementById('profileView').classList.contains('active')) {
             renderTasksGrid();
         }
@@ -205,6 +225,7 @@ function openKnowledgeTool(sectionTheme, sectionName) {
 }
 
 function closeKnowledgeTool(sectionTheme) {
+    activeOpenFolderKey = null;
     if (sectionTheme === 'marketing') {
         document.getElementById('tool-knowledge-marketing').classList.remove('active');
         document.getElementById('marketing-menu').style.display = 'block';
@@ -343,10 +364,10 @@ function renderFilesInFolder(sectionTheme) {
         let previewHtml = '';
         if (file.type && file.type.startsWith('video/')) {
             previewHtml = `<video src="${file.url}" muted></video>`;
-        } else if (file.url) {
+        } else if (file.url && (file.type.startsWith('image/') || file.url.startsWith('data:image'))) {
             previewHtml = `<img src="${file.url}" alt="${file.name}">`;
         } else {
-            previewHtml = `<span>Arquivo</span>`;
+            previewHtml = `<div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%; color:var(--text-dark); font-weight:700; font-size:0.8rem; padding:10px; text-align:center;"><span>📄 Ficheiro</span><a href="${file.url}" download="${file.name}" style="font-size:0.7rem; color:#2563eb; margin-top:5px;" onclick="event.stopPropagation()">Descarregar</a></div>`;
         }
 
         html += `
@@ -560,9 +581,11 @@ function openSelectProfileModal() {
     if (!list) return;
     let html = '';
     teamMembers.forEach(m => {
+        let avatarHtml = m.photo ? `<img src="${m.photo}" alt="Foto" style="width:36px; height:36px; border-radius:50%; object-fit:cover; margin-right:10px;">` : `<div style="width:36px; height:36px; border-radius:50%; background:var(--vanilla); display:flex; align-items:center; justify-content:center; font-weight:bold; font-size:0.8rem; margin-right:10px;">${m.name.substring(0, 2).toUpperCase()}</div>`;
         html += `
-            <div class="team-member-row" style="cursor: pointer;" onclick="promptProfilePassword(${m.id})">
-                <div class="team-member-header-info">
+            <div class="team-member-row" style="cursor: pointer; display:flex; align-items:center;" onclick="promptProfilePassword(${m.id})">
+                ${avatarHtml}
+                <div class="team-member-header-info" style="flex:1;">
                     <div class="team-member-info">
                         <h4>${m.name}</h4>
                         <p>${m.role}</p>
@@ -885,10 +908,13 @@ function openTeamModal() {
                 btnColor = "#5c5314";
             }
 
+            let avatarHtml = m.photo ? `<img src="${m.photo}" alt="Foto" style="width:32px; height:32px; border-radius:50%; object-fit:cover; margin-right:8px;">` : '';
+
             html += `
                 <div class="team-member-row">
-                    <div class="team-member-header-info">
-                        <div class="team-member-info">
+                    <div class="team-member-header-info" style="display:flex; align-items:center;">
+                        ${avatarHtml}
+                        <div class="team-member-info" style="flex:1;">
                             <h4>${m.name}</h4>
                             <p>${m.role}</p>
                         </div>
