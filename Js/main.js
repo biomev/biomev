@@ -115,7 +115,7 @@ async function saveToCloud() {
         if (!response.ok) {
             let errText = await response.text();
             console.error("Erro ao salvar no JSONbin:", response.status, errText);
-            alert(`Erro ao salvar na nuvem (${response.status}): Imagem pode ser muito grande ou Bin bloqueado.`);
+            alert(`Erro ao salvar na nuvem (${response.status})`);
         }
     } catch (e) {
         console.error("Erro de rede ao salvar na nuvem:", e);
@@ -160,7 +160,6 @@ function compressImage(file, callback) {
             const ctx = canvas.getContext('2d');
             ctx.drawImage(img, 0, 0, width, height);
 
-            // Comprime para JPEG com qualidade 0.7 (bastante leve e nítido para avatares)
             const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
             callback(dataUrl);
         };
@@ -281,7 +280,10 @@ async function createFolder(sectionTheme) {
         return;
     }
 
-    let fullKey = `${currentKnowledgeSection}_${folderName}`;
+    // Remove caracteres especiais e apóstrofos para evitar erros na chave
+    let safeFolderName = folderName.replace(/['"\\/]/g, '_');
+    let fullKey = `${currentKnowledgeSection}_${safeFolderName}`;
+
     if (!knowledgeData[fullKey]) {
         knowledgeData[fullKey] = [];
         await saveToCloud();
@@ -306,7 +308,7 @@ function renderFoldersGrid(sectionTheme) {
 
     let html = '';
     keys.forEach(key => {
-        let folderName = key.replace(`${currentKnowledgeSection}_`, '');
+        let folderName = key.replace(`${currentKnowledgeSection}_`, '').replace(/_/g, ' ');
 
         let folderSvg = `
             <svg class="folder-real-svg" viewBox="0 0 100 80">
@@ -316,7 +318,7 @@ function renderFoldersGrid(sectionTheme) {
         `;
 
         html += `
-            <div class="folder-real-item" onclick="openFolder('${key}', '${folderName}', '${sectionTheme}')">
+            <div class="folder-real-item" onclick="openFolder('${key}', '${folderName.replace(/'/g, "\\'")}', '${sectionTheme}')">
                 <button class="folder-real-delete" onclick="deleteFolder('${key}', '${sectionTheme}', event)">X</button>
                 ${folderSvg}
                 <span class="folder-real-name">${folderName}</span>
