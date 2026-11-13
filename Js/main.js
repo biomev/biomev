@@ -249,6 +249,15 @@ function openKnowledgeTool(sectionTheme, sectionName) {
         document.getElementById('folderMainAreaMkt').style.display = 'block';
         document.getElementById('folderViewMkt').style.display = 'none';
         document.getElementById('newFolderNameMkt').value = "";
+
+        // Se for a pasta de Vídeos Tutoriais, permite multimédia; se for POPs, força documentos
+        let fileInputMkt = document.getElementById('fileInputMkt');
+        if (sectionName.includes('Vídeos')) {
+            fileInputMkt.setAttribute('accept', 'image/*,video/*');
+        } else {
+            fileInputMkt.setAttribute('accept', '.pdf,.doc,.docx,.txt,.xls,.xlsx,.csv,.ppt,.pptx');
+        }
+
         renderFoldersGrid('marketing');
     } else {
         document.getElementById('tool-knowledge-vendas').classList.add('active');
@@ -256,6 +265,14 @@ function openKnowledgeTool(sectionTheme, sectionName) {
         document.getElementById('folderMainAreaVds').style.display = 'block';
         document.getElementById('folderViewVds').style.display = 'none';
         document.getElementById('newFolderNameVds').value = "";
+
+        let fileInputVds = document.getElementById('fileInputVds');
+        if (sectionName.includes('Vídeos')) {
+            fileInputVds.setAttribute('accept', 'image/*,video/*');
+        } else {
+            fileInputVds.setAttribute('accept', '.pdf,.doc,.docx,.txt,.xls,.xlsx,.csv,.ppt,.pptx');
+        }
+
         renderFoldersGrid('vendas');
     }
 }

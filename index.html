@@ -259,16 +259,14 @@
 
                         <div id="folderViewMkt" style="display: none; margin-top: 10px;">
                             <div
-                                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
                                 <button class="tool-header-back" style="margin-bottom:0;"
                                     onclick="backToFolders('marketing')">Voltar para as Pastas</button>
 
-                                <!-- Label estrito para documentos / POPs -->
-                                <label for="fileInputMkt" class="btn-action"
-                                    style="margin-top:0; width: auto; background: var(--glaucous); display: inline-block; cursor: pointer; text-align: center; line-height: normal; padding: 12px 20px; border-radius: 12px; font-weight: 700;">+
-                                    Enviar Arquivo</label>
-                                <input type="file" id="fileInputMkt" style="display: none;"
+                                <!-- Input nativo visível para garantir abertura do gestor de ficheiros -->
+                                <input type="file" id="fileInputMkt"
                                     accept=".pdf,.doc,.docx,.txt,.xls,.xlsx,.csv,.ppt,.pptx"
+                                    style="padding: 8px; background: #fff; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 0.85rem;"
                                     onchange="handleFileUpload(event, 'marketing')">
                             </div>
 
@@ -418,16 +416,14 @@
 
                         <div id="folderViewVds" style="display: none; margin-top: 10px;">
                             <div
-                                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
                                 <button class="tool-header-back" style="margin-bottom:0;"
                                     onclick="backToFolders('vendas')">Voltar para as Pastas</button>
 
-                                <!-- Label estrito para documentos / POPs -->
-                                <label for="fileInputVds" class="btn-action"
-                                    style="margin-top:0; width: auto; background: var(--moss-green); display: inline-block; cursor: pointer; text-align: center; line-height: normal; padding: 12px 20px; border-radius: 12px; font-weight: 700;">+
-                                    Enviar Arquivo</label>
-                                <input type="file" id="fileInputVds" style="display: none;"
+                                <!-- Input nativo visível para garantir abertura do gestor de ficheiros -->
+                                <input type="file" id="fileInputVds"
                                     accept=".pdf,.doc,.docx,.txt,.xls,.xlsx,.csv,.ppt,.pptx"
+                                    style="padding: 8px; background: #fff; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 0.85rem;"
                                     onchange="handleFileUpload(event, 'vendas')">
                             </div>
 
