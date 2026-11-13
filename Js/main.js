@@ -280,7 +280,6 @@ async function createFolder(sectionTheme) {
         return;
     }
 
-    // Remove caracteres especiais e apóstrofos para evitar erros na chave
     let safeFolderName = folderName.replace(/['"\\/]/g, '_');
     let fullKey = `${currentKnowledgeSection}_${safeFolderName}`;
 
@@ -318,8 +317,8 @@ function renderFoldersGrid(sectionTheme) {
         `;
 
         html += `
-            <div class="folder-real-item" onclick="openFolder('${key}', '${folderName.replace(/'/g, "\\'")}', '${sectionTheme}')">
-                <button class="folder-real-delete" onclick="deleteFolder('${key}', '${sectionTheme}', event)">X</button>
+            <div class="folder-real-item" style="position:relative; cursor:pointer;" onclick="openFolder('${key}', '${folderName.replace(/'/g, "\\'")}', '${sectionTheme}')">
+                <button class="folder-real-delete" style="position:absolute; top:5px; right:5px; z-index:10; background:#ef4444; color:#fff; border:none; border-radius:50%; width:26px; height:26px; font-weight:bold; cursor:pointer; display:flex; align-items:center; justify-content:center;" onclick="deleteFolder('${key}', '${sectionTheme}', event)">✕</button>
                 ${folderSvg}
                 <span class="folder-real-name">${folderName}</span>
             </div>
