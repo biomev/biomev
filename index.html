@@ -263,11 +263,12 @@
                                 <button class="tool-header-back" style="margin-bottom:0;"
                                     onclick="backToFolders('marketing')">Voltar para as Pastas</button>
 
-                                <!-- Label nativo para forçar o explorador de ficheiros no telemóvel -->
+                                <!-- Label estrito para documentos / POPs -->
                                 <label for="fileInputMkt" class="btn-action"
                                     style="margin-top:0; width: auto; background: var(--glaucous); display: inline-block; cursor: pointer; text-align: center; line-height: normal; padding: 12px 20px; border-radius: 12px; font-weight: 700;">+
                                     Enviar Arquivo</label>
                                 <input type="file" id="fileInputMkt" style="display: none;"
+                                    accept=".pdf,.doc,.docx,.txt,.xls,.xlsx,.csv,.ppt,.pptx"
                                     onchange="handleFileUpload(event, 'marketing')">
                             </div>
 
@@ -421,11 +422,12 @@
                                 <button class="tool-header-back" style="margin-bottom:0;"
                                     onclick="backToFolders('vendas')">Voltar para as Pastas</button>
 
-                                <!-- Label nativo para forçar o explorador de ficheiros no telemóvel -->
+                                <!-- Label estrito para documentos / POPs -->
                                 <label for="fileInputVds" class="btn-action"
                                     style="margin-top:0; width: auto; background: var(--moss-green); display: inline-block; cursor: pointer; text-align: center; line-height: normal; padding: 12px 20px; border-radius: 12px; font-weight: 700;">+
                                     Enviar Arquivo</label>
                                 <input type="file" id="fileInputVds" style="display: none;"
+                                    accept=".pdf,.doc,.docx,.txt,.xls,.xlsx,.csv,.ppt,.pptx"
                                     onchange="handleFileUpload(event, 'vendas')">
                             </div>
 
