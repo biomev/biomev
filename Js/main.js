@@ -341,13 +341,25 @@ function openFolder(folderKey, folderName, sectionTheme) {
     activeOpenFolderKey = folderKey;
     if (sectionTheme === 'marketing') {
         document.getElementById('folderMainAreaMkt').style.display = 'none';
-        document.getElementById('folderViewMkt').style.display = 'block';
+        let viewMkt = document.getElementById('folderViewMkt');
+        viewMkt.style.display = 'block';
         document.getElementById('currentFolderNameMkt').innerText = `Pasta: ${folderName}`;
+
+        // Garante que o input de arquivo aceita qualquer documento ou ficheiro de texto/PDF
+        let fileInputMkt = viewMkt.querySelector('input[type="file"]');
+        if (fileInputMkt) fileInputMkt.setAttribute('accept', '.pdf,.doc,.docx,.txt,.xls,.xlsx,.ppt,.pptx,image/*,video/*');
+
         renderFilesInFolder('marketing');
     } else {
         document.getElementById('folderMainAreaVds').style.display = 'none';
-        document.getElementById('folderViewVds').style.display = 'block';
+        let viewVds = document.getElementById('folderViewVds');
+        viewVds.style.display = 'block';
         document.getElementById('currentFolderNameVds').innerText = `Pasta: ${folderName}`;
+
+        // Garante que o input de arquivo aceita qualquer documento ou ficheiro de texto/PDF
+        let fileInputVds = viewVds.querySelector('input[type="file"]');
+        if (fileInputVds) fileInputVds.setAttribute('accept', '.pdf,.doc,.docx,.txt,.xls,.xlsx,.ppt,.pptx,image/*,video/*');
+
         renderFilesInFolder('vendas');
     }
 }
