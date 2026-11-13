@@ -32,6 +32,7 @@ let selectedCalendarDate = "";
 let currentActiveTab = 'marketing';
 let currentKnowledgeSection = "";
 let activeOpenFolderKey = null;
+let activeUploadMode = 'document'; // 'document' ou 'media'
 
 const novembroHolidays = {
     2: "Finados",
@@ -243,21 +244,18 @@ function openKnowledgeTool(sectionTheme, sectionName) {
     if (mktMenu) mktMenu.style.display = 'none';
     if (vdsMenu) vdsMenu.style.display = 'none';
 
+    if (sectionName.toLowerCase().includes('vídeos')) {
+        activeUploadMode = 'media';
+    } else {
+        activeUploadMode = 'document';
+    }
+
     if (sectionTheme === 'marketing') {
         document.getElementById('tool-knowledge-marketing').classList.add('active');
         document.getElementById('knowledgeTitleMkt').innerText = `Gestão de Conhecimento: ${sectionName}`;
         document.getElementById('folderMainAreaMkt').style.display = 'block';
         document.getElementById('folderViewMkt').style.display = 'none';
         document.getElementById('newFolderNameMkt').value = "";
-
-        // Se for a pasta de Vídeos Tutoriais, permite multimédia; se for POPs, força documentos
-        let fileInputMkt = document.getElementById('fileInputMkt');
-        if (sectionName.includes('Vídeos')) {
-            fileInputMkt.setAttribute('accept', 'image/*,video/*');
-        } else {
-            fileInputMkt.setAttribute('accept', '.pdf,.doc,.docx,.txt,.xls,.xlsx,.csv,.ppt,.pptx');
-        }
-
         renderFoldersGrid('marketing');
     } else {
         document.getElementById('tool-knowledge-vendas').classList.add('active');
@@ -265,14 +263,6 @@ function openKnowledgeTool(sectionTheme, sectionName) {
         document.getElementById('folderMainAreaVds').style.display = 'block';
         document.getElementById('folderViewVds').style.display = 'none';
         document.getElementById('newFolderNameVds').value = "";
-
-        let fileInputVds = document.getElementById('fileInputVds');
-        if (sectionName.includes('Vídeos')) {
-            fileInputVds.setAttribute('accept', 'image/*,video/*');
-        } else {
-            fileInputVds.setAttribute('accept', '.pdf,.doc,.docx,.txt,.xls,.xlsx,.csv,.ppt,.pptx');
-        }
-
         renderFoldersGrid('vendas');
     }
 }
@@ -384,6 +374,24 @@ function backToFolders(sectionTheme) {
     }
 }
 
+// Criação dinâmica com MIME types estritos para forçar explorador de ficheiros nos POPs
+function triggerDocumentPicker(sectionTheme) {
+    const hiddenInput = document.createElement('input');
+    hiddenInput.type = 'file';
+
+    if (activeUploadMode === 'document') {
+        hiddenInput.accept = 'application/pdf,.doc,.docx,.txt,.xls,.xlsx,.csv,.ppt,.pptx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+    } else {
+        hiddenInput.accept = 'video/*,image/*';
+    }
+
+    hiddenInput.onchange = function (event) {
+        handleFileUpload(event, sectionTheme);
+    };
+
+    hiddenInput.click();
+}
+
 function handleFileUpload(event, sectionTheme) {
     const file = event.target.files[0];
     if (!file) return;
@@ -401,7 +409,6 @@ function handleFileUpload(event, sectionTheme) {
         await saveToCloud();
 
         renderFilesInFolder(sectionTheme);
-        event.target.value = "";
     };
     reader.readAsDataURL(file);
 }

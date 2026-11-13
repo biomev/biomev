@@ -262,18 +262,14 @@
                                 style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
                                 <button class="tool-header-back" style="margin-bottom:0;"
                                     onclick="backToFolders('marketing')">Voltar para as Pastas</button>
-
-                                <!-- Input nativo visível para garantir abertura do gestor de ficheiros -->
-                                <input type="file" id="fileInputMkt"
-                                    accept=".pdf,.doc,.docx,.txt,.xls,.xlsx,.csv,.ppt,.pptx"
-                                    style="padding: 8px; background: #fff; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 0.85rem;"
-                                    onchange="handleFileUpload(event, 'marketing')">
+                                <button class="btn-action"
+                                    style="margin-top:0; width: auto; background: var(--glaucous);"
+                                    onclick="triggerDocumentPicker('marketing')">+ Enviar Arquivo</button>
                             </div>
 
                             <h3 id="currentFolderNameMkt"
                                 style="font-size: 1.2rem; font-weight: 700; color: var(--text-dark); margin-bottom: 16px;">
                             </h3>
-
                             <div class="gallery-grid" id="filesContainerMkt"></div>
                         </div>
                     </div>
@@ -419,18 +415,14 @@
                                 style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
                                 <button class="tool-header-back" style="margin-bottom:0;"
                                     onclick="backToFolders('vendas')">Voltar para as Pastas</button>
-
-                                <!-- Input nativo visível para garantir abertura do gestor de ficheiros -->
-                                <input type="file" id="fileInputVds"
-                                    accept=".pdf,.doc,.docx,.txt,.xls,.xlsx,.csv,.ppt,.pptx"
-                                    style="padding: 8px; background: #fff; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 0.85rem;"
-                                    onchange="handleFileUpload(event, 'vendas')">
+                                <button class="btn-action"
+                                    style="margin-top:0; width: auto; background: var(--moss-green);"
+                                    onclick="triggerDocumentPicker('vendas')">+ Enviar Arquivo</button>
                             </div>
 
                             <h3 id="currentFolderNameVds"
                                 style="font-size: 1.2rem; font-weight: 700; color: var(--text-dark); margin-bottom: 16px;">
                             </h3>
-
                             <div class="gallery-grid" id="filesContainerVds"></div>
                         </div>
                     </div>
