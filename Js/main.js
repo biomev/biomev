@@ -344,24 +344,12 @@ function openFolder(folderKey, folderName, sectionTheme) {
         let viewMkt = document.getElementById('folderViewMkt');
         viewMkt.style.display = 'block';
         document.getElementById('currentFolderNameMkt').innerText = `Pasta: ${folderName}`;
-
-        let fileInputMkt = document.getElementById('fileInputMkt');
-        if (fileInputMkt) {
-            fileInputMkt.removeAttribute('accept');
-        }
-
         renderFilesInFolder('marketing');
     } else {
         document.getElementById('folderMainAreaVds').style.display = 'none';
         let viewVds = document.getElementById('folderViewVds');
         viewVds.style.display = 'block';
         document.getElementById('currentFolderNameVds').innerText = `Pasta: ${folderName}`;
-
-        let fileInputVds = document.getElementById('fileInputVds');
-        if (fileInputVds) {
-            fileInputVds.removeAttribute('accept');
-        }
-
         renderFilesInFolder('vendas');
     }
 }
