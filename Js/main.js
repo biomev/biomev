@@ -345,9 +345,17 @@ function openFolder(folderKey, folderName, sectionTheme) {
         viewMkt.style.display = 'block';
         document.getElementById('currentFolderNameMkt').innerText = `Pasta: ${folderName}`;
 
-        // Garante que o input de arquivo aceita qualquer documento ou ficheiro de texto/PDF
+        // Força o input de arquivo a aceitar documentos gerais em vez de abrir a galeria de fotos
         let fileInputMkt = viewMkt.querySelector('input[type="file"]');
-        if (fileInputMkt) fileInputMkt.setAttribute('accept', '.pdf,.doc,.docx,.txt,.xls,.xlsx,.ppt,.pptx,image/*,video/*');
+        if (!fileInputMkt) {
+            // Se não existir no HTML, cria um botão funcional dinamicamente na vista da pasta
+            let uploadArea = viewMkt.querySelector('.folder-upload-area') || viewMkt;
+            fileInputMkt = document.createElement('input');
+            fileInputMkt.type = 'file';
+            fileInputMkt.onchange = (e) => handleFileUpload(e, 'marketing');
+            uploadArea.appendChild(fileInputMkt);
+        }
+        fileInputMkt.setAttribute('accept', '.pdf,.doc,.docx,.txt,.xls,.xlsx,.csv,.ppt,.pptx');
 
         renderFilesInFolder('marketing');
     } else {
@@ -356,9 +364,16 @@ function openFolder(folderKey, folderName, sectionTheme) {
         viewVds.style.display = 'block';
         document.getElementById('currentFolderNameVds').innerText = `Pasta: ${folderName}`;
 
-        // Garante que o input de arquivo aceita qualquer documento ou ficheiro de texto/PDF
+        // Força o input de arquivo a aceitar documentos gerais em vez de abrir a galeria de fotos
         let fileInputVds = viewVds.querySelector('input[type="file"]');
-        if (fileInputVds) fileInputVds.setAttribute('accept', '.pdf,.doc,.docx,.txt,.xls,.xlsx,.ppt,.pptx,image/*,video/*');
+        if (!fileInputVds) {
+            let uploadArea = viewVds.querySelector('.folder-upload-area') || viewVds;
+            fileInputVds = document.createElement('input');
+            fileInputVds.type = 'file';
+            fileInputVds.onchange = (e) => handleFileUpload(e, 'vendas');
+            uploadArea.appendChild(fileInputVds);
+        }
+        fileInputVds.setAttribute('accept', '.pdf,.doc,.docx,.txt,.xls,.xlsx,.csv,.ppt,.pptx');
 
         renderFilesInFolder('vendas');
     }
@@ -1162,7 +1177,7 @@ async function openNotificationsModal() {
     notifications.forEach(n => {
         if (!n.readBy) n.readBy = [];
         if (!n.readBy.includes(currentUser.name)) {
-            n.readBy.push(currentUser.name);
+            n.readBy.post ? n.readBy.push(currentUser.name) : n.readBy.push(currentUser.name);
         }
     });
     await saveToCloud();

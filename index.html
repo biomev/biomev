@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" , maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="robots" content="noindex, nofollow">
     <title>BIOMEV - Painel Operacional</title>
     <!-- Biblioteca jsPDF -->
@@ -265,7 +265,9 @@
                                 <button class="btn-action"
                                     style="margin-top:0; width: auto; background: var(--glaucous);"
                                     onclick="document.getElementById('fileInputMkt').click()">+ Enviar Arquivo</button>
-                                <input type="file" id="fileInputMkt" style="display: none;" accept="image/*,video/*"
+                                <!-- ATUALIZADO: Aceita documentos gerais, PDFs, textos, planilhas, além de imagens/vídeos -->
+                                <input type="file" id="fileInputMkt" style="display: none;"
+                                    accept=".pdf,.doc,.docx,.txt,.xls,.xlsx,.csv,.ppt,.pptx,image/*,video/*"
                                     onchange="handleFileUpload(event, 'marketing')">
                             </div>
 
@@ -286,7 +288,7 @@
                         <p class="section-label-white">Ferramentas de Vendas</p>
 
                         <div class="tools-grid">
-                            <!-- Planilha de Clientes & Pipeline (Apenas a letra P) -->
+                            <!-- Planilha de Clientes & Pipeline -->
                             <div class="widget-card highlight" onclick="openTool('pipeline-leads')">
                                 <div class="widget-icon-box">P</div>
                                 <div class="widget-info">
@@ -421,7 +423,9 @@
                                 <button class="btn-action"
                                     style="margin-top:0; width: auto; background: var(--moss-green);"
                                     onclick="document.getElementById('fileInputVds').click()">+ Enviar Arquivo</button>
-                                <input type="file" id="fileInputVds" style="display: none;" accept="image/*,video/*"
+                                <!-- ATUALIZADO: Aceita documentos gerais, PDFs, textos, planilhas, além de imagens/vídeos -->
+                                <input type="file" id="fileInputVds" style="display: none;"
+                                    accept=".pdf,.doc,.docx,.txt,.xls,.xlsx,.csv,.ppt,.pptx,image/*,video/*"
                                     onchange="handleFileUpload(event, 'vendas')">
                             </div>
 
@@ -649,10 +653,8 @@
         </div>
     </div>
 
-    <!-- Scripts Modulares -->
+    <!-- Script Principal da Aplicação -->
     <script src="js/main.js"></script>
-    <script src="js/marketing.js"></script>
-    <script src="js/vendas.js"></script>
 </body>
 
 </html>
