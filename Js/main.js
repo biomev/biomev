@@ -243,6 +243,68 @@ function closeTool(toolName) {
     }
 }
 
+/* EXPORTAÇÃO DA PLANILHA DE CLIENTES PARA EXCEL (.XLSX) */
+function exportLeadsToExcel() {
+    if (typeof XLSX === 'undefined') {
+        alert("Biblioteca de exportação Excel ainda está carregando. Tente novamente em instantes.");
+        return;
+    }
+
+    const table = document.getElementById('leadsTable');
+    if (!table) return;
+
+    const rowsData = [];
+    const rows = table.querySelectorAll('tr');
+
+    rows.forEach((tr) => {
+        const rowValues = [];
+        const cells = tr.querySelectorAll('th, td');
+        // Ignora a última coluna ("Ações") para manter a planilha limpa
+        const colLimit = cells.length > 1 ? cells.length - 1 : cells.length;
+
+        for (let i = 0; i < colLimit; i++) {
+            const cell = cells[i];
+            const input = cell.querySelector('input, textarea');
+            const select = cell.querySelector('select');
+
+            if (select) {
+                rowValues.push(select.options[select.selectedIndex]?.text || select.value || "");
+            } else if (input) {
+                rowValues.push(input.value.trim());
+            } else {
+                rowValues.push(cell.innerText.trim());
+            }
+        }
+
+        if (rowValues.length > 0) {
+            rowsData.push(rowValues);
+        }
+    });
+
+    if (rowsData.length <= 1) {
+        alert("Não há clientes cadastrados na tabela para exportar.");
+        return;
+    }
+
+    const worksheet = XLSX.utils.aoa_to_sheet(rowsData);
+
+    // Ajuste automático da largura das colunas com base no conteúdo
+    const colWidths = rowsData[0].map((_, colIndex) => {
+        const maxLen = rowsData.reduce((acc, row) => {
+            const val = row[colIndex] ? String(row[colIndex]) : "";
+            return Math.max(acc, val.length);
+        }, 12);
+        return { wch: maxLen + 4 };
+    });
+    worksheet['!cols'] = colWidths;
+
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Clientes e Contatos");
+
+    const today = new Date().toISOString().slice(0, 10);
+    XLSX.writeFile(workbook, `Clientes_Contatos_BIOMEV_${today}.xlsx`);
+}
+
 function openKnowledgeTool(sectionTheme, sectionName) {
     currentKnowledgeSection = sectionName;
     activeOpenFolderKey = null;
