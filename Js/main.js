@@ -34,10 +34,18 @@ let currentKnowledgeSection = "";
 let activeOpenFolderKey = null;
 let activeUploadMode = 'document'; // 'document' ou 'media'
 
-const novembroHolidays = {
-    2: "Finados",
-    15: "Proclamação",
-    20: "Consciência"
+const monthHolidays = {
+    1: { 1: "Confraternização" },
+    4: { 21: "Tiradentes" },
+    5: { 1: "Dia do Trabalho" },
+    9: { 7: "Independência" },
+    10: { 12: "Nossa Senhora" },
+    11: {
+        2: "Finados",
+        15: "Proclamação",
+        20: "Consciência"
+    },
+    12: { 25: "Natal" }
 };
 
 // Sincronização com a Nuvem (Carregar)
@@ -374,7 +382,6 @@ function backToFolders(sectionTheme) {
     }
 }
 
-// Criação dinâmica com MIME types estritos para forçar explorador de ficheiros nos POPs
 function triggerDocumentPicker(sectionTheme) {
     const hiddenInput = document.createElement('input');
     hiddenInput.type = 'file';
@@ -455,7 +462,7 @@ async function removeFileFromFolder(fileIndex, sectionTheme) {
     renderFilesInFolder(sectionTheme);
 }
 
-/* RENDERIZAÇÃO DOS CALENDÁRIOS */
+/* RENDERIZAÇÃO DOS CALENDÁRIOS DINÂMICOS */
 function renderCalendars() {
     renderFilteredCalendar('calendarGridMarketing', 'event-blue', 'Marketing');
     renderFilteredCalendar('calendarGridVendas', 'event-green', 'Vendas');
@@ -465,7 +472,18 @@ function renderFilteredCalendar(gridId, eventClass, calendarType) {
     const grid = document.getElementById(gridId);
     if (!grid) return;
 
-    let headers = `
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = now.getMonth() + 1; // 1 a 12
+    const daysInMonth = new Date(year, month, 0).getDate();
+    const monthStr = month < 10 ? '0' + month : String(month);
+
+    const monthTitleEl = grid.closest('.calendar-box-minimal')?.querySelector('.calendar-month-title');
+    if (monthTitleEl) {
+        monthTitleEl.innerText = `${monthStr} / ${year}`;
+    }
+
+    const headers = `
         <div class="cal-day-header">Dom</div>
         <div class="cal-day-header">Seg</div>
         <div class="cal-day-header">Ter</div>
@@ -476,9 +494,10 @@ function renderFilteredCalendar(gridId, eventClass, calendarType) {
     `;
 
     let html = headers;
-    for (let day = 1; day <= 30; day++) {
-        let dateStr = `${day < 10 ? '0' + day : day}/11/2026`;
-        let isHoliday = novembroHolidays[day];
+    for (let day = 1; day <= daysInMonth; day++) {
+        const dayStr = day < 10 ? '0' + day : String(day);
+        const dateStr = `${dayStr}/${monthStr}/${year}`;
+        const isHoliday = monthHolidays[month] ? monthHolidays[month][day] : null;
 
         let tasksForThisDay = [];
 
