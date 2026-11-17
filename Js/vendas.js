@@ -39,6 +39,8 @@ function renderLeadsTable() {
         `;
         tbody.appendChild(tr);
     });
+
+    ensureExcelExportButton();
 }
 
 function escapeHtml(str) {
@@ -61,16 +63,11 @@ function calculateLeadStatus(nextDateStr) {
     const diffTime = nextDate - today;
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-    // Vermelho: Mesma semana (<= 7 dias ou atrasado)
     if (diffDays <= 7) {
         return { class: 'status-red', text: 'Retornar esta semana!' };
-    }
-    // Amarelo: No mês de retomar contato (entre 8 e 30 dias)
-    else if (diffDays <= 30) {
+    } else if (diffDays <= 30) {
         return { class: 'status-yellow', text: 'Mês de retomar' };
-    }
-    // Verde: Mais de um mês (> 30 dias)
-    else {
+    } else {
         return { class: 'status-green', text: 'Prazo tranquilo (> 1 mês)' };
     }
 }
@@ -105,33 +102,46 @@ function saveAndRenderLeads() {
     renderLeadsTable();
 }
 
-function exportLeadsToExcel() {
-    if (typeof XLSX === 'undefined') {
-        alert("Biblioteca XLSX não carregada. Verifique o script do SheetJS no index.html.");
-        return;
-    }
+function ensureExcelExportButton() {
+    const table = document.getElementById('leadsTable');
+    if (!table) return;
 
+    if (document.getElementById('btnExportLeadsExcel')) return;
+
+    const wrapper = table.closest('div') || table.parentElement;
+    if (!wrapper) return;
+
+    const btn = document.createElement('button');
+    btn.id = 'btnExportLeadsExcel';
+    btn.type = 'button';
+    btn.className = 'btn-action';
+    btn.style.cssText = 'width: auto; padding: 12px 24px; margin-top: 16px; background: var(--moss-green);';
+    btn.textContent = 'Baixar Planilha em Excel (.xlsx)';
+    btn.addEventListener('click', exportLeadsToExcel);
+
+    wrapper.insertAdjacentElement('afterend', btn);
+}
+
+function exportLeadsToExcel() {
     if (!leadsData || leadsData.length === 0) {
         alert("Não há clientes na planilha para exportar.");
         return;
     }
 
-    const rowsData = [
-        [
-            "Nome do Cliente",
-            "Data",
-            "Serviço",
-            "Contato",
-            "Último Contato",
-            "Próximo Contato",
-            "Característica / Status",
-            "Situação do Prazo"
-        ]
+    const headers = [
+        "Nome do Cliente",
+        "Data",
+        "Serviço",
+        "Contato",
+        "Último Contato",
+        "Próximo Contato",
+        "Característica / Status",
+        "Situação do Prazo"
     ];
 
-    leadsData.forEach((lead) => {
+    const rows = leadsData.map((lead) => {
         const status = calculateLeadStatus(lead.nextContact);
-        rowsData.push([
+        return [
             lead.name || "",
             lead.date || "",
             lead.service || "",
@@ -140,31 +150,41 @@ function exportLeadsToExcel() {
             lead.nextContact || "",
             lead.type || "",
             status.text
-        ]);
+        ];
     });
-
-    const worksheet = XLSX.utils.aoa_to_sheet(rowsData);
-
-    worksheet['!cols'] = rowsData[0].map((_, colIndex) => {
-        const maxLen = rowsData.reduce((acc, row) => {
-            const val = row[colIndex] ? String(row[colIndex]) : "";
-            return Math.max(acc, val.length);
-        }, 14);
-        return { wch: maxLen + 4 };
-    });
-
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Clientes_BIOMEV");
 
     const today = new Date().toISOString().slice(0, 10);
-    XLSX.writeFile(workbook, `Clientes_Contatos_BIOMEV_${today}.xlsx`);
+
+    if (typeof XLSX !== 'undefined') {
+        const worksheet = XLSX.utils.aoa_to_sheet([headers, ...rows]);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Clientes_BIOMEV");
+        XLSX.writeFile(workbook, `Clientes_Contatos_BIOMEV_${today}.xlsx`);
+        return;
+    }
+
+    const csvLines = [headers, ...rows]
+        .map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(';'))
+        .join('\r\n');
+
+    const blob = new Blob(['\uFEFF' + csvLines], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `Clientes_Contatos_BIOMEV_${today}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
 }
 
 // Inicializar aba e tabelas ao carregar
 document.addEventListener('DOMContentLoaded', () => {
     renderLeadsTable();
+    ensureExcelExportButton();
 
-    if (typeof renderCalendars === 'function') {
-        renderCalendars();
+    const calGrid = document.getElementById('calendarGridVendas');
+    if (calGrid && typeof renderCalendar === 'function') {
+        renderCalendar('vendas');
     }
 });
