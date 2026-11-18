@@ -1,4 +1,4 @@
-// Gerenciamento do Painel de Vendas, Calendário e Planilha de Clientes
+// Gerenciamento do Painel de Vendas, Calendário, Planilha e Kanban
 let leadsData = JSON.parse(localStorage.getItem('biomev_leads')) || [
     {
         name: "Prefeitura Municipal",
@@ -7,7 +7,9 @@ let leadsData = JSON.parse(localStorage.getItem('biomev_leads')) || [
         contact: "(32) 99999-9999",
         lastContact: "2026-11-01",
         nextContact: "2026-12-05",
-        type: "Follow-up"
+        type: "Follow-up",
+        stage: "contato",
+        value: 1500
     }
 ];
 
@@ -18,7 +20,20 @@ function hydrateLeadsFromCloud() {
     }
 }
 
+function hydrateKanbanLeads() {
+    if (!Array.isArray(leadsData)) return;
+    leadsData.forEach(lead => {
+        if (!lead.stage) {
+            lead.stage = 'contato';
+        }
+        if (typeof lead.value !== 'number') {
+            lead.value = parseFloat(lead.value) || 0;
+        }
+    });
+}
+
 function renderLeadsTable() {
+    hydrateKanbanLeads();
     const tbody = document.getElementById('leadsTableBody');
     if (!tbody) return;
     tbody.innerHTML = '';
@@ -48,6 +63,130 @@ function renderLeadsTable() {
     });
 
     ensureExcelExportButton();
+    renderKanbanBoard();
+}
+
+// Funil de Vendas Visual (Kanban)
+const kanbanStages = [
+    { id: 'contato', name: 'Contato Inicial' },
+    { id: 'reuniao', name: 'Reunião Agendada' },
+    { id: 'proposta', name: 'Proposta Enviada' },
+    { id: 'negociacao', name: 'Em Negociação' },
+    { id: 'fechado', name: 'Fechado' },
+    { id: 'perdido', name: 'Perdido' }
+];
+
+function renderKanbanBoard() {
+    hydrateKanbanLeads();
+    const board = document.getElementById('kanbanBoard');
+    if (!board) return;
+
+    let totalPipeline = 0;
+    let boardHtml = '';
+
+    kanbanStages.forEach(stage => {
+        const columnLeads = leadsData.filter(l => l.stage === stage.id);
+
+        columnLeads.forEach(l => {
+            if (stage.id !== 'perdido') {
+                totalPipeline += (parseFloat(l.value) || 0);
+            }
+        });
+
+        let cardsHtml = '';
+        columnLeads.forEach((lead) => {
+            const originalIndex = leadsData.indexOf(lead);
+            cardsHtml += `
+                <div class="kanban-card" draggable="true" ondragstart="dragKanbanCard(event, ${originalIndex})">
+                    <div class="kanban-card-title">${escapeHtml(lead.name)}</div>
+                    <div class="kanban-card-service">${escapeHtml(lead.service || 'Serviço')}</div>
+                    <div style="font-size: 0.75rem; color: var(--text-muted);">Contato: ${escapeHtml(lead.contact || 'N/A')}</div>
+                    <div class="kanban-card-footer">
+                        <span class="kanban-card-value">R$ ${(parseFloat(lead.value) || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
+                        <div style="display: flex; gap: 6px;">
+                            <button title="Mudar Etapa" style="background: none; border: none; cursor: pointer; color: var(--moss-green); font-weight: bold;" onclick="openMoveLeadModal(${originalIndex})">⇄</button>
+                            <button title="Excluir" style="background: none; border: none; cursor: pointer; color: #ef4444;" onclick="deleteLeadRow(${originalIndex})">✕</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+
+        boardHtml += `
+            <div class="kanban-column" ondragover="allowDrop(event)" ondrop="dropKanbanCard(event, '${stage.id}')">
+                <div class="kanban-column-header">
+                    <span>${stage.name}</span>
+                    <span class="kanban-column-count">${columnLeads.length}</span>
+                </div>
+                <div class="kanban-cards-container">
+                    ${cardsHtml || '<p style="font-size:0.75rem; color:var(--text-muted); text-align:center; padding:10px;">Sem leads</p>'}
+                </div>
+            </div>
+        `;
+    });
+
+    board.innerHTML = boardHtml;
+
+    const totalEl = document.getElementById('pipelineTotalValue');
+    if (totalEl) {
+        totalEl.innerText = `Pipeline Ativo: R$ ${totalPipeline.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
+    }
+}
+
+let draggedLeadIndex = null;
+
+function dragKanbanCard(event, index) {
+    draggedLeadIndex = index;
+}
+
+function allowDrop(event) {
+    event.preventDefault();
+}
+
+async function dropKanbanCard(event, newStage) {
+    event.preventDefault();
+    if (draggedLeadIndex !== null && leadsData[draggedLeadIndex]) {
+        leadsData[draggedLeadIndex].stage = newStage;
+        draggedLeadIndex = null;
+        await saveAndRenderLeads();
+    }
+}
+
+async function openMoveLeadModal(index) {
+    const lead = leadsData[index];
+    if (!lead) return;
+
+    let optionsStr = kanbanStages.map(s => `${s.id}: ${s.name}`).join('\n');
+    let escolha = prompt(`Mover "${lead.name}" para qual etapa?\n\nDigite o ID da etapa:\n${optionsStr}`, lead.stage);
+
+    if (escolha && kanbanStages.some(s => s.id === escolha.trim())) {
+        lead.stage = escolha.trim();
+        await saveAndRenderLeads();
+    }
+}
+
+async function openAddKanbanCardModal() {
+    let name = prompt("Nome do Cliente / Empresa:");
+    if (!name) return;
+    let service = prompt("Serviço desejado (ex: Inventário de Flora):", "Consultoria Ambiental");
+    let contact = prompt("Telefone ou E-mail de contato:", "(32) ");
+    let valueStr = prompt("Valor estimado do contrato (R$):", "1500");
+    let value = parseFloat(valueStr.replace(',', '.')) || 0;
+
+    const todayStr = new Date().toISOString().split('T')[0];
+    leadsData.push({
+        name: name.trim(),
+        date: todayStr,
+        service: service || "Consultoria",
+        contact: contact || "",
+        lastContact: todayStr,
+        nextContact: todayStr,
+        type: "Follow-up",
+        stage: "contato",
+        value: value
+    });
+
+    await saveAndRenderLeads();
 }
 
 function escapeHtml(str) {
@@ -70,16 +209,11 @@ function calculateLeadStatus(nextDateStr) {
     const diffTime = nextDate - today;
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-    // Vermelho: Mesma semana (<= 7 dias ou atrasado)
     if (diffDays <= 7) {
         return { class: 'status-red', text: 'Retornar esta semana!' };
-    }
-    // Amarelo: No mês de retomar contato (entre 8 e 30 dias)
-    else if (diffDays <= 30) {
+    } else if (diffDays <= 30) {
         return { class: 'status-yellow', text: 'Mês de retomar' };
-    }
-    // Verde: Mais de um mês (> 30 dias)
-    else {
+    } else {
         return { class: 'status-green', text: 'Prazo tranquilo (> 1 mês)' };
     }
 }
@@ -93,7 +227,9 @@ async function addLeadRow() {
         contact: "",
         lastContact: todayStr,
         nextContact: todayStr,
-        type: "Follow-up"
+        type: "Follow-up",
+        stage: "contato",
+        value: 1000
     });
     await saveAndRenderLeads();
 }
@@ -127,7 +263,6 @@ function ensureExcelExportButton() {
     const table = document.getElementById('leadsTable');
     if (!table) return;
 
-    // Remove eventuais botões duplicados anteriores antes de criar o único
     const existingButtons = document.querySelectorAll('#btnExportLeadsExcel, #btnExportLeadsExcelWrapper');
     existingButtons.forEach((el) => el.remove());
 
@@ -176,7 +311,6 @@ async function exportLeadsToExcel() {
 
     const today = new Date().toISOString().slice(0, 10);
 
-    // Exportação estilizada com ExcelJS (paleta verde do setor de Vendas)
     if (typeof ExcelJS !== 'undefined') {
         const workbook = new ExcelJS.Workbook();
         workbook.creator = 'BIOMEV';
@@ -184,7 +318,6 @@ async function exportLeadsToExcel() {
             views: [{ state: 'frozen', ySplit: 3 }]
         });
 
-        // Faixa de título da planilha
         sheet.mergeCells('A1:H1');
         const titleCell = sheet.getCell('A1');
         titleCell.value = 'BIOMEV — Planilha de Clientes e Contatos (Vendas)';
@@ -193,7 +326,6 @@ async function exportLeadsToExcel() {
         titleCell.alignment = { vertical: 'middle', horizontal: 'left', indent: 1 };
         sheet.getRow(1).height = 32;
 
-        // Subtítulo com data de exportação
         sheet.mergeCells('A2:H2');
         const subCell = sheet.getCell('A2');
         subCell.value = `Gerado em ${formatDateBr(today)} • Total de registros: ${leadsData.length}`;
@@ -202,7 +334,6 @@ async function exportLeadsToExcel() {
         subCell.alignment = { vertical: 'middle', horizontal: 'left', indent: 1 };
         sheet.getRow(2).height = 20;
 
-        // Cabeçalho (linha 3)
         const headerRow = sheet.addRow(headers);
         headerRow.height = 28;
         headerRow.eachCell((cell) => {
@@ -217,7 +348,6 @@ async function exportLeadsToExcel() {
             };
         });
 
-        // Linhas de dados
         leadsData.forEach((lead, idx) => {
             const status = calculateLeadStatus(lead.nextContact);
             const rowValues = [
@@ -250,7 +380,6 @@ async function exportLeadsToExcel() {
                     right: { style: 'thin', color: { argb: 'FFCBD5E1' } }
                 };
 
-                // Destaque sutil na coluna Situação do Prazo (coluna 8)
                 if (colNumber === 8) {
                     cell.font = { name: 'Calibri', size: 10, bold: true, color: { argb: 'FF1E293B' } };
                     if (status.class === 'status-red') {
@@ -267,7 +396,6 @@ async function exportLeadsToExcel() {
             });
         });
 
-        // Ajuste automático de largura das colunas
         sheet.columns.forEach((col, index) => {
             let maxLen = headers[index].length;
             col.eachCell({ includeEmpty: false }, (cell) => {
@@ -293,7 +421,6 @@ async function exportLeadsToExcel() {
         return;
     }
 
-    // Fallback com SheetJS se ExcelJS não carregar
     const rows = leadsData.map((lead) => {
         const status = calculateLeadStatus(lead.nextContact);
         return [
@@ -353,7 +480,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }, 5000);
 
-    // Renderizar calendário de vendas caso exista
     const calGrid = document.getElementById('calendarGridVendas');
     if (calGrid && typeof renderCalendar === 'function') {
         renderCalendar('vendas');

@@ -295,6 +295,15 @@
                                 </div>
                             </div>
 
+                            <!-- CRM e Funil de Vendas Visual (Kanban) -->
+                            <div class="widget-card highlight" onclick="openTool('kanban-vendas')">
+                                <div class="widget-icon-box">K</div>
+                                <div class="widget-info">
+                                    <h3>CRM e Funil de Vendas</h3>
+                                    <p>Gestão visual de leads em estilo Kanban.</p>
+                                </div>
+                            </div>
+
                             <div class="widget-card">
                                 <span class="badge-soon">Em Breve</span>
                                 <div class="widget-icon-box">R</div>
@@ -385,7 +394,31 @@
                             </tbody>
                         </table>
                     </div>
-                    <!-- Botão único de exportação é injetado pelo Js/vendas.js após a tabela -->
+                </div>
+
+                <!-- Ferramenta CRM e Funil de Vendas (Kanban) -->
+                <div id="tool-kanban-vendas" class="tool-container">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
+                        <button class="tool-header-back" style="margin-bottom:0;"
+                            onclick="closeTool('kanban-vendas')">Voltar para as Ferramentas</button>
+                        <div style="display: flex; gap: 12px; align-items: center;">
+                            <span id="pipelineTotalValue"
+                                style="font-weight: 700; color: var(--moss-green); background: var(--vanilla); padding: 8px 14px; border-radius: 12px; font-size: 0.9rem;">Pipeline:
+                                R$ 0,00</span>
+                            <button class="btn-action"
+                                style="width: auto; padding: 10px 20px; margin-top: 0; background: var(--moss-green);"
+                                onclick="openAddKanbanCardModal()">+ Novo Lead no Funil</button>
+                        </div>
+                    </div>
+
+                    <h2 style="font-size: 1.5rem; font-weight: 700; color: var(--text-dark); margin-bottom: 20px;">Funil
+                        de Vendas (Kanban)</h2>
+
+                    <!-- Área das Colunas do Kanban -->
+                    <div class="kanban-board" id="kanbanBoard">
+                        <!-- Injetado via JS -->
+                    </div>
                 </div>
 
                 <!-- Ferramenta de Gestão de Conhecimento (Vendas) -->
