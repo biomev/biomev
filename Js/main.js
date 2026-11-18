@@ -9,7 +9,8 @@ let cloudData = {
     team: [],
     notifs: [],
     events: {},
-    knowledge: {}
+    knowledge: {},
+    leads: []
 };
 
 // Utilizador atual armazenado localmente
@@ -48,10 +49,24 @@ const monthHolidays = {
     12: { 25: "Natal" }
 };
 
+function syncCurrentUserFromCloud() {
+    if (!currentUser.name || !Array.isArray(teamMembers)) return;
+    const me = teamMembers.find(m => m.name && m.name.toLowerCase() === currentUser.name.toLowerCase());
+    if (me) {
+        currentUser.name = me.name;
+        currentUser.role = me.role || currentUser.role;
+        if (me.photo) {
+            currentUser.photo = me.photo;
+        }
+        saveSessionLocal();
+    }
+}
+
 // Sincronização com a Nuvem (Carregar)
 async function loadFromCloud(isInitial = false) {
     try {
         let response = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}/latest`, {
+            cache: "no-store",
             headers: {
                 "X-Master-Key": JSONBIN_MASTER_KEY
             }
@@ -60,31 +75,40 @@ async function loadFromCloud(isInitial = false) {
             let json = await response.json();
             if (json.record && json.record.biomev_payload) {
                 cloudData = json.record.biomev_payload;
-                teamMembers = cloudData.team || [];
-                notifications = cloudData.notifs || [];
-                calendarEvents = cloudData.events || {};
-                knowledgeData = cloudData.knowledge || {};
+                teamMembers = Array.isArray(cloudData.team) ? cloudData.team : [];
+                notifications = Array.isArray(cloudData.notifs) ? cloudData.notifs : [];
+                calendarEvents = cloudData.events && typeof cloudData.events === 'object' ? cloudData.events : {};
+                knowledgeData = cloudData.knowledge && typeof cloudData.knowledge === 'object' ? cloudData.knowledge : {};
 
-                if (currentUser.isLoggedIn) {
-                    let me = teamMembers.find(m => m.name.toLowerCase() === currentUser.name.toLowerCase());
-                    if (me && me.photo) {
-                        currentUser.photo = me.photo;
-                        localStorage.setItem("biomev_my_photo", me.photo);
+                if (Array.isArray(cloudData.leads)) {
+                    window.leadsData = cloudData.leads;
+                    localStorage.setItem('biomev_leads', JSON.stringify(cloudData.leads));
+                    if (typeof leadsData !== 'undefined') {
+                        leadsData = cloudData.leads;
+                    }
+                    if (typeof renderLeadsTable === 'function') {
+                        renderLeadsTable();
                     }
                 }
+
+                syncCurrentUserFromCloud();
             }
         }
     } catch (e) {
         console.error("Erro ao carregar da nuvem:", e);
     }
 
-    if (currentUser.isLoggedIn) {
+    if (currentUser.isLoggedIn && currentUser.name) {
         updateHeaderAvatar(currentUser.name, currentUser.photo);
     }
 
     if (isInitial) {
         updateNotifDot();
         renderCalendars();
+        if (typeof renderLeadsTable === 'function') renderLeadsTable();
+        if (currentUser.isLoggedIn && document.getElementById('profileView') && document.getElementById('profileView').classList.contains('active')) {
+            renderTasksGrid();
+        }
     } else {
         if (typeof renderCalendars === 'function') renderCalendars();
         if (typeof updateNotifDot === 'function') updateNotifDot();
@@ -110,6 +134,11 @@ async function saveToCloud() {
     cloudData.notifs = notifications;
     cloudData.events = calendarEvents;
     cloudData.knowledge = knowledgeData;
+    if (typeof leadsData !== 'undefined' && Array.isArray(leadsData)) {
+        cloudData.leads = leadsData;
+    } else if (Array.isArray(window.leadsData)) {
+        cloudData.leads = window.leadsData;
+    }
 
     try {
         let response = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`, {
@@ -226,6 +255,7 @@ function openTool(toolName) {
     const toolContainer = document.getElementById(`tool-${toolName}`);
     if (toolContainer) toolContainer.classList.add('active');
     if (toolName === 'certificado' && typeof renderCertificate === 'function') renderCertificate();
+    if (toolName === 'pipeline-leads' && typeof renderLeadsTable === 'function') renderLeadsTable();
 }
 
 function closeTool(toolName) {
@@ -241,68 +271,6 @@ function closeTool(toolName) {
     if (toolName === 'pipeline-leads' && vendasMenu) {
         vendasMenu.style.display = 'block';
     }
-}
-
-/* EXPORTAÇÃO DA PLANILHA DE CLIENTES PARA EXCEL (.XLSX) */
-function exportLeadsToExcel() {
-    if (typeof XLSX === 'undefined') {
-        alert("Biblioteca de exportação Excel ainda está carregando. Tente novamente em instantes.");
-        return;
-    }
-
-    const table = document.getElementById('leadsTable');
-    if (!table) return;
-
-    const rowsData = [];
-    const rows = table.querySelectorAll('tr');
-
-    rows.forEach((tr) => {
-        const rowValues = [];
-        const cells = tr.querySelectorAll('th, td');
-        // Ignora a última coluna ("Ações") para manter a planilha limpa
-        const colLimit = cells.length > 1 ? cells.length - 1 : cells.length;
-
-        for (let i = 0; i < colLimit; i++) {
-            const cell = cells[i];
-            const input = cell.querySelector('input, textarea');
-            const select = cell.querySelector('select');
-
-            if (select) {
-                rowValues.push(select.options[select.selectedIndex]?.text || select.value || "");
-            } else if (input) {
-                rowValues.push(input.value.trim());
-            } else {
-                rowValues.push(cell.innerText.trim());
-            }
-        }
-
-        if (rowValues.length > 0) {
-            rowsData.push(rowValues);
-        }
-    });
-
-    if (rowsData.length <= 1) {
-        alert("Não há clientes cadastrados na tabela para exportar.");
-        return;
-    }
-
-    const worksheet = XLSX.utils.aoa_to_sheet(rowsData);
-
-    // Ajuste automático da largura das colunas com base no conteúdo
-    const colWidths = rowsData[0].map((_, colIndex) => {
-        const maxLen = rowsData.reduce((acc, row) => {
-            const val = row[colIndex] ? String(row[colIndex]) : "";
-            return Math.max(acc, val.length);
-        }, 12);
-        return { wch: maxLen + 4 };
-    });
-    worksheet['!cols'] = colWidths;
-
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Clientes e Contatos");
-
-    const today = new Date().toISOString().slice(0, 10);
-    XLSX.writeFile(workbook, `Clientes_Contatos_BIOMEV_${today}.xlsx`);
 }
 
 function openKnowledgeTool(sectionTheme, sectionName) {
@@ -712,8 +680,11 @@ async function saveNewTask() {
 }
 
 /* Gestão de Perfil */
-function handleProfileClick() {
+async function handleProfileClick() {
     if (!currentUser.isLoggedIn) {
+        if (teamMembers.length === 0) {
+            await loadFromCloud(false);
+        }
         if (teamMembers.length > 0) openSelectProfileModal();
         else openRegisterModal();
     } else {

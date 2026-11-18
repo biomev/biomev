@@ -11,6 +11,13 @@ let leadsData = JSON.parse(localStorage.getItem('biomev_leads')) || [
     }
 ];
 
+function hydrateLeadsFromCloud() {
+    if (typeof cloudData !== 'undefined' && Array.isArray(cloudData.leads) && cloudData.leads.length > 0) {
+        leadsData = cloudData.leads;
+        localStorage.setItem('biomev_leads', JSON.stringify(leadsData));
+    }
+}
+
 function renderLeadsTable() {
     const tbody = document.getElementById('leadsTableBody');
     if (!tbody) return;
@@ -63,16 +70,21 @@ function calculateLeadStatus(nextDateStr) {
     const diffTime = nextDate - today;
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
+    // Vermelho: Mesma semana (<= 7 dias ou atrasado)
     if (diffDays <= 7) {
         return { class: 'status-red', text: 'Retornar esta semana!' };
-    } else if (diffDays <= 30) {
+    }
+    // Amarelo: No mês de retomar contato (entre 8 e 30 dias)
+    else if (diffDays <= 30) {
         return { class: 'status-yellow', text: 'Mês de retomar' };
-    } else {
+    }
+    // Verde: Mais de um mês (> 30 dias)
+    else {
         return { class: 'status-green', text: 'Prazo tranquilo (> 1 mês)' };
     }
 }
 
-function addLeadRow() {
+async function addLeadRow() {
     const todayStr = new Date().toISOString().split('T')[0];
     leadsData.push({
         name: "Novo Cliente",
@@ -83,29 +95,37 @@ function addLeadRow() {
         nextContact: todayStr,
         type: "Follow-up"
     });
-    saveAndRenderLeads();
+    await saveAndRenderLeads();
 }
 
-function updateLead(index, field, value) {
+async function updateLead(index, field, value) {
     if (!leadsData[index]) return;
     leadsData[index][field] = value;
-    saveAndRenderLeads();
+    await saveAndRenderLeads();
 }
 
-function deleteLeadRow(index) {
+async function deleteLeadRow(index) {
     leadsData.splice(index, 1);
-    saveAndRenderLeads();
+    await saveAndRenderLeads();
 }
 
-function saveAndRenderLeads() {
+async function saveAndRenderLeads() {
     localStorage.setItem('biomev_leads', JSON.stringify(leadsData));
+
+    if (typeof cloudData !== 'undefined') {
+        cloudData.leads = leadsData;
+    }
+
+    if (typeof saveToCloud === 'function') {
+        await saveToCloud();
+    }
+
     renderLeadsTable();
 }
 
 function ensureExcelExportButton() {
     const table = document.getElementById('leadsTable');
     if (!table) return;
-
     if (document.getElementById('btnExportLeadsExcel')) return;
 
     const wrapper = table.closest('div') || table.parentElement;
@@ -179,10 +199,28 @@ function exportLeadsToExcel() {
 }
 
 // Inicializar aba e tabelas ao carregar
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+    if (typeof loadFromCloud === 'function') {
+        await loadFromCloud(true);
+        hydrateLeadsFromCloud();
+    }
+
     renderLeadsTable();
     ensureExcelExportButton();
 
+    setInterval(() => {
+        if (typeof cloudData !== 'undefined' && Array.isArray(cloudData.leads)) {
+            const currentJson = JSON.stringify(leadsData);
+            const cloudJson = JSON.stringify(cloudData.leads);
+            if (currentJson !== cloudJson) {
+                leadsData = cloudData.leads;
+                localStorage.setItem('biomev_leads', cloudJson);
+                renderLeadsTable();
+            }
+        }
+    }, 5000);
+
+    // Renderizar calendário de vendas caso exista
     const calGrid = document.getElementById('calendarGridVendas');
     if (calGrid && typeof renderCalendar === 'function') {
         renderCalendar('vendas');
