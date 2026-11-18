@@ -49,9 +49,25 @@ const monthHolidays = {
     12: { 25: "Natal" }
 };
 
+function isSameUserName(a, b) {
+    if (!a || !b) return false;
+    return String(a).trim().toLowerCase() === String(b).trim().toLowerCase();
+}
+
+function getNotificationsForCurrentUser() {
+    if (!currentUser || !currentUser.isLoggedIn || !currentUser.name) return [];
+    return notifications.filter(n => {
+        if (!n || typeof n !== 'object') return false;
+        if (n.target) {
+            return isSameUserName(n.target, currentUser.name);
+        }
+        return false;
+    });
+}
+
 function syncCurrentUserFromCloud() {
     if (!currentUser.name || !Array.isArray(teamMembers)) return;
-    const me = teamMembers.find(m => m.name && m.name.toLowerCase() === currentUser.name.toLowerCase());
+    const me = teamMembers.find(m => m.name && isSameUserName(m.name, currentUser.name));
     if (me) {
         currentUser.name = me.name;
         currentUser.role = me.role || currentUser.role;
@@ -638,7 +654,10 @@ async function saveCalendarTask() {
                 file: null,
                 status: "Pendente"
             });
-            await addNotification(`Nova tarefa atribuída a ${assignedMember} para o dia ${selectedCalendarDate}: "${title}"`);
+            await addNotification(
+                `Nova tarefa atribuída a você para o dia ${selectedCalendarDate}: "${title}"`,
+                memberObj.name
+            );
         }
     }
 
@@ -670,9 +689,12 @@ async function saveNewTask() {
             file: null,
             status: "Pendente"
         });
+        await addNotification(
+            `Nova tarefa atribuída a você: "${title}" (${date})`,
+            targetMember.name
+        );
     }
 
-    await addNotification(`Nova tarefa criada para ${targetMember ? targetMember.name : 'Equipe'}: "${title}" (${date})`);
     await saveToCloud();
     toggleTaskModal(false);
     renderTasksGrid();
@@ -1132,11 +1154,14 @@ async function removeMemberTaskFromModal(taskIndex) {
     }
 }
 
-function submitMemberMessage() {
+async function submitMemberMessage() {
     let msgText = document.getElementById('memberMessage').value.trim();
     if (!msgText) return;
     let member = teamMembers.find(m => m.id === selectedMemberId);
-    addNotification(`Mensagem para ${member.name}: "${msgText}"`);
+    if (!member) return;
+
+    const senderName = (currentUser && currentUser.isLoggedIn && currentUser.name) ? currentUser.name : "Equipe";
+    await addNotification(`Mensagem de ${senderName}: "${msgText}"`, member.name);
     alert("Mensagem enviada!");
     closeMemberActionModal();
 }
@@ -1161,20 +1186,24 @@ async function submitMemberTask() {
             file: null,
             status: "Pendente"
         });
+        await addNotification(`Tarefa atribuída a você: "${title}" (${date})`, member.name);
     }
 
-    await addNotification(`Tarefa atribuída a ${member.name}: "${title}" (${date})`);
     await saveToCloud();
     alert("Tarefa atribuída com sucesso e integrada ao calendário!");
     closeMemberActionModal();
     renderCalendars();
 }
 
-async function addNotification(text) {
-    if (!currentUser || !currentUser.isLoggedIn) return;
+async function addNotification(text, targetUserName = null) {
+    if (!targetUserName) return;
+
+    const senderName = (currentUser && currentUser.isLoggedIn && currentUser.name) ? currentUser.name : "";
 
     notifications.unshift({
         text,
+        target: String(targetUserName).trim(),
+        sender: senderName,
         time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
         readBy: []
     });
@@ -1192,9 +1221,10 @@ function updateNotifDot() {
         return;
     }
 
-    let unreadNotifs = notifications.filter(n => {
-        if (!n.readBy) n.readBy = [];
-        return !n.readBy.includes(currentUser.name);
+    const myNotifs = getNotificationsForCurrentUser();
+    let unreadNotifs = myNotifs.filter(n => {
+        if (!Array.isArray(n.readBy)) n.readBy = [];
+        return !n.readBy.some(u => isSameUserName(u, currentUser.name));
     });
 
     if (unreadNotifs.length > 0) {
@@ -1215,23 +1245,30 @@ async function openNotificationsModal() {
         return;
     }
 
-    if (notifications.length === 0) {
+    const myNotifs = getNotificationsForCurrentUser();
+
+    if (myNotifs.length === 0) {
         list.innerHTML = `<p style="font-size:0.85rem; color:var(--text-muted); text-align:center;">Nenhuma notificação.</p>`;
     } else {
         let html = '';
-        notifications.forEach(n => {
+        myNotifs.forEach(n => {
             html += `<div style="background:#f8fafc; border:1px solid #e2e8f0; padding:10px; border-radius:12px; font-size:0.8rem; margin-bottom: 8px;"><p style="font-weight:700;">${n.text}</p><span style="font-size:0.7rem; color:var(--text-muted);">${n.time}</span></div>`;
         });
         list.innerHTML = html;
     }
 
-    notifications.forEach(n => {
-        if (!n.readBy) n.readBy = [];
-        if (!n.readBy.includes(currentUser.name)) {
+    let changed = false;
+    myNotifs.forEach(n => {
+        if (!Array.isArray(n.readBy)) n.readBy = [];
+        if (!n.readBy.some(u => isSameUserName(u, currentUser.name))) {
             n.readBy.push(currentUser.name);
+            changed = true;
         }
     });
-    await saveToCloud();
+
+    if (changed) {
+        await saveToCloud();
+    }
 
     const dot = document.getElementById('notifDot');
     if (dot) {
@@ -1261,3 +1298,5 @@ document.addEventListener("DOMContentLoaded", async () => {
         await loadFromCloud(false);
     }, 5000);
 });
+
+// Atualizado em: 2026-11-17
