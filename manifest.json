@@ -7,9 +7,10 @@
     "theme_color": "#243c2c",
     "icons": [
         {
-            "src": "imagens/logo-biomev.JPEG",
-            "sizes": "512x512",
-            "type": "image/jpeg"
+            "src": "imagens/logo-biomev.jpeg",
+            "sizes": "192x192 512x512",
+            "type": "image/jpeg",
+            "purpose": "any maskable"
         }
     ]
 }

@@ -45,7 +45,7 @@
     opacity: 0.9;
 }
 
-/* Estilo Planilha Excel / Tabela Interativa de Clientes */
+/* Estilo Planilha Excel / Tabela Interativa de Clientes (Desktop Padrão) */
 .excel-table {
     width: 100%;
     border-collapse: collapse;
@@ -136,7 +136,7 @@
 }
 
 /* ==========================================
-   AJUSTE DE CORES DA ABA DE VENDAS
+   AJUSTE DE CORES DOS CARTÕES DE VENDAS
    ========================================== */
 
 #vendas .widget-card.highlight .widget-icon-box,
@@ -169,7 +169,7 @@
 }
 
 /* ==========================================
-   CORREÇÃO DO CONTAINER E KANBAN / CRM (LARGURA TOTAL DA TELA)
+   CONTAINER E KANBAN / CRM (DESKTOP: TELA INTEIRA)
    ========================================== */
 
 #vendas .tool-container {
@@ -202,22 +202,24 @@
     font-size: 0.9rem;
 }
 
-/* Board do CRM / Funil de Vendas: Ocupa 100% da largura e distribui as colunas */
+/* Board do CRM no PC: Ocupa 100% da largura sem barra de rolagem forçada */
 .kanban-board {
     display: flex;
     gap: 16px;
     width: 100%;
-    overflow-x: auto;
+    overflow-x: visible;
+    /* No PC as colunas dividem o espaço por igual */
     padding-bottom: 20px;
     align-items: flex-start;
 }
 
-/* Colunas flexíveis que se expandem para preencher a tela no computador */
+/* Colunas dividem o espaço de forma fluida no PC */
 .kanban-column {
     background: #f4ecdf;
     border-radius: 16px;
     flex: 1;
-    min-width: 220px;
+    min-width: 0;
+    /* Permite encolher proporcionalmente sem estourar a tela */
     display: flex;
     flex-direction: column;
     max-height: 75vh;
@@ -226,9 +228,9 @@
 }
 
 .kanban-column-header {
-    padding: 14px 12px;
+    padding: 14px 10px;
     font-weight: 700;
-    font-size: 0.85rem;
+    font-size: 0.82rem;
     color: var(--dark-green);
     display: flex;
     justify-content: space-between;
@@ -287,11 +289,6 @@
     margin-bottom: 6px;
 }
 
-.kanban_card-contact {
-    font-size: 0.75rem;
-    color: #64748b;
-}
-
 .kanban-card-footer {
     display: flex;
     justify-content: space-between;
@@ -308,7 +305,7 @@
 }
 
 /* ==========================================
-   CORREÇÃO RESPONSIVA (MOBILE)
+   RESPONSIVO APENAS PARA CELULAR (MOBILE)
    ========================================== */
 @media (max-width: 768px) {
 
@@ -319,12 +316,18 @@
         box-sizing: border-box;
     }
 
-    /* No mobile, ativa largura mínima fixa para permitir o arrasto lateral fluido */
+    /* No celular, o Kanban ganha rolagem lateral e largura fixa por coluna */
+    .kanban-board {
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch;
+    }
+
     .kanban-column {
-        min-width: 260px !important;
         flex: 0 0 260px !important;
+        min-width: 260px !important;
     }
 
+    /* Tabela de Clientes no Celular com Scroll Lateral Isolado */
     #tool-pipeline-leads div[style*="overflow-x"] {
         width: 100% !important;
         overflow-x: auto !important;
@@ -334,47 +337,6 @@
         padding-bottom: 15px !important;
     }
 
-    .excel-table {
-        width: 800px !important;
-        min-width: 800px !important;
-        background: #ffffff !important;
-        border-radius: 12px;
-    }
-
-    .excel-table th,
-    .excel-table td {
-        padding: 12px 10px !important;
-        font-size: 0.78rem !important;
-        white-space: nowrap !important;
-    }
-
-    .excel-table input,
-    .excel-table select {
-        min-width: 110px !important;
-    }
-}
-
-/* ==========================================
-   CORREÇÃO RESPONSIVA DA TABELA DE CLIENTES (MOBILE)
-   ========================================== */
-@media (max-width: 768px) {
-    #tool-pipeline-leads {
-        width: 100% !important;
-        padding: 15px 10px !important;
-        box-sizing: border-box;
-    }
-
-    /* Container com scroll horizontal fluido */
-    #tool-pipeline-leads div[style*="overflow-x"] {
-        width: 100% !important;
-        overflow-x: auto !important;
-        -webkit-overflow-scrolling: touch;
-        display: block !important;
-        white-space: nowrap !important;
-        padding-bottom: 15px !important;
-    }
-
-    /* Trava a largura da tabela para que caiba todas as colunas sem amassar */
     .excel-table {
         width: 850px !important;
         min-width: 850px !important;
@@ -390,7 +352,6 @@
         vertical-align: middle !important;
     }
 
-    /* Garante espaçamento seguro para o status e o botão de excluir */
     .excel-table td:nth-child(7),
     .excel-table th:nth-child(7) {
         min-width: 180px !important;
