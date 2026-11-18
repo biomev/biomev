@@ -1,4 +1,7 @@
-// Gerenciamento do Painel de Vendas, Calendário, Planilha e CRM Visual
+/* ==========================================
+   PAINEL DE VENDAS E CRM (BIOMEV)
+   ========================================== */
+
 let leadsData = JSON.parse(localStorage.getItem('biomev_leads')) || [
     {
         name: "Prefeitura Municipal",
@@ -32,13 +35,13 @@ function hydrateKanbanLeads() {
     });
 }
 
-// Sobrescreve/complementa o openTool para esconder o vendas-menu ao abrir o CRM Visual
+// Sobrescreve o openTool e closeTool para garantir a abertura correta do CRM
 const originalOpenTool = window.openTool || function () { };
 window.openTool = function (toolName) {
     if (toolName === 'kanban-vendas') {
         const vendasMenu = document.getElementById('vendas-menu');
         if (vendasMenu) vendasMenu.style.display = 'none';
-        const toolContainer = document.getElementById(`tool-kanban-vendas`);
+        const toolContainer = document.getElementById('tool-kanban-vendas');
         if (toolContainer) toolContainer.classList.add('active');
         renderKanbanBoard();
         return;
@@ -49,7 +52,7 @@ window.openTool = function (toolName) {
 const originalCloseTool = window.closeTool || function () { };
 window.closeTool = function (toolName) {
     if (toolName === 'kanban-vendas') {
-        const toolContainer = document.getElementById(`tool-kanban-vendas`);
+        const toolContainer = document.getElementById('tool-kanban-vendas');
         if (toolContainer) toolContainer.classList.remove('active');
         const vendasMenu = document.getElementById('vendas-menu');
         if (vendasMenu) vendasMenu.style.display = 'block';
