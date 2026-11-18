@@ -8,7 +8,7 @@
     <title>BIOMEV - Painel Operacional</title>
     <!-- Biblioteca jsPDF -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <!-- Biblioteca SheetJS (fallback) + ExcelJS (exportação .xlsx estilizada) -->
+    <!-- Biblioteca SheetJS + ExcelJS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js"></script>
 
@@ -44,7 +44,7 @@
     </header>
 
     <div class="app-container">
-        <!-- Navegação de Abas Limpa -->
+        <!-- Navegação de Abas -->
         <nav class="tab-nav" id="mainTabNav">
             <button class="tab-button marketing-tab active" onclick="openTab('marketing')">Marketing</button>
             <button class="tab-button vendas-tab" onclick="openTab('vendas')">Vendas</button>
@@ -54,10 +54,8 @@
             <!-- ABA MARKETING -->
             <section id="marketing" class="tab-content active marketing-theme">
                 <div id="marketing-menu">
-
                     <div class="mkt-top-section">
                         <p class="section-label-white">Ferramentas de Marketing</p>
-
                         <div class="tools-grid">
                             <div class="widget-card highlight" onclick="openTool('certificado')">
                                 <div class="widget-icon-box">C</div>
@@ -66,7 +64,6 @@
                                     <p>Emissão de PDFs com validação oficial.</p>
                                 </div>
                             </div>
-
                             <div class="widget-card">
                                 <span class="badge-soon">Em Breve</span>
                                 <div class="widget-icon-box">I</div>
@@ -75,7 +72,6 @@
                                     <p>Logos oficiais e paleta de cores.</p>
                                 </div>
                             </div>
-
                             <div class="widget-card">
                                 <span class="badge-soon">Em Breve</span>
                                 <div class="widget-icon-box">T</div>
@@ -87,35 +83,27 @@
                         </div>
                     </div>
 
-                    <!-- CALENDÁRIO MARKETING -->
                     <div class="mkt-curved-container">
                         <p class="section-label-dark">Cronograma de Marketing - Novembro 2026</p>
-
                         <div class="calendar-box-minimal">
                             <div class="calendar-month-title">11 / 2026</div>
-
                             <div class="calendar-grid-minimal" id="calendarGridMarketing"></div>
-
                             <div class="calendar-legend">
                                 <div class="legend-item">
                                     <div class="legend-box" style="background: #ffffff;"></div> Dias Normais
                                 </div>
                                 <div class="legend-item">
-                                    <div class="legend-box" style="background: var(--vanilla);"></div> Feriados /
-                                    Comemorações
+                                    <div class="legend-box" style="background: var(--vanilla);"></div> Feriados
                                 </div>
                                 <div class="legend-item">
-                                    <div class="legend-box" style="background: var(--glaucous);"></div> Tarefas de
-                                    Marketing
+                                    <div class="legend-box" style="background: var(--glaucous);"></div> Tarefas
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- GESTÃO DE CONHECIMENTO MARKETING -->
                     <div class="mkt-bottom-knowledge-section">
                         <p class="section-label-white">Gestão de Conhecimento</p>
-
                         <div class="knowledge-grid">
                             <div class="knowledge-folder-card">
                                 <div>
@@ -125,7 +113,6 @@
                                 <button class="btn-acessar"
                                     onclick="openKnowledgeTool('marketing', 'Vídeos Tutoriais')">Acessar</button>
                             </div>
-
                             <div class="knowledge-folder-card">
                                 <div>
                                     <h4 style="color: var(--vanilla); margin-bottom: 4px;">POP's (Arquivos)</h4>
@@ -136,21 +123,19 @@
                             </div>
                         </div>
                     </div>
-
                 </div>
 
                 <!-- Ferramenta de Certificados -->
                 <div id="tool-certificado" class="tool-container">
                     <button class="tool-header-back" onclick="closeTool('certificado')">Voltar para as
                         Ferramentas</button>
-
                     <div class="certificate-editor">
                         <div class="editor-form">
                             <div class="form-row-3">
                                 <div class="form-group">
                                     <label>Nome do Participante</label>
-                                    <input type="text" id="studentName" placeholder="Ex: Fulana da Silva"
-                                        value="Fulana da Silva" oninput="renderCertificate()">
+                                    <input type="text" id="studentName" value="Fulana da Silva"
+                                        oninput="renderCertificate()">
                                 </div>
                                 <div class="form-group">
                                     <label>Tam. Fonte</label>
@@ -160,14 +145,11 @@
                                 <div class="form-group">
                                     <label>Ajustar Nome</label>
                                     <div class="position-controls">
-                                        <button type="button" onclick="adjustPosition('name', -15)"
-                                            title="Subir">▲</button>
-                                        <button type="button" onclick="adjustPosition('name', 15)"
-                                            title="Descer">▼</button>
+                                        <button type="button" onclick="adjustPosition('name', -15)">▲</button>
+                                        <button type="button" onclick="adjustPosition('name', 15)">▼</button>
                                     </div>
                                 </div>
                             </div>
-
                             <div class="form-group">
                                 <label>Papel / Atuação</label>
                                 <select id="roleSelect" onchange="updateTemplateText(); renderCertificate()">
@@ -177,20 +159,18 @@
                                     <option value="Participou da organização da">Participou da organização da</option>
                                 </select>
                             </div>
-
                             <div class="form-row">
                                 <div class="form-group">
-                                    <label>Tipo (Ex: capacitação)</label>
+                                    <label>Tipo</label>
                                     <input type="text" id="eventType" value="capacitação"
                                         oninput="updateTemplateText(); renderCertificate()">
                                 </div>
                                 <div class="form-group">
-                                    <label>Nome da Atividade ("X")</label>
+                                    <label>Nome da Atividade</label>
                                     <input type="text" id="eventName" value="Gestão de Vendas"
                                         oninput="updateTemplateText(); renderCertificate()">
                                 </div>
                             </div>
-
                             <div class="form-row">
                                 <div class="form-group">
                                     <label>Data</label>
@@ -203,63 +183,35 @@
                                         oninput="updateTemplateText(); renderCertificate()">
                                 </div>
                             </div>
-
-                            <div class="form-row-3">
-                                <div class="form-group">
-                                    <label>Texto do Certificado (Editável)</label>
-                                    <textarea id="certDetails" rows="3" oninput="renderCertificate()"></textarea>
-                                </div>
-                                <div class="form-group">
-                                    <label>Tam. Fonte Texto</label>
-                                    <input type="number" id="textFontSize" value="24" min="12" max="60"
-                                        oninput="renderCertificate()">
-                                </div>
-                                <div class="form-group">
-                                    <label>Ajustar Texto</label>
-                                    <div class="position-controls">
-                                        <button type="button" onclick="adjustPosition('text', -15)"
-                                            title="Subir">▲</button>
-                                        <button type="button" onclick="adjustPosition('text', 15)"
-                                            title="Descer">▼</button>
-                                    </div>
-                                </div>
-                            </div>
-
                             <button class="btn-action" onclick="downloadPDF()">Baixar Certificado em PDF</button>
                         </div>
-
                         <div class="preview-area">
                             <canvas id="certCanvas" width="1200" height="850"></canvas>
                         </div>
                     </div>
                 </div>
 
-                <!-- Ferramentas de Gestão de Conhecimento (Marketing) -->
+                <!-- Gestão de Conhecimento Marketing -->
                 <div id="tool-knowledge-marketing" class="tool-container">
                     <button class="tool-header-back" onclick="closeKnowledgeTool('marketing')">Voltar para o
                         Painel</button>
-
                     <h2 id="knowledgeTitleMkt"
-                        style="font-size: 1.6rem; font-weight: 700; color: var(--vanilla); margin-bottom: 24px;">
-                        Gestão de Conhecimento
-                    </h2>
-
+                        style="font-size: 1.6rem; font-weight: 700; color: var(--vanilla); margin-bottom: 24px;">Gestão
+                        de Conhecimento</h2>
                     <div class="knowledge-tool-wrapper">
                         <div id="folderMainAreaMkt">
                             <div class="transparent-folder-box">
                                 <h3>Adicionar uma nova pasta</h3>
                                 <div style="display: flex; gap: 10px; margin-top: 10px;">
                                     <input type="text" id="newFolderNameMkt" placeholder="Nome da pasta"
-                                        style="flex: 1; padding: 12px 16px; border: 1px solid #cbd5e1; border-radius: 12px; background: rgba(255,255,255,0.8);">
+                                        style="flex: 1; padding: 12px 16px; border-radius: 12px; background: rgba(255,255,255,0.8);">
                                     <button class="btn-action"
                                         style="margin-top:0; width: auto; background: var(--glaucous);"
                                         onclick="createFolder('marketing')">Criar Pasta</button>
                                 </div>
                             </div>
-
                             <div class="folders-grid" id="foldersContainerMkt"></div>
                         </div>
-
                         <div id="folderViewMkt" style="display: none; margin-top: 10px;">
                             <div
                                 style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
@@ -269,7 +221,6 @@
                                     style="margin-top:0; width: auto; background: var(--glaucous);"
                                     onclick="triggerDocumentPicker('marketing')">+ Enviar Arquivo</button>
                             </div>
-
                             <h3 id="currentFolderNameMkt"
                                 style="font-size: 1.2rem; font-weight: 700; color: var(--text-dark); margin-bottom: 16px;">
                             </h3>
@@ -284,9 +235,8 @@
                 <div id="vendas-menu">
                     <div class="vds-top-section">
                         <p class="section-label-white">Ferramentas de Vendas</p>
-
                         <div class="tools-grid">
-                            <!-- Planilha de Clientes & Pipeline -->
+                            <!-- Planilha de Clientes -->
                             <div class="widget-card highlight" onclick="openTool('pipeline-leads')">
                                 <div class="widget-icon-box">P</div>
                                 <div class="widget-info">
@@ -296,7 +246,7 @@
                             </div>
 
                             <!-- CRM e Funil de Vendas -->
-                            <div class="widget-card highlight" onclick="openTool('kanban-vendas')">
+                            <div class="widget-card highlight" onclick="openKanbanTool()">
                                 <div class="widget-icon-box">K</div>
                                 <div class="widget-info">
                                     <h3>CRM e Funil de Vendas</h3>
@@ -317,23 +267,18 @@
 
                     <div class="mkt-curved-container">
                         <p class="section-label-dark">Cronograma de Vendas - Novembro 2026</p>
-
                         <div class="calendar-box-minimal">
                             <div class="calendar-month-title">11 / 2026</div>
-
                             <div class="calendar-grid-minimal" id="calendarGridVendas"></div>
-
                             <div class="calendar-legend">
                                 <div class="legend-item">
                                     <div class="legend-box" style="background: #ffffff;"></div> Dias Normais
                                 </div>
                                 <div class="legend-item">
-                                    <div class="legend-box" style="background: var(--vanilla);"></div> Feriados /
-                                    Comemorações
+                                    <div class="legend-box" style="background: var(--vanilla);"></div> Feriados
                                 </div>
                                 <div class="legend-item">
-                                    <div class="legend-box" style="background: var(--moss-green);"></div> Tarefas de
-                                    Vendas
+                                    <div class="legend-box" style="background: var(--moss-green);"></div> Tarefas
                                 </div>
                             </div>
                         </div>
@@ -341,7 +286,6 @@
 
                     <div class="vds-bottom-knowledge-section">
                         <p class="section-label-white">Gestão de Conhecimento</p>
-
                         <div class="knowledge-grid">
                             <div class="knowledge-folder-card">
                                 <div>
@@ -351,7 +295,6 @@
                                 <button class="btn-acessar" style="background: var(--vanilla); color: #243c2c;"
                                     onclick="openKnowledgeTool('vendas', 'Vídeos Vendas')">Acessar</button>
                             </div>
-
                             <div class="knowledge-folder-card">
                                 <div>
                                     <h4 style="color: var(--vanilla); margin-bottom: 4px;">POP's (Arquivos)</h4>
@@ -364,7 +307,7 @@
                     </div>
                 </div>
 
-                <!-- Ferramenta Planilha de Clientes / Pipeline Aberta -->
+                <!-- Ferramenta Planilha de Clientes -->
                 <div id="tool-pipeline-leads" class="tool-container">
                     <button class="tool-header-back" onclick="closeTool('pipeline-leads')">Voltar para as
                         Ferramentas</button>
@@ -389,9 +332,7 @@
                                     <th>Ações</th>
                                 </tr>
                             </thead>
-                            <tbody id="leadsTableBody">
-                                <!-- Linhas injetadas via JavaScript -->
-                            </tbody>
+                            <tbody id="leadsTableBody"></tbody>
                         </table>
                     </div>
                 </div>
@@ -400,8 +341,8 @@
                 <div id="tool-kanban-vendas" class="tool-container">
                     <div
                         style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
-                        <button class="tool-header-back" style="margin-bottom:0;"
-                            onclick="closeTool('kanban-vendas')">Voltar para as Ferramentas</button>
+                        <button class="tool-header-back" style="margin-bottom:0;" onclick="closeKanbanTool()">Voltar
+                            para as Ferramentas</button>
                         <div style="display: flex; gap: 12px; align-items: center;">
                             <span id="pipelineTotalValue"
                                 style="font-weight: 700; color: var(--moss-green); background: var(--vanilla); padding: 8px 14px; border-radius: 12px; font-size: 0.9rem;">Pipeline:
@@ -414,39 +355,30 @@
 
                     <h2 style="font-size: 1.5rem; font-weight: 700; color: var(--text-dark); margin-bottom: 20px;">CRM e
                         Funil de Vendas</h2>
-
-                    <!-- Área das Colunas do Funil -->
-                    <div class="kanban-board" id="kanbanBoard">
-                        <!-- Injetado via JS -->
-                    </div>
+                    <div class="kanban-board" id="kanbanBoard"></div>
                 </div>
 
-                <!-- Ferramenta de Gestão de Conhecimento (Vendas) -->
+                <!-- Gestão de Conhecimento Vendas -->
                 <div id="tool-knowledge-vendas" class="tool-container">
                     <button class="tool-header-back" onclick="closeKnowledgeTool('vendas')">Voltar para o
                         Painel</button>
-
                     <h2 id="knowledgeTitleVds"
-                        style="font-size: 1.6rem; font-weight: 700; color: var(--vanilla); margin-bottom: 24px;">
-                        Gestão de Conhecimento
-                    </h2>
-
+                        style="font-size: 1.6rem; font-weight: 700; color: var(--vanilla); margin-bottom: 24px;">Gestão
+                        de Conhecimento</h2>
                     <div class="knowledge-tool-wrapper">
                         <div id="folderMainAreaVds">
                             <div class="transparent-folder-box">
                                 <h3>Adicionar uma nova pasta</h3>
                                 <div style="display: flex; gap: 10px; margin-top: 10px;">
                                     <input type="text" id="newFolderNameVds" placeholder="Nome da pasta"
-                                        style="flex: 1; padding: 12px 16px; border: 1px solid #cbd5e1; border-radius: 12px; background: rgba(255,255,255,0.8);">
+                                        style="flex: 1; padding: 12px 16px; border-radius: 12px; background: rgba(255,255,255,0.8);">
                                     <button class="btn-action"
                                         style="margin-top:0; width: auto; background: var(--moss-green);"
                                         onclick="createFolder('vendas')">Criar Pasta</button>
                                 </div>
                             </div>
-
                             <div class="folders-grid" id="foldersContainerVds"></div>
                         </div>
-
                         <div id="folderViewVds" style="display: none; margin-top: 10px;">
                             <div
                                 style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
@@ -456,7 +388,6 @@
                                     style="margin-top:0; width: auto; background: var(--moss-green);"
                                     onclick="triggerDocumentPicker('vendas')">+ Enviar Arquivo</button>
                             </div>
-
                             <h3 id="currentFolderNameVds"
                                 style="font-size: 1.2rem; font-weight: 700; color: var(--text-dark); margin-bottom: 16px;">
                             </h3>
@@ -469,7 +400,6 @@
             <!-- TELA DE PERFIL -->
             <section id="profileView" class="profile-view" style="padding: 0 32px;">
                 <button class="tool-header-back" onclick="closeProfile()">Voltar ao Painel</button>
-
                 <div class="profile-card-header">
                     <div class="profile-left-info">
                         <div class="profile-big-avatar" id="profileBigAvatar">LS</div>
@@ -480,15 +410,11 @@
                     </div>
                     <button class="btn-edit-profile" onclick="openEditProfileModal()">Editar Perfil</button>
                 </div>
-
-                <!-- Seção de Tarefas Pendentes -->
                 <div class="section-header-row">
                     <p class="section-label-dark" style="margin-bottom:0;">Tarefas Pendentes</p>
                     <button class="btn-add-task" title="Adicionar Nova Tarefa" onclick="openAddTaskModal()">+</button>
                 </div>
                 <div class="tasks-grid" id="tasksGridContainer" style="margin-bottom: 32px;"></div>
-
-                <!-- Seção de Tarefas Concluídas -->
                 <div class="section-header-row">
                     <p class="section-label-dark" style="margin-bottom:0;">Tarefas Concluídas</p>
                 </div>
@@ -497,194 +423,20 @@
         </main>
     </div>
 
-    <!-- MODAIS -->
-    <div class="auth-modal-overlay" id="calEventModal">
-        <div class="auth-modal-box">
-            <h3 id="calModalTitle">Adicionar Evento / Tarefa</h3>
-            <div class="editor-form">
-                <div class="form-group">
-                    <label>Título da Tarefa / Evento</label>
-                    <input type="text" id="calTaskTitle" placeholder="Ex: Reunião de Planejamento">
-                </div>
-                <div class="form-group">
-                    <label>Descrição da Tarefa</label>
-                    <input type="text" id="calTaskDesc" placeholder="Ex: Alinhar métricas e prazos">
-                </div>
-                <div class="form-group">
-                    <label>Atribuir Membro da Equipe</label>
-                    <select id="calTaskMember"></select>
-                </div>
-                <button class="btn-action" onclick="saveCalendarTask()">Salvar no Calendário e na Equipe</button>
-                <button class="tool-header-back"
-                    style="width: 100%; justify-content: center; margin-top: 6px; background: #e2e8f0;"
-                    onclick="closeCalendarModal()">Cancelar</button>
-            </div>
-        </div>
-    </div>
+    <!-- MODAIS NECESSÁRIOS -->
+    <div class="auth-modal-overlay" id="calEventModal">...</div>
+    <div class="auth-modal-overlay" id="selectProfileModal">...</div>
+    <div class="auth-modal-overlay" id="passwordModal">...</div>
+    <div class="auth-modal-overlay" id="authModal">...</div>
+    <div class="auth-modal-overlay" id="taskModal">...</div>
+    <div class="auth-modal-overlay" id="teamModal">...</div>
+    <div class="auth-modal-overlay" id="memberActionModal">...</div>
+    <div class="auth-modal-overlay" id="notificationsModal">...</div>
 
-    <div class="auth-modal-overlay" id="selectProfileModal">
-        <div class="auth-modal-box">
-            <h3>Selecione o seu Perfil</h3>
-            <div id="selectProfileList" style="margin-bottom: 16px; max-height: 250px; overflow-y: auto;"></div>
-            <button class="btn-action" onclick="openRegisterModalFromSelect()">Cadastrar Novo Perfil</button>
-            <button class="tool-header-back"
-                style="width: 100%; justify-content: center; margin-top: 8px; background: #e2e8f0;"
-                onclick="toggleSelectProfileModal(false)">Cancelar</button>
-        </div>
-    </div>
-
-    <div class="auth-modal-overlay" id="passwordModal">
-        <div class="auth-modal-box">
-            <h3 id="loginProfileTitle">Digite a Senha</h3>
-            <div class="editor-form">
-                <div class="form-group">
-                    <label>Senha do Perfil</label>
-                    <input type="password" id="loginPasswordInput" placeholder="Sua senha">
-                </div>
-                <button class="btn-action" onclick="verifyProfilePassword()">Entrar</button>
-                <button class="tool-header-back"
-                    style="width: 100%; justify-content: center; margin-top: 6px; background: #e2e8f0;"
-                    onclick="closePasswordModal()">Voltar</button>
-            </div>
-        </div>
-    </div>
-
-    <div class="auth-modal-overlay" id="authModal">
-        <div class="auth-modal-box">
-            <h3 id="authModalTitle">Cadastre-se no Painel</h3>
-            <div class="editor-form">
-                <div class="form-group">
-                    <label>Nome do Perfil</label>
-                    <input type="text" id="inputName" placeholder="Ex: Fulano Biocicler da Silva">
-                </div>
-                <div class="form-group">
-                    <label>Cargo / Departamento</label>
-                    <select id="inputRole">
-                        <option value="Gerente de Marketing">Gerente de Marketing</option>
-                        <option value="Gerente de Vendas">Gerente de Vendas</option>
-                        <option value="Diretor de Marketing e Vendas">Diretor de Marketing e Vendas</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label id="passwordLabel">Senha de Acesso</label>
-                    <input type="password" id="inputPassword" placeholder="Digite a senha">
-                </div>
-                <div class="form-group">
-                    <label>Foto de Perfil (Arquivo)</label>
-                    <input type="file" id="inputPhotoFile" accept="image/*" style="padding: 6px;">
-                </div>
-                <button class="btn-action" onclick="saveProfileData()">Salvar Perfil</button>
-                <button class="tool-header-back"
-                    style="width: 100%; justify-content: center; margin-top: 6px; background: #e2e8f0;"
-                    onclick="toggleAuthModal(false)">Cancelar</button>
-            </div>
-        </div>
-    </div>
-
-    <div class="auth-modal-overlay" id="taskModal">
-        <div class="auth-modal-box">
-            <h3>Nova Tarefa</h3>
-            <div class="editor-form">
-                <div class="form-group">
-                    <label>Nome da Tarefa</label>
-                    <input type="text" id="taskTitle" placeholder="Ex: Criar post para Instagram">
-                </div>
-                <div class="form-group">
-                    <label>Descrição da Tarefa</label>
-                    <input type="text" id="taskDesc" placeholder="Ex: Desenvolver arte e legenda">
-                </div>
-                <div class="form-group">
-                    <label>Data Limite (Ex: 15/11/2026)</label>
-                    <input type="text" id="taskDate" placeholder="15/11/2026">
-                </div>
-                <div class="form-group">
-                    <label>Atribuir Membro</label>
-                    <select id="taskMemberSelect"></select>
-                </div>
-                <button class="btn-action" onclick="saveNewTask()">Adicionar Tarefa</button>
-                <button class="tool-header-back"
-                    style="width: 100%; justify-content: center; margin-top: 6px; background: #e2e8f0;"
-                    onclick="toggleTaskModal(false)">Cancelar</button>
-            </div>
-        </div>
-    </div>
-
-    <div class="auth-modal-overlay" id="teamModal">
-        <div class="auth-modal-box">
-            <h3>Membros da Equipe e Tarefas</h3>
-            <div id="teamMemberList" style="margin-bottom: 16px; max-height: 350px; overflow-y: auto;"></div>
-            <button class="tool-header-back" style="width: 100%; justify-content: center; background: #e2e8f0;"
-                onclick="toggleTeamModal(false)">Fechar</button>
-        </div>
-    </div>
-
-    <div class="auth-modal-overlay" id="memberActionModal">
-        <div class="auth-modal-box">
-            <h3 id="memberActionTitle">Gerenciar Membro</h3>
-            <div class="modal-tabs-header">
-                <button class="modal-tab-btn active" id="tabBtnMsg" onclick="switchMemberTab('msg')">Mandar
-                    Mensagem</button>
-                <button class="modal-tab-btn" id="tabBtnTask" onclick="switchMemberTab('task')">Atribuir
-                    Tarefas</button>
-                <button class="modal-tab-btn" id="tabBtnList" onclick="switchMemberTab('list')">Ver Tarefas</button>
-            </div>
-
-            <div class="modal-tab-pane active" id="paneMsg">
-                <div class="editor-form">
-                    <div class="form-group">
-                        <label>Mensagem</label>
-                        <input type="text" id="memberMessage" placeholder="Escreva...">
-                    </div>
-                    <button class="btn-action" onclick="submitMemberMessage()">Enviar</button>
-                </div>
-            </div>
-
-            <div class="modal-tab-pane" id="paneTask">
-                <div class="editor-form">
-                    <div class="form-group">
-                        <label>Nome da Tarefa</label>
-                        <input type="text" id="memberTaskTitle" placeholder="Tarefa">
-                    </div>
-                    <div class="form-group">
-                        <label>Descrição da Tarefa</label>
-                        <input type="text" id="memberTaskDesc" placeholder="Detalhes da tarefa...">
-                    </div>
-                    <div class="form-group">
-                        <label>Data (Ex: 15/11/2026)</label>
-                        <input type="text" id="memberTaskDate" placeholder="15/11/2026">
-                    </div>
-                    <button class="btn-action" onclick="submitMemberTask()">Atribuir Tarefa</button>
-                </div>
-            </div>
-
-            <div class="modal-tab-pane" id="paneList">
-                <div id="memberTasksListContainer"
-                    style="max-height: 200px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px;">
-                </div>
-            </div>
-
-            <button class="tool-header-back"
-                style="width: 100%; justify-content: center; margin-top: 12px; background: #e2e8f0;"
-                onclick="closeMemberActionModal()">Voltar</button>
-        </div>
-    </div>
-
-    <div class="auth-modal-overlay" id="notificationsModal">
-        <div class="auth-modal-box">
-            <h3>Caixa de Notificações</h3>
-            <div id="notificationsList"
-                style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; max-height: 250px; overflow-y: auto;">
-            </div>
-            <button class="tool-header-back" style="width: 100%; justify-content: center; background: #e2e8f0;"
-                onclick="toggleNotificationsModal(false)">Fechar</button>
-        </div>
-    </div>
-
-    <!-- Scripts Modulares da Aplicação -->
+    <!-- Scripts -->
     <script src="Js/marketing.js"></script>
     <script src="Js/vendas.js"></script>
     <script src="Js/main.js"></script>
 </body>
 
 </html>
-<!--- Desenvolvido por: Lucca Sanchez --->

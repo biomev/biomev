@@ -7,7 +7,7 @@
 
 .vds-top-section {
     background-color: var(--dark-green) !important;
-    padding: 40px 40px 40px 40px;
+    padding: 40px;
     color: #ffffff;
     width: 100%;
 }
@@ -53,7 +53,7 @@
     border-radius: 16px;
     overflow: hidden;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
-    border: 1px solid #e2e8f0;
+    border: 1px solid #cbd5e1;
 }
 
 .excel-table th {
@@ -64,7 +64,7 @@
     text-transform: uppercase;
     padding: 14px 16px;
     text-align: left;
-    border-bottom: 1px solid #e2e8f0;
+    border-bottom: 1px solid #cbd5e1;
 }
 
 .excel-table td {
@@ -139,7 +139,6 @@
    AJUSTE DE CORES DA ABA DE VENDAS (PADRÃO CORRETO)
    ========================================== */
 
-/* Ícone/letra do cartão ativo de Vendas em verde mais claro com texto em verde escuro */
 #vendas .widget-card.highlight .widget-icon-box,
 #vendas .tool-card.highlight .widget-icon-box {
     background: var(--moss-green) !important;
@@ -157,7 +156,6 @@
     color: var(--text-muted) !important;
 }
 
-/* Cartões "Em Breve" de Vendas mantêm o fundo transparente original */
 #vendas .widget-card:not(.highlight),
 #vendas .tool-card:not(.highlight) {
     background: rgba(255, 255, 255, 0.15) !important;
@@ -171,18 +169,158 @@
 }
 
 /* ==========================================
-   CORREÇÃO DEFINITIVA DA TABELA DE VENDAS NO MOBILE
+   CORREÇÃO DO CONTAINER E KANBAN / CRM (CONTINUIDADE E VERDE)
+   ========================================== */
+
+/* Container da ferramenta integrado sem cortes, com fundo verde escuro harmonioso */
+#vendas .tool-container {
+    display: none;
+    padding: 30px;
+    background: var(--dark-green) !important;
+    /* Mantém o verde escuro padrão para continuidade total */
+    border-radius: 0 !important;
+    /* Remove o corte arredondado isolado para fluir na página */
+    margin-top: 0;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+#vendas .tool-container.active {
+    display: block !important;
+}
+
+/* Título da ferramenta em verde claro/vanilla para alto contraste com o fundo verde */
+#tool-kanban-vendas h2 {
+    color: #ffffff !important;
+    font-size: 1.8rem;
+    margin-bottom: 24px;
+}
+
+/* Badge do Pipeline total com amarelo pontual e contraste perfeito */
+#pipelineTotalValue {
+    font-weight: 700;
+    color: var(--dark-green) !important;
+    background: var(--vanilla) !important;
+    border: 1px solid #d4af37;
+    padding: 8px 14px;
+    border-radius: 12px;
+    font-size: 0.9rem;
+}
+
+/* Board do CRM / Funil de Vendas */
+.kanban-board {
+    display: flex;
+    gap: 16px;
+    overflow-x: auto;
+    padding-bottom: 20px;
+    align-items: flex-start;
+    min-height: 500px;
+}
+
+/* Colunas do Kanban com tom bege elegante do calendário e boa estrutura */
+.kanban-column {
+    background: #f4ecdf;
+    border-radius: 16px;
+    min-width: 280px;
+    max-width: 280px;
+    flex: 0 0 280px;
+    display: flex;
+    flex-direction: column;
+    max-height: 75vh;
+    border: 1px solid #d8ccb8;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.kanban-column-header {
+    padding: 16px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: var(--dark-green);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #d8ccb8;
+    background: #eae2d0;
+    border-top-left-radius: 16px;
+    border-top-right-radius: 16px;
+}
+
+.kanban-column-count {
+    background: var(--dark-green);
+    color: var(--vanilla);
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+.kanban-cards-container {
+    padding: 12px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    flex: 1;
+}
+
+/* Cards de Clientes com fundo branco puro para leitura cristalina */
+.kanban-card {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 14px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    border: 1px solid #cbd5e1;
+    cursor: grab;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.kanban-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border-color: var(--moss-green);
+}
+
+.kanban-card-title {
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: var(--text-dark);
+    margin-bottom: 4px;
+}
+
+.kanban-card-service {
+    font-size: 0.8rem;
+    color: var(--moss-green);
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.kanban-card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+    padding-top: 8px;
+    border-top: 1px solid #f1f5f9;
+}
+
+.kanban-card-value {
+    font-weight: 700;
+    font-size: 0.85rem;
+    color: var(--dark-green);
+}
+
+/* ==========================================
+   CORREÇÃO RESPONSIVA (MOBILE)
    ========================================== */
 @media (max-width: 768px) {
 
-    /* Libera o container da ferramenta de vendas para expandir */
-    #tool-pipeline-leads {
+    #tool-pipeline-leads,
+    #tool-kanban-vendas {
         width: 100% !important;
-        padding: 20px 8px !important;
+        padding: 15px 10px !important;
         box-sizing: border-box;
     }
 
-    /* Força o container da tabela a ter scroll horizontal fluido */
     #tool-pipeline-leads div[style*="overflow-x"] {
         width: 100% !important;
         overflow-x: auto !important;
@@ -192,7 +330,6 @@
         padding-bottom: 15px !important;
     }
 
-    /* Trava a tabela com largura ideal para caber todas as colunas sem amassar */
     .excel-table {
         width: 800px !important;
         min-width: 800px !important;
@@ -200,7 +337,6 @@
         border-radius: 12px;
     }
 
-    /* Mantém os títulos e células alinhados e sem quebras feias */
     .excel-table th,
     .excel-table td {
         padding: 12px 10px !important;
@@ -211,51 +347,5 @@
     .excel-table input,
     .excel-table select {
         min-width: 110px !important;
-    }
-}
-
-/* ==========================================
-   CORREÇÃO DEFINITIVA DE COLISÃO DE ELEMENTOS (MOBILE)
-   ========================================== */
-@media (max-width: 768px) {
-
-    /* Garante espaçamento lateral folGado entre as colunas da tabela */
-    .excel-table th,
-    .excel-table td {
-        padding: 12px 16px !important;
-        vertical-align: middle !important;
-    }
-
-    /* Impede que o seletor ou status interno colida com a coluna de ações */
-    .excel-table td:nth-child(7),
-    .excel-table th:nth-child(7) {
-        min-width: 200px !important;
-        max-width: 250px !important;
-        white-space: normal !important;
-        /* Permite que o status quebre linha se necessário dentro da célula dele */
-    }
-
-    /* Garante que a coluna de Ações tenha espaço isolado e limpo */
-    .excel-table td:nth-child(8),
-    .excel-table th:nth-child(8) {
-        min-width: 120px !important;
-        text-align: center !important;
-    }
-
-    /* Estiliza o botão de excluir para ficar perfeitamente legível sem sobreposições */
-    .excel-table td button,
-    .excel-table td .btn-delete-row,
-    .btn-delete-row {
-        position: relative !important;
-        z-index: 5 !important;
-        background: #fee2e2 !important;
-        color: #dc2626 !important;
-        padding: 6px 12px !important;
-        border-radius: 8px !important;
-        font-weight: 700 !important;
-        font-size: 0.78rem !important;
-        border: none !important;
-        display: inline-block !important;
-        width: auto !important;
     }
 }
