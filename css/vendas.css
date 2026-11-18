@@ -45,7 +45,7 @@
     opacity: 0.9;
 }
 
-/* Estilo Planilha Excel / Tabela Interativa de Clientes (Desktop Padrão) */
+/* Tabela Interativa de Clientes (Desktop) */
 .excel-table {
     width: 100%;
     border-collapse: collapse;
@@ -135,10 +135,7 @@
     background: #fee2e2;
 }
 
-/* ==========================================
-   AJUSTE DE CORES DOS CARTÕES DE VENDAS
-   ========================================== */
-
+/* Cartões de Vendas */
 #vendas .widget-card.highlight .widget-icon-box,
 #vendas .tool-card.highlight .widget-icon-box {
     background: var(--moss-green) !important;
@@ -168,10 +165,7 @@
     color: #ffffff !important;
 }
 
-/* ==========================================
-   CONTAINER E KANBAN / CRM (DESKTOP: TELA INTEIRA)
-   ========================================== */
-
+/* Container de Ferramentas de Vendas */
 #vendas .tool-container {
     display: none;
     padding: 30px;
@@ -202,24 +196,21 @@
     font-size: 0.9rem;
 }
 
-/* Board do CRM no PC: Ocupa 100% da largura sem barra de rolagem forçada */
+/* Board do CRM no PC: Ocupa 100% da largura sem rolagem forçada */
 .kanban-board {
     display: flex;
     gap: 16px;
     width: 100%;
     overflow-x: visible;
-    /* No PC as colunas dividem o espaço por igual */
     padding-bottom: 20px;
     align-items: flex-start;
 }
 
-/* Colunas dividem o espaço de forma fluida no PC */
 .kanban-column {
     background: #f4ecdf;
     border-radius: 16px;
     flex: 1;
     min-width: 0;
-    /* Permite encolher proporcionalmente sem estourar a tela */
     display: flex;
     flex-direction: column;
     max-height: 75vh;
@@ -305,7 +296,7 @@
 }
 
 /* ==========================================
-   RESPONSIVO APENAS PARA CELULAR (MOBILE)
+   RESPONSIVO EXCLUSIVO PARA CELULAR (MOBILE)
    ========================================== */
 @media (max-width: 768px) {
 
@@ -316,10 +307,11 @@
         box-sizing: border-box;
     }
 
-    /* No celular, o Kanban ganha rolagem lateral e largura fixa por coluna */
+    /* Kanban com scroll lateral no celular */
     .kanban-board {
         overflow-x: auto !important;
         -webkit-overflow-scrolling: touch;
+        width: max-content !important;
     }
 
     .kanban-column {
@@ -327,14 +319,10 @@
         min-width: 260px !important;
     }
 
-    /* Tabela de Clientes no Celular com Scroll Lateral Isolado */
-    #tool-pipeline-leads div[style*="overflow-x"] {
-        width: 100% !important;
+    /* Tabela de Clientes no Celular corrigida e isolada */
+    #tool-pipeline-leads div {
         overflow-x: auto !important;
         -webkit-overflow-scrolling: touch;
-        display: block !important;
-        white-space: nowrap !important;
-        padding-bottom: 15px !important;
     }
 
     .excel-table {
@@ -346,30 +334,24 @@
 
     .excel-table th,
     .excel-table td {
-        padding: 12px 10px !important;
-        font-size: 0.78rem !important;
+        padding: 10px 8px !important;
+        font-size: 0.75rem !important;
         white-space: nowrap !important;
         vertical-align: middle !important;
     }
 
-    .excel-table td:nth-child(7),
-    .excel-table th:nth-child(7) {
-        min-width: 180px !important;
-    }
-
-    .excel-table td:nth-child(8),
-    .excel-table th:nth-child(8) {
-        min-width: 100px !important;
-        text-align: center !important;
+    .excel-table td select {
+        padding: 4px !important;
+        font-size: 0.75rem !important;
     }
 
     .btn-delete-row {
         background: #fee2e2 !important;
         color: #dc2626 !important;
-        padding: 6px 12px !important;
-        border-radius: 8px !important;
+        padding: 4px 8px !important;
+        border-radius: 6px !important;
         font-weight: 700 !important;
-        font-size: 0.78rem !important;
+        font-size: 0.75rem !important;
         border: none !important;
         display: inline-block !important;
     }
