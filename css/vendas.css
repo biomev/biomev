@@ -45,7 +45,7 @@
     opacity: 0.9;
 }
 
-/* Tabela Interativa de Clientes (Desktop) */
+/* Estilo Planilha Excel / Tabela Interativa de Clientes (Desktop) */
 .excel-table {
     width: 100%;
     border-collapse: collapse;
@@ -135,7 +135,10 @@
     background: #fee2e2;
 }
 
-/* Cartões de Vendas */
+/* ==========================================
+   AJUSTE DE CORES DOS CARTÕES DE VENDAS
+   ========================================== */
+
 #vendas .widget-card.highlight .widget-icon-box,
 #vendas .tool-card.highlight .widget-icon-box {
     background: var(--moss-green) !important;
@@ -165,7 +168,10 @@
     color: #ffffff !important;
 }
 
-/* Container de Ferramentas de Vendas */
+/* ==========================================
+   CONTAINER DE FERRAMENTAS E KANBAN (DESKTOP)
+   ========================================== */
+
 #vendas .tool-container {
     display: none;
     padding: 30px;
@@ -319,109 +325,76 @@
         min-width: 260px !important;
     }
 
-    /* Tabela de Clientes no Celular corrigida e isolada */
-    #tool-pipeline-leads div {
-        overflow-x: auto !important;
-        -webkit-overflow-scrolling: touch;
+    /* Transforma a tabela de clientes em Cards Verticais no Celular (Elimina sobreposições) */
+    .excel-table thead {
+        display: none !important;
     }
 
-    .excel-table {
-        width: 850px !important;
-        min-width: 850px !important;
-        background: #ffffff !important;
-        border-radius: 12px;
-    }
-
-    .excel-table th,
-    .excel-table td {
-        padding: 10px 8px !important;
-        font-size: 0.75rem !important;
-        white-space: nowrap !important;
-        vertical-align: middle !important;
-    }
-
-    .excel-table td select {
-        padding: 4px !important;
-        font-size: 0.75rem !important;
-    }
-
-    .btn-delete-row {
-        background: #fee2e2 !important;
-        color: #dc2626 !important;
-        padding: 4px 8px !important;
-        border-radius: 6px !important;
-        font-weight: 700 !important;
-        font-size: 0.75rem !important;
-        border: none !important;
-        display: inline-block !important;
-    }
-}
-
-/* ==========================================
-   CORREÇÃO DEFINITIVA PARA A TABELA NO CELULAR
-   ========================================== */
-@media (max-width: 768px) {
-    #tool-pipeline-leads {
-        width: 100% !important;
-        padding: 10px 5px !important;
-        box-sizing: border-box;
-    }
-
-    /* Força o container pai a aceitar scroll horizontal suave */
-    #tool-pipeline-leads div[style*="overflow-x"],
-    #tool-pipeline-leads .table-responsive,
-    #tool-pipeline-leads>div:not(.section-header-row) {
-        width: 100% !important;
-        overflow-x: auto !important;
-        -webkit-overflow-scrolling: touch;
+    .excel-table,
+    .excel-table tbody,
+    .excel-table tr {
         display: block !important;
-        white-space: nowrap !important;
-        padding-bottom: 20px !important;
+        width: 100% !important;
+        background: transparent !important;
+        box-shadow: none !important;
+        border: none !important;
     }
 
-    /* Define uma largura ampla e segura para a tabela nunca espremer os dados */
-    .excel-table {
-        width: 950px !important;
-        min-width: 950px !important;
+    .excel-table tr {
         background: #ffffff !important;
-        border-radius: 12px;
+        border-radius: 14px !important;
+        padding: 16px !important;
+        margin-bottom: 16px !important;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important;
+        border: 1px solid #cbd5e1 !important;
+        position: relative !important;
     }
 
-    /* Espaçamento interno limpo para as células no mobile */
-    .excel-table th,
     .excel-table td {
-        padding: 10px 8px !important;
-        font-size: 0.75rem !important;
-        white-space: nowrap !important;
-        vertical-align: middle !important;
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        padding: 8px 0 !important;
+        border-bottom: 1px solid #f1f5f9 !important;
+        font-size: 0.85rem !important;
+        text-align: right !important;
+        width: 100% !important;
     }
 
-    /* Alarga especificamente a coluna de Status/Select para evitar conflitos */
-    .excel-table td:nth-child(7),
-    .excel-table th:nth-child(7) {
-        min-width: 210px !important;
-        max-width: 250px !important;
+    .excel-table td:last-child {
+        border-bottom: none !important;
+        padding-top: 12px !important;
+        justify-content: center !important;
     }
 
-    /* Isola completamente a coluna de Ações (Excluir) */
-    .excel-table td:nth-child(8),
-    .excel-table th:nth-child(8) {
-        min-width: 110px !important;
-        text-align: center !important;
+    .excel-table input,
+    .excel-table select {
+        width: 60% !important;
+        padding: 6px 10px !important;
+        background: #f8fafc !important;
+        border: 1px solid #cbd5e1 !important;
+        border-radius: 8px !important;
+        text-align: left !important;
+        font-size: 0.85rem !important;
     }
 
-    /* Garante que o botão de excluir fique isolado com cor e tamanho corretos */
+    .status-badge {
+        display: inline-block !important;
+        margin-top: 4px !important;
+    }
+
     .btn-delete-row {
         position: relative !important;
-        z-index: 10 !important;
         background: #fee2e2 !important;
         color: #dc2626 !important;
-        padding: 6px 12px !important;
+        padding: 8px 16px !important;
         border-radius: 8px !important;
         font-weight: 700 !important;
-        font-size: 0.75rem !important;
+        font-size: 0.8rem !important;
         border: none !important;
-        display: inline-block !important;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        display: block !important;
+        width: 100% !important;
+        text-align: center !important;
+        cursor: pointer;
     }
 }
