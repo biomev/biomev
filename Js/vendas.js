@@ -126,23 +126,38 @@ async function saveAndRenderLeads() {
 function ensureExcelExportButton() {
     const table = document.getElementById('leadsTable');
     if (!table) return;
-    if (document.getElementById('btnExportLeadsExcel')) return;
+
+    // Remove eventuais botões duplicados anteriores antes de criar o único
+    const existingButtons = document.querySelectorAll('#btnExportLeadsExcel, #btnExportLeadsExcelWrapper');
+    existingButtons.forEach((el) => el.remove());
 
     const wrapper = table.closest('div') || table.parentElement;
     if (!wrapper) return;
+
+    const btnWrapper = document.createElement('div');
+    btnWrapper.id = 'btnExportLeadsExcelWrapper';
+    btnWrapper.style.cssText = 'display: flex; justify-content: flex-end; margin-top: 20px;';
 
     const btn = document.createElement('button');
     btn.id = 'btnExportLeadsExcel';
     btn.type = 'button';
     btn.className = 'btn-action';
-    btn.style.cssText = 'width: auto; padding: 12px 24px; margin-top: 16px; background: var(--moss-green);';
+    btn.style.cssText = 'width: auto; padding: 12px 24px; margin-top: 0; background: var(--moss-green);';
     btn.textContent = 'Baixar Planilha em Excel (.xlsx)';
     btn.addEventListener('click', exportLeadsToExcel);
 
-    wrapper.insertAdjacentElement('afterend', btn);
+    btnWrapper.appendChild(btn);
+    wrapper.insertAdjacentElement('afterend', btnWrapper);
 }
 
-function exportLeadsToExcel() {
+function formatDateBr(isoDate) {
+    if (!isoDate || typeof isoDate !== 'string') return '';
+    const parts = isoDate.split('-');
+    if (parts.length !== 3) return isoDate;
+    return `${parts[2]}/${parts[1]}/${parts[0]}`;
+}
+
+async function exportLeadsToExcel() {
     if (!leadsData || leadsData.length === 0) {
         alert("Não há clientes na planilha para exportar.");
         return;
@@ -159,21 +174,139 @@ function exportLeadsToExcel() {
         "Situação do Prazo"
     ];
 
+    const today = new Date().toISOString().slice(0, 10);
+
+    // Exportação estilizada com ExcelJS (paleta verde do setor de Vendas)
+    if (typeof ExcelJS !== 'undefined') {
+        const workbook = new ExcelJS.Workbook();
+        workbook.creator = 'BIOMEV';
+        const sheet = workbook.addWorksheet('Clientes_BIOMEV', {
+            views: [{ state: 'frozen', ySplit: 3 }]
+        });
+
+        // Faixa de título da planilha
+        sheet.mergeCells('A1:H1');
+        const titleCell = sheet.getCell('A1');
+        titleCell.value = 'BIOMEV — Planilha de Clientes e Contatos (Vendas)';
+        titleCell.font = { name: 'Calibri', size: 14, bold: true, color: { argb: 'FFF3E5AB' } };
+        titleCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF243C2C' } };
+        titleCell.alignment = { vertical: 'middle', horizontal: 'left', indent: 1 };
+        sheet.getRow(1).height = 32;
+
+        // Subtítulo com data de exportação
+        sheet.mergeCells('A2:H2');
+        const subCell = sheet.getCell('A2');
+        subCell.value = `Gerado em ${formatDateBr(today)} • Total de registros: ${leadsData.length}`;
+        subCell.font = { name: 'Calibri', size: 10, italic: true, color: { argb: 'FF243C2C' } };
+        subCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFDCE6DF' } };
+        subCell.alignment = { vertical: 'middle', horizontal: 'left', indent: 1 };
+        sheet.getRow(2).height = 20;
+
+        // Cabeçalho (linha 3)
+        const headerRow = sheet.addRow(headers);
+        headerRow.height = 28;
+        headerRow.eachCell((cell) => {
+            cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF2F4F3A' } };
+            cell.font = { name: 'Calibri', size: 11, bold: true, color: { argb: 'FFFFFFFF' } };
+            cell.alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
+            cell.border = {
+                top: { style: 'thin', color: { argb: 'FF1E3326' } },
+                bottom: { style: 'medium', color: { argb: 'FFD4AF37' } },
+                left: { style: 'thin', color: { argb: 'FF1E3326' } },
+                right: { style: 'thin', color: { argb: 'FF1E3326' } }
+            };
+        });
+
+        // Linhas de dados
+        leadsData.forEach((lead, idx) => {
+            const status = calculateLeadStatus(lead.nextContact);
+            const rowValues = [
+                lead.name || "",
+                formatDateBr(lead.date),
+                lead.service || "",
+                lead.contact || "",
+                formatDateBr(lead.lastContact),
+                formatDateBr(lead.nextContact),
+                lead.type || "",
+                status.text
+            ];
+
+            const row = sheet.addRow(rowValues);
+            row.height = 22;
+            const rowBg = idx % 2 === 1 ? 'FFEBF2ED' : 'FFFFFFFF';
+
+            row.eachCell((cell, colNumber) => {
+                cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: rowBg } };
+                cell.font = { name: 'Calibri', size: 10, color: { argb: 'FF1E293B' } };
+                cell.alignment = {
+                    vertical: 'middle',
+                    horizontal: colNumber === 1 || colNumber === 3 || colNumber === 7 ? 'left' : 'center',
+                    wrapText: true
+                };
+                cell.border = {
+                    top: { style: 'thin', color: { argb: 'FFCBD5E1' } },
+                    bottom: { style: 'thin', color: { argb: 'FFCBD5E1' } },
+                    left: { style: 'thin', color: { argb: 'FFCBD5E1' } },
+                    right: { style: 'thin', color: { argb: 'FFCBD5E1' } }
+                };
+
+                // Destaque sutil na coluna Situação do Prazo (coluna 8)
+                if (colNumber === 8) {
+                    cell.font = { name: 'Calibri', size: 10, bold: true, color: { argb: 'FF1E293B' } };
+                    if (status.class === 'status-red') {
+                        cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFFEE2E2' } };
+                        cell.font = { name: 'Calibri', size: 10, bold: true, color: { argb: 'FF991B1B' } };
+                    } else if (status.class === 'status-yellow') {
+                        cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFFEF3C7' } };
+                        cell.font = { name: 'Calibri', size: 10, bold: true, color: { argb: 'FF92400E' } };
+                    } else {
+                        cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFDCFCE7' } };
+                        cell.font = { name: 'Calibri', size: 10, bold: true, color: { argb: 'FF166534' } };
+                    }
+                }
+            });
+        });
+
+        // Ajuste automático de largura das colunas
+        sheet.columns.forEach((col, index) => {
+            let maxLen = headers[index].length;
+            col.eachCell({ includeEmpty: false }, (cell) => {
+                if (cell.row < 3) return;
+                const valLen = String(cell.value || '').length;
+                if (valLen > maxLen) maxLen = valLen;
+            });
+            col.width = Math.min(Math.max(maxLen + 6, 16), 44);
+        });
+
+        const buffer = await workbook.xlsx.writeBuffer();
+        const blob = new Blob([buffer], {
+            type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `Clientes_Contatos_BIOMEV_${today}.xlsx`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        return;
+    }
+
+    // Fallback com SheetJS se ExcelJS não carregar
     const rows = leadsData.map((lead) => {
         const status = calculateLeadStatus(lead.nextContact);
         return [
             lead.name || "",
-            lead.date || "",
+            formatDateBr(lead.date),
             lead.service || "",
             lead.contact || "",
-            lead.lastContact || "",
-            lead.nextContact || "",
+            formatDateBr(lead.lastContact),
+            formatDateBr(lead.nextContact),
             lead.type || "",
             status.text
         ];
     });
-
-    const today = new Date().toISOString().slice(0, 10);
 
     if (typeof XLSX !== 'undefined') {
         const worksheet = XLSX.utils.aoa_to_sheet([headers, ...rows]);

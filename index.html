@@ -8,8 +8,9 @@
     <title>BIOMEV - Painel Operacional</title>
     <!-- Biblioteca jsPDF -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <!-- Biblioteca SheetJS (Exportação Excel .xlsx) -->
+    <!-- Biblioteca SheetJS (fallback) + ExcelJS (exportação .xlsx estilizada) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js"></script>
 
     <!-- CSS Modulares -->
     <link rel="stylesheet" href="css/main.css">
@@ -384,13 +385,7 @@
                             </tbody>
                         </table>
                     </div>
-
-                    <!-- Botão de Exportação para Excel no final da planilha -->
-                    <div style="display: flex; justify-content: flex-end; margin-top: 20px;">
-                        <button class="btn-action"
-                            style="width: auto; padding: 12px 24px; margin-top: 0; background: var(--moss-green);"
-                            onclick="exportLeadsToExcel()">Baixar Planilha em Excel (.xlsx)</button>
-                    </div>
+                    <!-- Botão único de exportação é injetado pelo Js/vendas.js após a tabela -->
                 </div>
 
                 <!-- Ferramenta de Gestão de Conhecimento (Vendas) -->
@@ -659,4 +654,4 @@
 </body>
 
 </html>
-<!--- Desenvolvido por: Lucca --->
+<!--- Desenvolvido por: Lucca Sanchez--->
