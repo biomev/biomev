@@ -1,4 +1,4 @@
-// Gerenciamento do Painel de Vendas, Calendário, Planilha e Kanban
+// Gerenciamento do Painel de Vendas, Calendário, Planilha e CRM Visual
 let leadsData = JSON.parse(localStorage.getItem('biomev_leads')) || [
     {
         name: "Prefeitura Municipal",
@@ -31,6 +31,32 @@ function hydrateKanbanLeads() {
         }
     });
 }
+
+// Sobrescreve/complementa o openTool para esconder o vendas-menu ao abrir o CRM Visual
+const originalOpenTool = window.openTool || function () { };
+window.openTool = function (toolName) {
+    if (toolName === 'kanban-vendas') {
+        const vendasMenu = document.getElementById('vendas-menu');
+        if (vendasMenu) vendasMenu.style.display = 'none';
+        const toolContainer = document.getElementById(`tool-kanban-vendas`);
+        if (toolContainer) toolContainer.classList.add('active');
+        renderKanbanBoard();
+        return;
+    }
+    originalOpenTool(toolName);
+};
+
+const originalCloseTool = window.closeTool || function () { };
+window.closeTool = function (toolName) {
+    if (toolName === 'kanban-vendas') {
+        const toolContainer = document.getElementById(`tool-kanban-vendas`);
+        if (toolContainer) toolContainer.classList.remove('active');
+        const vendasMenu = document.getElementById('vendas-menu');
+        if (vendasMenu) vendasMenu.style.display = 'block';
+        return;
+    }
+    originalCloseTool(toolName);
+};
 
 function renderLeadsTable() {
     hydrateKanbanLeads();
@@ -66,7 +92,7 @@ function renderLeadsTable() {
     renderKanbanBoard();
 }
 
-// Funil de Vendas Visual (Kanban)
+// Etapas do Funil de Vendas
 const kanbanStages = [
     { id: 'contato', name: 'Contato Inicial' },
     { id: 'reuniao', name: 'Reunião Agendada' },
