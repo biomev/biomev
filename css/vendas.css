@@ -353,3 +353,63 @@
         min-width: 110px !important;
     }
 }
+
+/* ==========================================
+   CORREÇÃO RESPONSIVA DA TABELA DE CLIENTES (MOBILE)
+   ========================================== */
+@media (max-width: 768px) {
+    #tool-pipeline-leads {
+        width: 100% !important;
+        padding: 15px 10px !important;
+        box-sizing: border-box;
+    }
+
+    /* Container com scroll horizontal fluido */
+    #tool-pipeline-leads div[style*="overflow-x"] {
+        width: 100% !important;
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch;
+        display: block !important;
+        white-space: nowrap !important;
+        padding-bottom: 15px !important;
+    }
+
+    /* Trava a largura da tabela para que caiba todas as colunas sem amassar */
+    .excel-table {
+        width: 850px !important;
+        min-width: 850px !important;
+        background: #ffffff !important;
+        border-radius: 12px;
+    }
+
+    .excel-table th,
+    .excel-table td {
+        padding: 12px 10px !important;
+        font-size: 0.78rem !important;
+        white-space: nowrap !important;
+        vertical-align: middle !important;
+    }
+
+    /* Garante espaçamento seguro para o status e o botão de excluir */
+    .excel-table td:nth-child(7),
+    .excel-table th:nth-child(7) {
+        min-width: 180px !important;
+    }
+
+    .excel-table td:nth-child(8),
+    .excel-table th:nth-child(8) {
+        min-width: 100px !important;
+        text-align: center !important;
+    }
+
+    .btn-delete-row {
+        background: #fee2e2 !important;
+        color: #dc2626 !important;
+        padding: 6px 12px !important;
+        border-radius: 8px !important;
+        font-weight: 700 !important;
+        font-size: 0.78rem !important;
+        border: none !important;
+        display: inline-block !important;
+    }
+}
