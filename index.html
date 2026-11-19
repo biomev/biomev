@@ -13,11 +13,11 @@
     <script src="https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js"></script>
 
     <!-- CSS Modulares -->
-    <link rel="stylesheet" href="css/main.css?v=13">
-    <link rel="stylesheet" href="css/header.css?v=13">
-    <link rel="stylesheet" href="css/marketing.css?v=13">
-    <link rel="stylesheet" href="css/vendas.css?v=13">
-    <link rel="stylesheet" href="css/perfil.css?v=13">
+    <link rel="stylesheet" href="css/main.css?v=14">
+    <link rel="stylesheet" href="css/header.css?v=14">
+    <link rel="stylesheet" href="css/marketing.css?v=14">
+    <link rel="stylesheet" href="css/vendas.css?v=14">
+    <link rel="stylesheet" href="css/perfil.css?v=14">
     <!-- Ícone padrão para a aba do navegador (Favicon) -->
     <link rel="icon" type="image/jpeg" href="imagens/logo-biomev.jpeg">
     <!-- Ícone para dispositivos Apple (iPhone/iPad) ao salvar na Tela Inicial -->
@@ -191,6 +191,25 @@
                                     <label>Carga Horária</label>
                                     <input type="text" id="eventHours" value="10"
                                         oninput="updateTemplateText(); renderCertificate()">
+                                </div>
+                            </div>
+                            <div class="form-row-3">
+                                <div class="form-group">
+                                    <label>Texto do Certificado (Editável)</label>
+                                    <textarea id="certTextEdit" rows="3"
+                                        oninput="renderCertificate()">Participou da capacitação "Gestão de Vendas"</textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label>Tam. Fonte Texto</label>
+                                    <input type="number" id="textFontSize" value="24" min="10" max="120"
+                                        oninput="renderCertificate()">
+                                </div>
+                                <div class="form-group">
+                                    <label>Ajustar Texto</label>
+                                    <div class="position-controls">
+                                        <button type="button" onclick="adjustPosition('text', -15)">▲</button>
+                                        <button type="button" onclick="adjustPosition('text', 15)">▼</button>
+                                    </div>
                                 </div>
                             </div>
                             <button class="btn-action" onclick="downloadPDF()">Baixar Certificado em PDF</button>
