@@ -418,3 +418,56 @@
         width: auto !important;
     }
 }
+
+/* ==========================================
+   SOLUÇÃO DEFINITIVA DE SCROLL E ESPAÇAMENTO MOBILE
+   ========================================== */
+@media (max-width: 768px) {
+
+    /* Força o container da tabela a aceitar transbordo horizontal e toque suave */
+    #tool-pipeline-leads {
+        width: 100% !important;
+        overflow-x: hidden !important;
+        padding: 15px 5px !important;
+    }
+
+    #tool-pipeline-leads>div:not(.section-header-row) {
+        width: 100% !important;
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+        display: block !important;
+        padding-bottom: 15px !important;
+    }
+
+    /* Trava a tabela em 850px fixos para que ela obrigue o scroll lateral a aparecer */
+    #tool-pipeline-leads .excel-table {
+        width: 850px !important;
+        min-width: 850px !important;
+        table-layout: auto !important;
+    }
+
+    /* Dá respiro e largura segura para as colunas de Status e Ações não colidirem */
+    #tool-pipeline-leads .excel-table td:nth-child(7),
+    #tool-pipeline-leads .excel-table th:nth-child(7) {
+        min-width: 220px !important;
+        max-width: 250px !important;
+    }
+
+    #tool-pipeline-leads .excel-table td:nth-child(8),
+    #tool-pipeline-leads .excel-table th:nth-child(8) {
+        min-width: 110px !important;
+        text-align: center !important;
+    }
+
+    /* Isola o botão de excluir para garantir clique fácil e sem sobreposição */
+    #tool-pipeline-leads .btn-delete-row {
+        background: #fee2e2 !important;
+        color: #dc2626 !important;
+        padding: 6px 12px !important;
+        border-radius: 8px !important;
+        font-size: 0.75rem !important;
+        font-weight: 700 !important;
+        display: inline-block !important;
+        white-space: nowrap !important;
+    }
+}
