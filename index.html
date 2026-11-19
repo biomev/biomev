@@ -13,11 +13,11 @@
     <script src="https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js"></script>
 
     <!-- CSS Modulares -->
-    <link rel="stylesheet" href="css/main.css?v=14">
-    <link rel="stylesheet" href="css/header.css?v=14">
-    <link rel="stylesheet" href="css/marketing.css?v=14">
-    <link rel="stylesheet" href="css/vendas.css?v=14">
-    <link rel="stylesheet" href="css/perfil.css?v=14">
+    <link rel="stylesheet" href="css/main.css?v=16">
+    <link rel="stylesheet" href="css/header.css?v=16">
+    <link rel="stylesheet" href="css/marketing.css?v=16">
+    <link rel="stylesheet" href="css/vendas.css?v=16">
+    <link rel="stylesheet" href="css/perfil.css?v=16">
     <!-- Ícone padrão para a aba do navegador (Favicon) -->
     <link rel="icon" type="image/jpeg" href="imagens/logo-biomev.jpeg">
     <!-- Ícone para dispositivos Apple (iPhone/iPad) ao salvar na Tela Inicial -->
@@ -196,7 +196,7 @@
                             <div class="form-row-3">
                                 <div class="form-group">
                                     <label>Texto do Certificado (Editável)</label>
-                                    <textarea id="certTextEdit" rows="3"
+                                    <textarea id="certDetails" rows="3"
                                         oninput="renderCertificate()">Participou da capacitação "Gestão de Vendas"</textarea>
                                 </div>
                                 <div class="form-group">
@@ -338,16 +338,86 @@
 
                 <!-- Ferramenta Planilha de Clientes -->
                 <div id="tool-pipeline-leads" class="tool-container">
+                    <style>
+                        @media (max-width: 768px) {
+                            #tool-pipeline-leads .vendas-table-scroll-box {
+                                width: 100%;
+                                overflow-x: auto;
+                                -webkit-overflow-scrolling: touch;
+                                border-radius: 16px;
+                                background: #ffffff;
+                                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+                            }
+
+                            #tool-pipeline-leads #leadsTable {
+                                display: table;
+                                width: 1040px;
+                                min-width: 1040px;
+                                table-layout: fixed;
+                                border-collapse: collapse;
+                                white-space: nowrap;
+                            }
+
+                            #tool-pipeline-leads #leadsTable th,
+                            #tool-pipeline-leads #leadsTable td {
+                                display: table-cell;
+                                vertical-align: middle;
+                                padding: 10px 12px;
+                                white-space: nowrap;
+                                overflow: visible;
+                            }
+
+                            #tool-pipeline-leads #leadsTable th:nth-child(6),
+                            #tool-pipeline-leads #leadsTable td:nth-child(6) {
+                                width: 140px;
+                                padding-right: 18px;
+                            }
+
+                            #tool-pipeline-leads #leadsTable th:nth-child(7),
+                            #tool-pipeline-leads #leadsTable td:nth-child(7) {
+                                width: 250px;
+                                padding-left: 18px;
+                                padding-right: 18px;
+                            }
+
+                            #tool-pipeline-leads #leadsTable th:nth-child(8),
+                            #tool-pipeline-leads #leadsTable td:nth-child(8) {
+                                width: 110px;
+                                padding-left: 16px;
+                                text-align: center;
+                            }
+
+                            #tool-pipeline-leads #leadsTable td:nth-child(8)>*,
+                            #tool-pipeline-leads #leadsTable .btn-delete-row {
+                                position: static;
+                                float: none;
+                                margin: 0 auto;
+                                display: inline-flex;
+                                align-items: center;
+                                justify-content: center;
+                                width: auto;
+                                padding: 6px 12px;
+                                border-radius: 8px;
+                                background: #fee2e2;
+                                color: #dc2626;
+                                font-size: 0.75rem;
+                                font-weight: 700;
+                                white-space: nowrap;
+                            }
+                        }
+                    </style>
                     <button class="tool-header-back" onclick="closeTool('pipeline-leads')">Voltar para as
                         Ferramentas</button>
-                    <div class="section-header-row" style="margin-top: 10px; margin-bottom: 20px;">
-                        <h2 style="font-size: 1.5rem; font-weight: 700; color: var(--text-dark);">Planilha de Clientes e
+                    <div class="section-header-row"
+                        style="margin-top: 10px; margin-bottom: 20px; flex-wrap: wrap; gap: 12px;">
+                        <h2 style="font-size: 1.35rem; font-weight: 700; color: var(--text-dark); margin: 0;">Planilha
+                            de Clientes e
                             Contatos</h2>
                         <button class="btn-action"
                             style="width: auto; padding: 10px 20px; margin-top: 0; background: var(--moss-green);"
                             onclick="addLeadRow()">+ Adicionar Novo Cliente</button>
                     </div>
-                    <div style="overflow-x: auto;">
+                    <div class="vendas-table-scroll-box" style="overflow-x: auto;">
                         <table id="leadsTable" class="excel-table">
                             <thead>
                                 <tr>
@@ -463,9 +533,10 @@
     <div class="auth-modal-overlay" id="notificationsModal">...</div>
 
     <!-- Scripts -->
-    <script src="Js/marketing.js"></script>
-    <script src="Js/vendas.js"></script>
-    <script src="Js/main.js"></script>
+    <script src="Js/marketing.js?v=16"></script>
+    <script src="Js/vendas.js?v=16"></script>
+    <script src="Js/main.js?v=16"></script>
 </body>
 
 </html>
+<!-- Programado por: Lucca Sanchez-->
