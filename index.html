@@ -13,11 +13,11 @@
     <script src="https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js"></script>
 
     <!-- CSS Modulares -->
-    <link rel="stylesheet" href="css/main.css?v=18">
-    <link rel="stylesheet" href="css/header.css?v=18">
-    <link rel="stylesheet" href="css/marketing.css?v=18">
-    <link rel="stylesheet" href="css/vendas.css?v=18">
-    <link rel="stylesheet" href="css/perfil.css?v=18">
+    <link rel="stylesheet" href="css/main.css?v=24">
+    <link rel="stylesheet" href="css/header.css?v=24">
+    <link rel="stylesheet" href="css/marketing.css?v=24">
+    <link rel="stylesheet" href="css/vendas.css?v=24">
+    <link rel="stylesheet" href="css/perfil.css?v=24">
     <!-- Ícone padrão para a aba do navegador (Favicon) -->
     <link rel="icon" type="image/jpeg" href="imagens/logo-biomev.jpeg">
     <!-- Ícone para dispositivos Apple (iPhone/iPad) ao salvar na Tela Inicial -->
@@ -28,6 +28,35 @@
 
     <!-- Manifesto para Progressive Web App -->
     <link rel="manifest" href="manifest.json">
+
+    <style>
+        .biomev-header-top {
+            position: relative !important;
+            z-index: 500 !important;
+            pointer-events: auto !important;
+        }
+
+        .biomev-header-top .header-center-title {
+            pointer-events: none !important;
+        }
+
+        .biomev-header-top .header-actions-right,
+        .biomev-header-top .team-btn-header,
+        .biomev-header-top .notification-btn-minimal,
+        .biomev-header-top .notification-btn-minimal svg,
+        .biomev-header-top .profile-avatar,
+        .biomev-header-top .profile-avatar span {
+            position: relative !important;
+            z-index: 510 !important;
+            pointer-events: auto !important;
+            cursor: pointer !important;
+            touch-action: manipulation !important;
+        }
+
+        .biomev-header-top .notification-btn-minimal svg {
+            pointer-events: none !important;
+        }
+    </style>
 </head>
 
 <body>
@@ -37,9 +66,10 @@
         <div class="header-brand" onclick="closeProfile()">BIOMEV</div>
         <div class="header-center-title" id="header-subtitle">Painel de Marketing</div>
         <div class="header-actions-right">
-            <button class="team-btn-header" onclick="openTeamModal()">Equipe</button>
+            <button type="button" class="team-btn-header" onclick="openTeamModal()">Equipe</button>
 
-            <button class="notification-btn-minimal" title="Notificações" onclick="openNotificationsModal()">
+            <button type="button" class="notification-btn-minimal" title="Notificações"
+                onclick="openNotificationsModal()">
                 <svg viewBox="0 0 24 24">
                     <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
                     <polyline points="22,6 12,13 2,6"></polyline>
@@ -56,8 +86,9 @@
     <div class="app-container">
         <!-- Navegação de Abas -->
         <nav class="tab-nav" id="mainTabNav">
-            <button class="tab-button marketing-tab active" onclick="openTab('marketing')">Marketing</button>
-            <button class="tab-button vendas-tab" onclick="openTab('vendas')">Vendas</button>
+            <button type="button" class="tab-button marketing-tab active"
+                onclick="openTab('marketing')">Marketing</button>
+            <button type="button" class="tab-button vendas-tab" onclick="openTab('vendas')">Vendas</button>
         </nav>
 
         <main>
@@ -120,7 +151,7 @@
                                     <h4 style="color: var(--vanilla); margin-bottom: 4px;">Vídeos Tutoriais</h4>
                                     <p>Acesse videoaulas e treinamentos gravados.</p>
                                 </div>
-                                <button class="btn-acessar"
+                                <button type="button" class="btn-acessar"
                                     onclick="openKnowledgeTool('marketing', 'Vídeos Tutoriais')">Acessar</button>
                             </div>
                             <div class="knowledge-folder-card">
@@ -128,7 +159,7 @@
                                     <h4 style="color: var(--vanilla); margin-bottom: 4px;">POP's (Arquivos)</h4>
                                     <p>Procedimentos Operacionais Padronizados e manuais.</p>
                                 </div>
-                                <button class="btn-acessar"
+                                <button type="button" class="btn-acessar"
                                     onclick="openKnowledgeTool('marketing', 'POPs Marketing')">Acessar</button>
                             </div>
                         </div>
@@ -137,7 +168,7 @@
 
                 <!-- Ferramenta de Certificados -->
                 <div id="tool-certificado" class="tool-container">
-                    <button class="tool-header-back" onclick="closeTool('certificado')">Voltar para as
+                    <button type="button" class="tool-header-back" onclick="closeTool('certificado')">Voltar para as
                         Ferramentas</button>
                     <div class="certificate-editor">
                         <div class="editor-form">
@@ -212,7 +243,8 @@
                                     </div>
                                 </div>
                             </div>
-                            <button class="btn-action" onclick="downloadPDF()">Baixar Certificado em PDF</button>
+                            <button type="button" class="btn-action" onclick="downloadPDF()">Baixar Certificado em
+                                PDF</button>
                         </div>
                         <div class="preview-area">
                             <canvas id="certCanvas" width="1200" height="850"></canvas>
@@ -222,7 +254,8 @@
 
                 <!-- Gestão de Conhecimento Marketing -->
                 <div id="tool-knowledge-marketing" class="tool-container">
-                    <button class="tool-header-back" onclick="closeKnowledgeTool('marketing')">Voltar para o
+                    <button type="button" class="tool-header-back" onclick="closeKnowledgeTool('marketing')">Voltar para
+                        o
                         Painel</button>
                     <h2 id="knowledgeTitleMkt"
                         style="font-size: 1.6rem; font-weight: 700; color: var(--vanilla); margin-bottom: 24px;">Gestão
@@ -234,7 +267,7 @@
                                 <div style="display: flex; gap: 10px; margin-top: 10px;">
                                     <input type="text" id="newFolderNameMkt" placeholder="Nome da pasta"
                                         style="flex: 1; padding: 12px 16px; border-radius: 12px; background: rgba(255,255,255,0.8);">
-                                    <button class="btn-action"
+                                    <button type="button" class="btn-action"
                                         style="margin-top:0; width: auto; background: var(--glaucous);"
                                         onclick="createFolder('marketing')">Criar Pasta</button>
                                 </div>
@@ -244,9 +277,9 @@
                         <div id="folderViewMkt" style="display: none; margin-top: 10px;">
                             <div
                                 style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
-                                <button class="tool-header-back" style="margin-bottom:0;"
+                                <button type="button" class="tool-header-back" style="margin-bottom:0;"
                                     onclick="backToFolders('marketing')">Voltar para as Pastas</button>
-                                <button class="btn-action"
+                                <button type="button" class="btn-action"
                                     style="margin-top:0; width: auto; background: var(--glaucous);"
                                     onclick="triggerDocumentPicker('marketing')">+ Enviar Arquivo</button>
                             </div>
@@ -321,7 +354,8 @@
                                     <h4 style="color: var(--vanilla); margin-bottom: 4px;">Vídeos Tutoriais</h4>
                                     <p>Acesse videoaulas e treinamentos gravados.</p>
                                 </div>
-                                <button class="btn-acessar" style="background: var(--vanilla); color: #243c2c;"
+                                <button type="button" class="btn-acessar"
+                                    style="background: var(--vanilla); color: #243c2c;"
                                     onclick="openKnowledgeTool('vendas', 'Vídeos Vendas')">Acessar</button>
                             </div>
                             <div class="knowledge-folder-card">
@@ -329,7 +363,8 @@
                                     <h4 style="color: var(--vanilla); margin-bottom: 4px;">POP's (Arquivos)</h4>
                                     <p>Procedimentos Operacionais Padronizados e manuais.</p>
                                 </div>
-                                <button class="btn-acessar" style="background: var(--vanilla); color: #243c2c;"
+                                <button type="button" class="btn-acessar"
+                                    style="background: var(--vanilla); color: #243c2c;"
                                     onclick="openKnowledgeTool('vendas', 'POPs Vendas')">Acessar</button>
                             </div>
                         </div>
@@ -338,65 +373,12 @@
 
                 <!-- Ferramenta Planilha de Clientes -->
                 <div id="tool-pipeline-leads" class="tool-container">
-                    <style>
-                        /* Ajustes exclusivos para celular (<= 768px) sem alterar o PC */
-                        @media (max-width: 768px) {
-                            #tool-pipeline-leads .section-header-row {
-                                display: flex;
-                                flex-direction: row;
-                                flex-wrap: nowrap;
-                                align-items: center;
-                                justify-content: space-between;
-                                gap: 8px;
-                            }
-
-                            #tool-pipeline-leads .section-header-row h2 {
-                                font-size: 0.92rem;
-                                line-height: 1.2;
-                                margin: 0;
-                                flex: 1 1 auto;
-                                min-width: 0;
-                            }
-
-                            #tool-pipeline-leads .section-header-row .btn-action {
-                                flex: 0 0 auto;
-                                width: auto;
-                                padding: 8px 10px;
-                                font-size: 0.72rem;
-                                white-space: nowrap;
-                            }
-
-                            #tool-pipeline-leads .vendas-table-scroll-box {
-                                width: 100%;
-                                overflow-x: auto;
-                                -webkit-overflow-scrolling: touch;
-                                border-radius: 16px;
-                            }
-
-                            #tool-pipeline-leads #leadsTable {
-                                display: table;
-                                width: 980px;
-                                min-width: 980px;
-                                white-space: nowrap;
-                            }
-
-                            #tool-pipeline-leads #btnExportLeadsExcelWrapper {
-                                justify-content: flex-start;
-                            }
-
-                            #tool-pipeline-leads #btnExportLeadsExcel {
-                                width: auto;
-                                font-size: 0.8rem;
-                                padding: 10px 16px;
-                            }
-                        }
-                    </style>
-                    <button class="tool-header-back" onclick="closeTool('pipeline-leads')">Voltar para as
+                    <button type="button" class="tool-header-back" onclick="closeTool('pipeline-leads')">Voltar para as
                         Ferramentas</button>
                     <div class="section-header-row" style="margin-top: 10px; margin-bottom: 20px;">
                         <h2 style="font-size: 1.5rem; font-weight: 700; color: var(--text-dark);">Planilha de Clientes e
                             Contatos</h2>
-                        <button class="btn-action"
+                        <button type="button" class="btn-action"
                             style="width: auto; padding: 10px 20px; margin-top: 0; background: var(--moss-green);"
                             onclick="addLeadRow()">+ Adicionar Novo Cliente</button>
                     </div>
@@ -423,13 +405,14 @@
                 <div id="tool-kanban-vendas" class="tool-container">
                     <div
                         style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
-                        <button class="tool-header-back" style="margin-bottom:0;" onclick="closeKanbanTool()">Voltar
+                        <button type="button" class="tool-header-back" style="margin-bottom:0;"
+                            onclick="closeKanbanTool()">Voltar
                             para as Ferramentas</button>
                         <div style="display: flex; gap: 12px; align-items: center;">
                             <span id="pipelineTotalValue"
                                 style="font-weight: 700; color: var(--moss-green); background: var(--vanilla); padding: 8px 14px; border-radius: 12px; font-size: 0.9rem;">Pipeline:
                                 R$ 0,00</span>
-                            <button class="btn-action"
+                            <button type="button" class="btn-action"
                                 style="width: auto; padding: 10px 20px; margin-top: 0; background: var(--moss-green);"
                                 onclick="openAddKanbanCardModal()">+ Novo Lead no Funil</button>
                         </div>
@@ -442,7 +425,7 @@
 
                 <!-- Gestão de Conhecimento Vendas -->
                 <div id="tool-knowledge-vendas" class="tool-container">
-                    <button class="tool-header-back" onclick="closeKnowledgeTool('vendas')">Voltar para o
+                    <button type="button" class="tool-header-back" onclick="closeKnowledgeTool('vendas')">Voltar para o
                         Painel</button>
                     <h2 id="knowledgeTitleVds"
                         style="font-size: 1.6rem; font-weight: 700; color: var(--vanilla); margin-bottom: 24px;">Gestão
@@ -454,7 +437,7 @@
                                 <div style="display: flex; gap: 10px; margin-top: 10px;">
                                     <input type="text" id="newFolderNameVds" placeholder="Nome da pasta"
                                         style="flex: 1; padding: 12px 16px; border-radius: 12px; background: rgba(255,255,255,0.8);">
-                                    <button class="btn-action"
+                                    <button type="button" class="btn-action"
                                         style="margin-top:0; width: auto; background: var(--moss-green);"
                                         onclick="createFolder('vendas')">Criar Pasta</button>
                                 </div>
@@ -464,9 +447,9 @@
                         <div id="folderViewVds" style="display: none; margin-top: 10px;">
                             <div
                                 style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
-                                <button class="tool-header-back" style="margin-bottom:0;"
+                                <button type="button" class="tool-header-back" style="margin-bottom:0;"
                                     onclick="backToFolders('vendas')">Voltar para as Pastas</button>
-                                <button class="btn-action"
+                                <button type="button" class="btn-action"
                                     style="margin-top:0; width: auto; background: var(--moss-green);"
                                     onclick="triggerDocumentPicker('vendas')">+ Enviar Arquivo</button>
                             </div>
@@ -481,7 +464,7 @@
 
             <!-- TELA DE PERFIL -->
             <section id="profileView" class="profile-view" style="padding: 0 32px;">
-                <button class="tool-header-back" onclick="closeProfile()">Voltar ao Painel</button>
+                <button type="button" class="tool-header-back" onclick="closeProfile()">Voltar ao Painel</button>
                 <div class="profile-card-header">
                     <div class="profile-left-info">
                         <div class="profile-big-avatar" id="profileBigAvatar">LS</div>
@@ -490,11 +473,13 @@
                             <p id="viewUserRole">Cargo / Departamento</p>
                         </div>
                     </div>
-                    <button class="btn-edit-profile" onclick="openEditProfileModal()">Editar Perfil</button>
+                    <button type="button" class="btn-edit-profile" onclick="openEditProfileModal()">Editar
+                        Perfil</button>
                 </div>
                 <div class="section-header-row">
                     <p class="section-label-dark" style="margin-bottom:0;">Tarefas Pendentes</p>
-                    <button class="btn-add-task" title="Adicionar Nova Tarefa" onclick="openAddTaskModal()">+</button>
+                    <button type="button" class="btn-add-task" title="Adicionar Nova Tarefa"
+                        onclick="openAddTaskModal()">+</button>
                 </div>
                 <div class="tasks-grid" id="tasksGridContainer" style="margin-bottom: 32px;"></div>
                 <div class="section-header-row">
@@ -516,9 +501,9 @@
     <div class="auth-modal-overlay" id="notificationsModal">...</div>
 
     <!-- Scripts -->
-    <script src="Js/marketing.js?v=23"></script>
-    <script src="Js/vendas.js?v=23"></script>
-    <script src="Js/main.js?v=23s"></script>
+    <script src="Js/marketing.js?v=24"></script>
+    <script src="Js/vendas.js?v=24"></script>
+    <script src="Js/main.js?v=24"></script>
 </body>
 
 </html>
