@@ -31,6 +31,54 @@ function hydrateKanbanLeads() {
     });
 }
 
+function applyResponsiveKanbanLayout() {
+    const board = document.getElementById('kanbanBoard');
+    if (!board) return;
+
+    const isMobile = window.innerWidth <= 768;
+    const columns = board.querySelectorAll('.kanban-column');
+
+    if (isMobile) {
+        board.style.setProperty('display', 'flex', 'important');
+        board.style.setProperty('flex-direction', 'row', 'important');
+        board.style.setProperty('flex-wrap', 'nowrap', 'important');
+        board.style.setProperty('overflow-x', 'auto', 'important');
+        board.style.setProperty('overflow-y', 'hidden', 'important');
+        board.style.setProperty('-webkit-overflow-scrolling', 'touch', 'important');
+        board.style.setProperty('scroll-snap-type', 'x proximity', 'important');
+        board.style.setProperty('gap', '14px', 'important');
+        board.style.setProperty('padding-bottom', '14px', 'important');
+        board.style.setProperty('width', '100%', 'important');
+        board.style.setProperty('grid-template-columns', 'unset', 'important');
+
+        columns.forEach(col => {
+            col.style.setProperty('flex', '0 0 82vw', 'important');
+            col.style.setProperty('min-width', '270px', 'important');
+            col.style.setProperty('max-width', '320px', 'important');
+            col.style.setProperty('scroll-snap-align', 'start', 'important');
+        });
+    } else {
+        board.style.removeProperty('display');
+        board.style.removeProperty('flex-direction');
+        board.style.removeProperty('flex-wrap');
+        board.style.removeProperty('overflow-x');
+        board.style.removeProperty('overflow-y');
+        board.style.removeProperty('-webkit-overflow-scrolling');
+        board.style.removeProperty('scroll-snap-type');
+        board.style.removeProperty('gap');
+        board.style.removeProperty('padding-bottom');
+        board.style.removeProperty('width');
+        board.style.removeProperty('grid-template-columns');
+
+        columns.forEach(col => {
+            col.style.removeProperty('flex');
+            col.style.removeProperty('min-width');
+            col.style.removeProperty('max-width');
+            col.style.removeProperty('scroll-snap-align');
+        });
+    }
+}
+
 function applyResponsiveLeadsLayout() {
     const tool = document.getElementById('tool-pipeline-leads');
     if (!tool) return;
@@ -139,6 +187,8 @@ function applyResponsiveLeadsLayout() {
         exportBtn.style.setProperty('padding', isMobile ? '10px 16px' : '12px 24px', 'important');
         exportBtn.style.setProperty('font-size', isMobile ? '0.8rem' : '0.9rem', 'important');
     }
+
+    applyResponsiveKanbanLayout();
 }
 
 // Abertura correta do CRM (esconde o menu principal de vendas e ativa o container da ferramenta)
@@ -212,6 +262,154 @@ const kanbanStages = [
     { id: 'perdido', name: 'Perdido' }
 ];
 
+// Suporte a segurar e arrastar (Touch Drag & Drop) no celular
+let touchDragState = {
+    active: false,
+    leadIndex: null,
+    sourceEl: null,
+    ghostEl: null,
+    targetStageId: null,
+    targetColEl: null,
+    holdTimer: null,
+    startX: 0,
+    startY: 0
+};
+
+function clearTouchDragState() {
+    if (touchDragState.holdTimer) {
+        clearTimeout(touchDragState.holdTimer);
+        touchDragState.holdTimer = null;
+    }
+    if (touchDragState.ghostEl && touchDragState.ghostEl.parentNode) {
+        touchDragState.ghostEl.parentNode.removeChild(touchDragState.ghostEl);
+    }
+    if (touchDragState.sourceEl) {
+        touchDragState.sourceEl.style.opacity = '';
+        touchDragState.sourceEl.style.transform = '';
+    }
+    if (touchDragState.targetColEl) {
+        touchDragState.targetColEl.style.outline = '';
+        touchDragState.targetColEl.style.backgroundColor = '';
+    }
+    touchDragState.active = false;
+    touchDragState.leadIndex = null;
+    touchDragState.sourceEl = null;
+    touchDragState.ghostEl = null;
+    touchDragState.targetStageId = null;
+    touchDragState.targetColEl = null;
+}
+
+function startTouchGhost(cardEl, leadIndex, touch) {
+    const rect = cardEl.getBoundingClientRect();
+    const ghost = cardEl.cloneNode(true);
+    ghost.style.position = 'fixed';
+    ghost.style.left = `${rect.left}px`;
+    ghost.style.top = `${rect.top}px`;
+    ghost.style.width = `${rect.width}px`;
+    ghost.style.zIndex = '9999';
+    ghost.style.pointerEvents = 'none';
+    ghost.style.opacity = '0.92';
+    ghost.style.transform = 'scale(1.03) rotate(1.5deg)';
+    ghost.style.boxShadow = '0 14px 28px rgba(0, 0, 0, 0.22)';
+    ghost.dataset.offsetX = String(touch.clientX - rect.left);
+    ghost.dataset.offsetY = String(touch.clientY - rect.top);
+
+    document.body.appendChild(ghost);
+    cardEl.style.opacity = '0.35';
+
+    touchDragState.active = true;
+    touchDragState.leadIndex = leadIndex;
+    touchDragState.sourceEl = cardEl;
+    touchDragState.ghostEl = ghost;
+}
+
+function highlightDropColumnAtPoint(clientX, clientY) {
+    if (touchDragState.targetColEl) {
+        touchDragState.targetColEl.style.outline = '';
+        touchDragState.targetColEl.style.backgroundColor = '';
+        touchDragState.targetColEl = null;
+        touchDragState.targetStageId = null;
+    }
+
+    const elements = document.elementsFromPoint(clientX, clientY);
+    const col = elements.find(el => el.classList && el.classList.contains('kanban-column'));
+    if (col && col.dataset.stageId) {
+        col.style.outline = '2px dashed var(--moss-green)';
+        col.style.backgroundColor = 'rgba(122, 148, 69, 0.08)';
+        touchDragState.targetColEl = col;
+        touchDragState.targetStageId = col.dataset.stageId;
+    }
+}
+
+function bindTouchDragEvents(board) {
+    if (!board) return;
+
+    const cards = board.querySelectorAll('.kanban-card[data-lead-index]');
+    cards.forEach(card => {
+        const leadIndex = parseInt(card.dataset.leadIndex, 10);
+
+        card.addEventListener('touchstart', (e) => {
+            if (e.target.closest('button')) return;
+            if (!e.touches || e.touches.length === 0) return;
+
+            const touch = e.touches[0];
+            clearTouchDragState();
+            touchDragState.startX = touch.clientX;
+            touchDragState.startY = touch.clientY;
+
+            // Segurar brevemente ativa o modo arrastar card; deslizar rápido sem segurar rola o carrossel normalmente
+            touchDragState.holdTimer = setTimeout(() => {
+                startTouchGhost(card, leadIndex, touch);
+            }, 180);
+        }, { passive: true });
+
+        card.addEventListener('touchmove', (e) => {
+            if (!e.touches || e.touches.length === 0) return;
+            const touch = e.touches[0];
+
+            if (!touchDragState.active) {
+                const dx = Math.abs(touch.clientX - touchDragState.startX);
+                const dy = Math.abs(touch.clientY - touchDragState.startY);
+                if (dx > 10 || dy > 10) {
+                    if (touchDragState.holdTimer) {
+                        clearTimeout(touchDragState.holdTimer);
+                        touchDragState.holdTimer = null;
+                    }
+                }
+                return;
+            }
+
+            e.preventDefault();
+
+            if (touchDragState.ghostEl) {
+                const offsetX = parseFloat(touchDragState.ghostEl.dataset.offsetX || '0');
+                const offsetY = parseFloat(touchDragState.ghostEl.dataset.offsetY || '0');
+                touchDragState.ghostEl.style.left = `${touch.clientX - offsetX}px`;
+                touchDragState.ghostEl.style.top = `${touch.clientY - offsetY}px`;
+            }
+
+            highlightDropColumnAtPoint(touch.clientX, touch.clientY);
+        }, { passive: false });
+
+        const finishTouch = async () => {
+            if (touchDragState.active && touchDragState.leadIndex !== null && touchDragState.targetStageId) {
+                const idx = touchDragState.leadIndex;
+                const newStage = touchDragState.targetStageId;
+                clearTouchDragState();
+                if (leadsData[idx]) {
+                    leadsData[idx].stage = newStage;
+                    await saveAndRenderLeads();
+                }
+                return;
+            }
+            clearTouchDragState();
+        };
+
+        card.addEventListener('touchend', finishTouch);
+        card.addEventListener('touchcancel', clearTouchDragState);
+    });
+}
+
 function renderKanbanBoard() {
     hydrateKanbanLeads();
     const board = document.getElementById('kanbanBoard');
@@ -230,7 +428,7 @@ function renderKanbanBoard() {
         columnLeads.forEach((lead) => {
             const originalIndex = leadsData.indexOf(lead);
             cardsHtml += `
-                <div class="kanban-card" draggable="true" ondragstart="dragKanbanCard(event, ${originalIndex})">
+                <div class="kanban-card" data-lead-index="${originalIndex}" draggable="true" ondragstart="dragKanbanCard(event, ${originalIndex})" style="touch-action: pan-x pan-y;">
                     <div class="kanban-card-title">${escapeHtml(lead.name)}</div>
                     <div class="kanban-card-service">${escapeHtml(lead.service || 'Serviço')}</div>
                     <div style="font-size: 0.75rem; color: var(--text-muted);">Contato: ${escapeHtml(lead.contact || 'N/A')}</div>
@@ -246,7 +444,7 @@ function renderKanbanBoard() {
         });
 
         boardHtml += `
-            <div class="kanban-column" ondragover="allowDrop(event)" ondrop="dropKanbanCard(event, '${stage.id}')">
+            <div class="kanban-column" data-stage-id="${stage.id}" ondragover="allowDrop(event)" ondrop="dropKanbanCard(event, '${stage.id}')">
                 <div class="kanban-column-header">
                     <span>${stage.name}</span>
                     <span class="kanban-column-count">${columnLeads.length}</span>
@@ -264,6 +462,9 @@ function renderKanbanBoard() {
     if (totalEl) {
         totalEl.innerText = `Pipeline Ativo: R$ ${totalPipeline.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
     }
+
+    applyResponsiveKanbanLayout();
+    bindTouchDragEvents(board);
 }
 
 let draggedLeadIndex = null;
