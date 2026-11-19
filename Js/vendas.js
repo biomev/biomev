@@ -87,6 +87,7 @@ function applyResponsiveLeadsLayout() {
     }
 
     if (wrapper && table) {
+        const cells = table.querySelectorAll('th, td');
         if (isMobile) {
             wrapper.style.setProperty('width', '100%', 'important');
             wrapper.style.setProperty('max-width', '100%', 'important');
@@ -96,15 +97,25 @@ function applyResponsiveLeadsLayout() {
             table.style.setProperty('display', 'table', 'important');
             table.style.setProperty('width', '980px', 'important');
             table.style.setProperty('min-width', '980px', 'important');
+            table.style.setProperty('table-layout', 'auto', 'important');
         } else {
             wrapper.style.setProperty('width', '100%', 'important');
             wrapper.style.setProperty('max-width', '100%', 'important');
-            wrapper.style.setProperty('overflow-x', 'auto', 'important');
+            wrapper.style.setProperty('overflow-x', 'hidden', 'important');
             wrapper.style.setProperty('border-radius', '16px', 'important');
 
             table.style.setProperty('display', 'table', 'important');
             table.style.setProperty('width', '100%', 'important');
             table.style.setProperty('min-width', '100%', 'important');
+            table.style.setProperty('max-width', '100%', 'important');
+            table.style.setProperty('table-layout', 'fixed', 'important');
+
+            cells.forEach(cell => {
+                cell.style.setProperty('min-width', '0', 'important');
+                cell.style.setProperty('width', 'auto', 'important');
+                cell.style.setProperty('padding', '10px 8px', 'important');
+                cell.style.setProperty('word-break', 'break-word', 'important');
+            });
         }
     }
 
@@ -157,28 +168,30 @@ function renderLeadsTable() {
     if (!tbody) return;
     tbody.innerHTML = '';
 
+    const isMobile = window.innerWidth <= 768;
+
     leadsData.forEach((lead, index) => {
         const statusClass = calculateLeadStatus(lead.nextContact);
         const tr = document.createElement('tr');
         tr.innerHTML = `
-            <td style="min-width: 150px; padding: 12px 14px;"><input type="text" value="${escapeHtml(lead.name)}" onchange="updateLead(${index}, 'name', this.value)"></td>
-            <td style="min-width: 130px; padding: 12px 14px;"><input type="date" value="${lead.date || ''}" onchange="updateLead(${index}, 'date', this.value)"></td>
-            <td style="min-width: 150px; padding: 12px 14px;"><input type="text" value="${escapeHtml(lead.service)}" onchange="updateLead(${index}, 'service', this.value)"></td>
-            <td style="min-width: 140px; padding: 12px 14px;"><input type="text" value="${escapeHtml(lead.contact)}" onchange="updateLead(${index}, 'contact', this.value)"></td>
-            <td style="min-width: 130px; padding: 12px 14px;"><input type="date" value="${lead.lastContact || ''}" onchange="updateLead(${index}, 'lastContact', this.value)"></td>
-            <td style="min-width: 140px; padding: 12px 18px 12px 14px;"><input type="date" value="${lead.nextContact || ''}" onchange="updateLead(${index}, 'nextContact', this.value)"></td>
-            <td style="min-width: 220px; padding: 12px 20px;">
+            <td style="${isMobile ? 'min-width: 150px; padding: 12px 14px;' : 'padding: 10px 8px;'}"><input type="text" value="${escapeHtml(lead.name)}" onchange="updateLead(${index}, 'name', this.value)"></td>
+            <td style="${isMobile ? 'min-width: 130px; padding: 12px 14px;' : 'padding: 10px 8px;'}"><input type="date" value="${lead.date || ''}" onchange="updateLead(${index}, 'date', this.value)"></td>
+            <td style="${isMobile ? 'min-width: 150px; padding: 12px 14px;' : 'padding: 10px 8px;'}"><input type="text" value="${escapeHtml(lead.service)}" onchange="updateLead(${index}, 'service', this.value)"></td>
+            <td style="${isMobile ? 'min-width: 140px; padding: 12px 14px;' : 'padding: 10px 8px;'}"><input type="text" value="${escapeHtml(lead.contact)}" onchange="updateLead(${index}, 'contact', this.value)"></td>
+            <td style="${isMobile ? 'min-width: 130px; padding: 12px 14px;' : 'padding: 10px 8px;'}"><input type="date" value="${lead.lastContact || ''}" onchange="updateLead(${index}, 'lastContact', this.value)"></td>
+            <td style="${isMobile ? 'min-width: 140px; padding: 12px 18px 12px 14px;' : 'padding: 10px 8px;'}"><input type="date" value="${lead.nextContact || ''}" onchange="updateLead(${index}, 'nextContact', this.value)"></td>
+            <td style="${isMobile ? 'min-width: 220px; padding: 12px 20px;' : 'padding: 10px 8px;'}">
                 <div style="display: flex; flex-direction: column; gap: 6px; align-items: flex-start;">
-                    <select style="width: 100%; min-width: 170px;" onchange="updateLead(${index}, 'type', this.value)">
+                    <select style="width: 100%; ${isMobile ? 'min-width: 170px;' : 'min-width: 0;'}" onchange="updateLead(${index}, 'type', this.value)">
                         <option value="Follow-up" ${lead.type === 'Follow-up' ? 'selected' : ''}>Follow-up</option>
                         <option value="Cliente sem retorno" ${lead.type === 'Cliente sem retorno' ? 'selected' : ''}>Cliente sem retorno</option>
                         <option value="Reativação de clientes" ${lead.type === 'Reativação de clientes' ? 'selected' : ''}>Reativação de clientes</option>
                     </select>
-                    <span class="status-badge ${statusClass.class}" style="white-space: nowrap;">${statusClass.text}</span>
+                    <span class="status-badge ${statusClass.class}" style="white-space: nowrap; max-width: 100%; overflow: hidden; text-overflow: ellipsis;">${statusClass.text}</span>
                 </div>
             </td>
-            <td style="min-width: 100px; padding: 12px 14px; text-align: center;">
-                <button type="button" class="btn-delete-row" style="position: static; display: inline-flex; align-items: center; justify-content: center; padding: 7px 12px; border-radius: 8px; background: #fee2e2; color: #dc2626; font-size: 0.78rem; font-weight: 700; white-space: nowrap;" onclick="deleteLeadRow(${index})">Excluir</button>
+            <td style="${isMobile ? 'min-width: 100px; padding: 12px 14px;' : 'padding: 10px 8px;'} text-align: center;">
+                <button type="button" class="btn-delete-row" style="position: static; display: inline-flex; align-items: center; justify-content: center; padding: 6px 10px; border-radius: 8px; background: #fee2e2; color: #dc2626; font-size: 0.75rem; font-weight: 700; white-space: nowrap;" onclick="deleteLeadRow(${index})">Excluir</button>
             </td>
         `;
         tbody.appendChild(tr);
