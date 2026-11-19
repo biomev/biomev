@@ -13,7 +13,10 @@ function updateTemplateText() {
     const hours = document.getElementById('eventHours').value;
 
     let text = `${role} ${type} "${name}", realizada em ${date}, com carga horária total de ${hours} horas.`;
-    document.getElementById('certDetails').value = text;
+    const detailsEl = document.getElementById('certDetails') || document.getElementById('certTextEdit');
+    if (detailsEl) {
+        detailsEl.value = text;
+    }
 }
 
 let customNamePosY = 360;
@@ -61,7 +64,8 @@ function renderCertificate() {
     ctx.fillText(studentName, canvas.width / 2, customNamePosY);
 
     // Texto descritivo (Cor: #002747, Poppins, com tamanho dinâmico)
-    const details = document.getElementById('certDetails').value;
+    const detailsEl = document.getElementById('certDetails') || document.getElementById('certTextEdit');
+    const details = detailsEl ? detailsEl.value : "";
     const textFontSize = document.getElementById('textFontSize').value || 24;
     const lineHeight = parseInt(textFontSize) + 12;
 
