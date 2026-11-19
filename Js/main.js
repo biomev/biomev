@@ -222,7 +222,7 @@ function compressImage(file, callback) {
     reader.readAsDataURL(file);
 }
 
-function openTab(tabName) {
+function openTab(tabName, triggerBtn = null) {
     currentActiveTab = tabName;
     const contents = document.querySelectorAll('.tab-content');
     const buttons = document.querySelectorAll('.tab-button');
@@ -246,8 +246,9 @@ function openTab(tabName) {
     const targetTab = document.getElementById(tabName);
     if (targetTab) targetTab.classList.add('active');
 
-    if (event && event.currentTarget) {
-        event.currentTarget.classList.add('active');
+    const activeBtn = triggerBtn || document.querySelector(`.tab-button.${tabName}-tab`);
+    if (activeBtn) {
+        activeBtn.classList.add('active');
     }
 
     if (tabName === 'marketing') {
@@ -356,6 +357,7 @@ async function createFolder(sectionTheme) {
 function renderFoldersGrid(sectionTheme) {
     let containerId = sectionTheme === 'marketing' ? 'foldersContainerMkt' : 'foldersContainerVds';
     const container = document.getElementById(containerId);
+    if (!container) return;
 
     let keys = Object.keys(knowledgeData).filter(k => k.startsWith(currentKnowledgeSection));
 
@@ -469,6 +471,7 @@ function handleFileUpload(event, sectionTheme) {
 function renderFilesInFolder(sectionTheme) {
     let containerId = sectionTheme === 'marketing' ? 'filesContainerMkt' : 'filesContainerVds';
     const container = document.getElementById(containerId);
+    if (!container) return;
     let files = knowledgeData[activeOpenFolderKey] || [];
 
     if (files.length === 0) {
@@ -520,7 +523,7 @@ function renderFilteredCalendar(gridId, eventClass, calendarType) {
 
     const now = new Date();
     const year = now.getFullYear();
-    const month = now.getMonth() + 1; // 1 a 12
+    const month = now.getMonth() + 1;
     const daysInMonth = new Date(year, month, 0).getDate();
     const monthStr = month < 10 ? '0' + month : String(month);
 
@@ -594,33 +597,40 @@ function renderFilteredCalendar(gridId, eventClass, calendarType) {
 
 function openCalendarEventModal(dateStr) {
     selectedCalendarDate = dateStr;
-    document.getElementById('calModalTitle').innerText = `Adicionar em ${dateStr} (${currentActiveTab.toUpperCase()})`;
-    document.getElementById('calTaskTitle').value = "";
-    document.getElementById('calTaskDesc').value = "";
+    const titleEl = document.getElementById('calModalTitle');
+    if (titleEl) titleEl.innerText = `Adicionar em ${dateStr} (${currentActiveTab.toUpperCase()})`;
+    const taskTitleEl = document.getElementById('calTaskTitle');
+    if (taskTitleEl) taskTitleEl.value = "";
+    const taskDescEl = document.getElementById('calTaskDesc');
+    if (taskDescEl) taskDescEl.value = "";
 
     const select = document.getElementById('calTaskMember');
-    let allowedMembers = teamMembers.filter(m => {
-        if (currentUser.role === 'Diretor de Marketing e Vendas') return true;
-        if (currentActiveTab === 'marketing' && (m.role === 'Gerente de Marketing' || m.role === 'Diretor de Marketing e Vendas')) return true;
-        if (currentActiveTab === 'vendas' && (m.role === 'Gerente de Vendas' || m.role === 'Diretor de Marketing e Vendas')) return true;
-        return false;
-    });
-
-    if (allowedMembers.length === 0) {
-        select.innerHTML = `<option value="">Nenhum membro compatível com este setor</option>`;
-    } else {
-        let opts = '';
-        allowedMembers.forEach(m => {
-            opts += `<option value="${m.name}">${m.name} (${m.role})</option>`;
+    if (select) {
+        let allowedMembers = teamMembers.filter(m => {
+            if (currentUser.role === 'Diretor de Marketing e Vendas') return true;
+            if (currentActiveTab === 'marketing' && (m.role === 'Gerente de Marketing' || m.role === 'Diretor de Marketing e Vendas')) return true;
+            if (currentActiveTab === 'vendas' && (m.role === 'Gerente de Vendas' || m.role === 'Diretor de Marketing e Vendas')) return true;
+            return false;
         });
-        select.innerHTML = opts;
+
+        if (allowedMembers.length === 0) {
+            select.innerHTML = `<option value="">Nenhum membro compatível com este setor</option>`;
+        } else {
+            let opts = '';
+            allowedMembers.forEach(m => {
+                opts += `<option value="${m.name}">${m.name} (${m.role})</option>`;
+            });
+            select.innerHTML = opts;
+        }
     }
 
-    document.getElementById('calEventModal').classList.add('active');
+    const modal = document.getElementById('calEventModal');
+    if (modal) modal.classList.add('active');
 }
 
 function closeCalendarModal() {
-    document.getElementById('calEventModal').classList.remove('active');
+    const modal = document.getElementById('calEventModal');
+    if (modal) modal.classList.remove('active');
 }
 
 async function saveCalendarTask() {
@@ -716,29 +726,32 @@ async function handleProfileClick() {
 
 function openSelectProfileModal() {
     const list = document.getElementById('selectProfileList');
-    if (!list) return;
-    let html = '';
-    teamMembers.forEach(m => {
-        let avatarHtml = m.photo ? `<img src="${m.photo}" alt="Foto" style="width:36px; height:36px; border-radius:50%; object-fit:cover; margin-right:10px;">` : `<div style="width:36px; height:36px; border-radius:50%; background:var(--vanilla); display:flex; align-items:center; justify-content:center; font-weight:bold; font-size:0.8rem; margin-right:10px;">${m.name.substring(0, 2).toUpperCase()}</div>`;
-        html += `
-            <div class="team-member-row" style="cursor: pointer; display:flex; align-items:center;" onclick="promptProfilePassword(${m.id})">
-                ${avatarHtml}
-                <div class="team-member-header-info" style="flex:1;">
-                    <div class="team-member-info">
-                        <h4>${m.name}</h4>
-                        <p>${m.role}</p>
+    if (list) {
+        let html = '';
+        teamMembers.forEach(m => {
+            let avatarHtml = m.photo ? `<img src="${m.photo}" alt="Foto" style="width:36px; height:36px; border-radius:50%; object-fit:cover; margin-right:10px;">` : `<div style="width:36px; height:36px; border-radius:50%; background:var(--vanilla); display:flex; align-items:center; justify-content:center; font-weight:bold; font-size:0.8rem; margin-right:10px;">${m.name.substring(0, 2).toUpperCase()}</div>`;
+            html += `
+                <div class="team-member-row" style="cursor: pointer; display:flex; align-items:center;" onclick="promptProfilePassword(${m.id})">
+                    ${avatarHtml}
+                    <div class="team-member-header-info" style="flex:1;">
+                        <div class="team-member-info">
+                            <h4>${m.name}</h4>
+                            <p>${m.role}</p>
+                        </div>
+                        <button type="button" class="btn-small-action">Entrar</button>
                     </div>
-                    <button class="btn-small-action">Entrar</button>
                 </div>
-            </div>
-        `;
-    });
-    list.innerHTML = html;
-    document.getElementById('selectProfileModal').classList.add('active');
+            `;
+        });
+        list.innerHTML = html;
+    }
+    const modal = document.getElementById('selectProfileModal');
+    if (modal) modal.classList.add('active');
 }
 
 function toggleSelectProfileModal(show) {
     const modal = document.getElementById('selectProfileModal');
+    if (!modal) return;
     if (show) modal.classList.add('active');
     else modal.classList.remove('active');
 }
@@ -746,14 +759,18 @@ function toggleSelectProfileModal(show) {
 function promptProfilePassword(memberId) {
     pendingLoginMemberId = memberId;
     let member = teamMembers.find(m => m.id === memberId);
-    document.getElementById('loginProfileTitle').innerText = `Senha para: ${member.name}`;
-    document.getElementById('loginPasswordInput').value = "";
+    const titleEl = document.getElementById('loginProfileTitle');
+    if (titleEl && member) titleEl.innerText = `Senha para: ${member.name}`;
+    const passInput = document.getElementById('loginPasswordInput');
+    if (passInput) passInput.value = "";
     toggleSelectProfileModal(false);
-    document.getElementById('passwordModal').classList.add('active');
+    const modal = document.getElementById('passwordModal');
+    if (modal) modal.classList.add('active');
 }
 
 function closePasswordModal() {
-    document.getElementById('passwordModal').classList.remove('active');
+    const modal = document.getElementById('passwordModal');
+    if (modal) modal.classList.remove('active');
     openSelectProfileModal();
 }
 
@@ -774,7 +791,8 @@ async function verifyProfilePassword() {
 
         saveSessionLocal();
         updateHeaderAvatar(member.name, member.photo);
-        document.getElementById('passwordModal').classList.remove('active');
+        const modal = document.getElementById('passwordModal');
+        if (modal) modal.classList.remove('active');
         showProfileView();
         updateNotifDot();
     }
@@ -786,22 +804,34 @@ function openRegisterModalFromSelect() {
 }
 
 function openRegisterModal() {
-    document.getElementById('authModalTitle').innerText = "Cadastre-se no Painel";
-    document.getElementById('passwordLabel').innerText = "Senha de Acesso";
-    document.getElementById('inputName').value = "";
-    document.getElementById('inputRole').value = "Gerente de Marketing";
-    document.getElementById('inputPassword').value = "";
-    document.getElementById('inputPhotoFile').value = "";
+    const titleEl = document.getElementById('authModalTitle');
+    if (titleEl) titleEl.innerText = "Cadastre-se no Painel";
+    const passLabel = document.getElementById('passwordLabel');
+    if (passLabel) passLabel.innerText = "Senha de Acesso";
+    const nameEl = document.getElementById('inputName');
+    if (nameEl) nameEl.value = "";
+    const roleEl = document.getElementById('inputRole');
+    if (roleEl) roleEl.value = "Gerente de Marketing";
+    const passEl = document.getElementById('inputPassword');
+    if (passEl) passEl.value = "";
+    const photoEl = document.getElementById('inputPhotoFile');
+    if (photoEl) photoEl.value = "";
     toggleAuthModal(true);
 }
 
 function openEditProfileModal() {
-    document.getElementById('authModalTitle').innerText = "Editar Perfil";
-    document.getElementById('passwordLabel').innerText = "Mudar Senha";
-    document.getElementById('inputName').value = currentUser.name;
-    document.getElementById('inputRole').value = currentUser.role;
-    document.getElementById('inputPassword').value = currentUser.password || "";
-    document.getElementById('inputPhotoFile').value = "";
+    const titleEl = document.getElementById('authModalTitle');
+    if (titleEl) titleEl.innerText = "Editar Perfil";
+    const passLabel = document.getElementById('passwordLabel');
+    if (passLabel) passLabel.innerText = "Mudar Senha";
+    const nameEl = document.getElementById('inputName');
+    if (nameEl) nameEl.value = currentUser.name;
+    const roleEl = document.getElementById('inputRole');
+    if (roleEl) roleEl.value = currentUser.role;
+    const passEl = document.getElementById('inputPassword');
+    if (passEl) passEl.value = currentUser.password || "";
+    const photoEl = document.getElementById('inputPhotoFile');
+    if (photoEl) photoEl.value = "";
     toggleAuthModal(true);
 }
 
@@ -935,11 +965,13 @@ function openAddTaskModal() {
     });
     select.innerHTML = opts;
 
-    document.getElementById('taskModal').classList.add('active');
+    const modal = document.getElementById('taskModal');
+    if (modal) modal.classList.add('active');
 }
 
 function toggleTaskModal(show) {
     const modal = document.getElementById('taskModal');
+    if (!modal) return;
     if (show) modal.classList.add('active');
     else modal.classList.remove('active');
 }
@@ -972,7 +1004,7 @@ function renderTasksGrid() {
                             </div>
                             <div class="task-square-footer">
                                 <span class="task-status-pill">${t.status}</span>
-                                <button style="background:none; border:none; cursor:pointer; font-size:0.75rem; color:#166534; font-weight:700;" onclick="completeTask(${idx})">Concluir</button>
+                                <button type="button" style="background:none; border:none; cursor:pointer; font-size:0.75rem; color:#166534; font-weight:700;" onclick="completeTask(${idx})">Concluir</button>
                             </div>
                         </div>
                     `;
@@ -1000,7 +1032,7 @@ function renderTasksGrid() {
                             </div>
                             <div class="task-square-footer">
                                 <span class="task-status-pill" style="background:#dcfce7; color:#166534;">Concluída</span>
-                                <button style="background:none; border:none; cursor:pointer; font-size:0.75rem; color:#e74c3c; font-weight:700;" onclick="deleteCompletedTask(${idx})">Apagar</button>
+                                <button type="button" style="background:none; border:none; cursor:pointer; font-size:0.75rem; color:#e74c3c; font-weight:700;" onclick="deleteCompletedTask(${idx})">Apagar</button>
                             </div>
                         </div>
                     `;
@@ -1032,42 +1064,46 @@ async function deleteCompletedTask(index) {
 
 function openTeamModal() {
     const list = document.getElementById('teamMemberList');
-    if (teamMembers.length === 0) {
-        list.innerHTML = `<p style="font-size:0.85rem; color:var(--text-muted);">Nenhum membro cadastrado.</p>`;
-    } else {
-        let html = '';
-        teamMembers.forEach(m => {
-            let btnBg = "var(--glaucous)";
-            let btnColor = "#ffffff";
-            if (m.role === 'Gerente de Vendas') {
-                btnBg = "var(--moss-green)";
-            } else if (m.role === 'Diretor de Marketing e Vendas') {
-                btnBg = "var(--vanilla)";
-                btnColor = "#5c5314";
-            }
+    if (list) {
+        if (teamMembers.length === 0) {
+            list.innerHTML = `<p style="font-size:0.85rem; color:var(--text-muted);">Nenhum membro cadastrado.</p>`;
+        } else {
+            let html = '';
+            teamMembers.forEach(m => {
+                let btnBg = "var(--glaucous)";
+                let btnColor = "#ffffff";
+                if (m.role === 'Gerente de Vendas') {
+                    btnBg = "var(--moss-green)";
+                } else if (m.role === 'Diretor de Marketing e Vendas') {
+                    btnBg = "var(--vanilla)";
+                    btnColor = "#5c5314";
+                }
 
-            let avatarHtml = m.photo ? `<img src="${m.photo}" alt="Foto" style="width:32px; height:32px; border-radius:50%; object-fit:cover; margin-right:8px;">` : '';
+                let avatarHtml = m.photo ? `<img src="${m.photo}" alt="Foto" style="width:32px; height:32px; border-radius:50%; object-fit:cover; margin-right:8px;">` : '';
 
-            html += `
-                <div class="team-member-row">
-                    <div class="team-member-header-info" style="display:flex; align-items:center;">
-                        ${avatarHtml}
-                        <div class="team-member-info" style="flex:1;">
-                            <h4>${m.name}</h4>
-                            <p>${m.role}</p>
+                html += `
+                    <div class="team-member-row">
+                        <div class="team-member-header-info" style="display:flex; align-items:center;">
+                            ${avatarHtml}
+                            <div class="team-member-info" style="flex:1;">
+                                <h4>${m.name}</h4>
+                                <p>${m.role}</p>
+                            </div>
+                            <button type="button" class="btn-small-action" style="background-color: ${btnBg}; color: ${btnColor};" onclick="openMemberAction(${m.id})">Gerenciar</button>
                         </div>
-                        <button class="btn-small-action" style="background-color: ${btnBg}; color: ${btnColor};" onclick="openMemberAction(${m.id})">Gerenciar</button>
                     </div>
-                </div>
-            `;
-        });
-        list.innerHTML = html;
+                `;
+            });
+            list.innerHTML = html;
+        }
     }
-    document.getElementById('teamModal').classList.add('active');
+    const modal = document.getElementById('teamModal');
+    if (modal) modal.classList.add('active');
 }
 
 function toggleTeamModal(show) {
     const modal = document.getElementById('teamModal');
+    if (!modal) return;
     if (show) modal.classList.add('active');
     else modal.classList.remove('active');
 }
@@ -1082,11 +1118,13 @@ function openMemberAction(memberId) {
     document.getElementById('memberTaskDate').value = "";
 
     renderMemberTasksInModal();
-    document.getElementById('memberActionModal').classList.add('active');
+    const modal = document.getElementById('memberActionModal');
+    if (modal) modal.classList.add('active');
 }
 
 function closeMemberActionModal() {
-    document.getElementById('memberActionModal').classList.remove('active');
+    const modal = document.getElementById('memberActionModal');
+    if (modal) modal.classList.remove('active');
     openTeamModal();
 }
 
@@ -1137,7 +1175,7 @@ function renderMemberTasksInModal() {
                     <h5 style="font-size:0.85rem; font-weight:700; color:var(--text-dark);">${t.title} (${t.date})</h5>
                     <p style="font-size:0.75rem; color:var(--text-muted);">${t.desc}</p>
                 </div>
-                <button style="background:none; border:none; cursor:pointer; font-size:0.75rem; color:#e74c3c; font-weight:700;" onclick="removeMemberTaskFromModal(${idx})">Remover</button>
+                <button type="button" style="background:none; border:none; cursor:pointer; font-size:0.75rem; color:#e74c3c; font-weight:700;" onclick="removeMemberTaskFromModal(${idx})">Remover</button>
             </div>
         `;
     });
@@ -1240,21 +1278,26 @@ async function openNotificationsModal() {
     const list = document.getElementById('notificationsList');
 
     if (!currentUser || !currentUser.isLoggedIn) {
-        list.innerHTML = `<p style="font-size:0.85rem; color:var(--text-muted); text-align:center;">Faça login para ver suas notificações.</p>`;
-        document.getElementById('notificationsModal').classList.add('active');
+        if (list) {
+            list.innerHTML = `<p style="font-size:0.85rem; color:var(--text-muted); text-align:center;">Faça login para ver suas notificações.</p>`;
+        }
+        const modal = document.getElementById('notificationsModal');
+        if (modal) modal.classList.add('active');
         return;
     }
 
     const myNotifs = getNotificationsForCurrentUser();
 
-    if (myNotifs.length === 0) {
-        list.innerHTML = `<p style="font-size:0.85rem; color:var(--text-muted); text-align:center;">Nenhuma notificação.</p>`;
-    } else {
-        let html = '';
-        myNotifs.forEach(n => {
-            html += `<div style="background:#f8fafc; border:1px solid #e2e8f0; padding:10px; border-radius:12px; font-size:0.8rem; margin-bottom: 8px;"><p style="font-weight:700;">${n.text}</p><span style="font-size:0.7rem; color:var(--text-muted);">${n.time}</span></div>`;
-        });
-        list.innerHTML = html;
+    if (list) {
+        if (myNotifs.length === 0) {
+            list.innerHTML = `<p style="font-size:0.85rem; color:var(--text-muted); text-align:center;">Nenhuma notificação.</p>`;
+        } else {
+            let html = '';
+            myNotifs.forEach(n => {
+                html += `<div style="background:#f8fafc; border:1px solid #e2e8f0; padding:10px; border-radius:12px; font-size:0.8rem; margin-bottom: 8px;"><p style="font-weight:700;">${n.text}</p><span style="font-size:0.7rem; color:var(--text-muted);">${n.time}</span></div>`;
+            });
+            list.innerHTML = html;
+        }
     }
 
     let changed = false;
@@ -1276,7 +1319,8 @@ async function openNotificationsModal() {
         dot.textContent = '';
     }
 
-    document.getElementById('notificationsModal').classList.add('active');
+    const modal = document.getElementById('notificationsModal');
+    if (modal) modal.classList.add('active');
 }
 
 function toggleNotificationsModal(show) {
@@ -1298,5 +1342,3 @@ document.addEventListener("DOMContentLoaded", async () => {
         await loadFromCloud(false);
     }, 5000);
 });
-
-// Atualizado em: 2026-11-17
