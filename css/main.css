@@ -1125,3 +1125,125 @@ body {
         padding-bottom: 20px !important;
     }
 }
+
+/* ==========================================
+   CORREÇÃO DEFINITIVA DA PLANILHA DE VENDAS NO MOBILE (SEM CORTAR O RESTO)
+   ========================================== */
+@media (max-width: 768px) {
+    #tool-pipeline-leads {
+        width: 100% !important;
+        max-width: 100% !important;
+        padding: 16px 10px !important;
+        box-sizing: border-box !important;
+        overflow-x: hidden !important;
+    }
+
+    /* Evita que título grande e botão "+ Adicionar Novo Cliente" encostem */
+    #tool-pipeline-leads .section-header-row {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        gap: 12px !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+    }
+
+    #tool-pipeline-leads .section-header-row h2 {
+        font-size: 1.2rem !important;
+        line-height: 1.25 !important;
+        margin: 0 !important;
+        flex: 1 1 170px !important;
+    }
+
+    /* Container com rolagem lateral suave e cantos arredondados reais */
+    .table-scroll-wrapper,
+    #tool-pipeline-leads>div[style*="overflow-x"] {
+        width: 100% !important;
+        max-width: 100% !important;
+        overflow-x: auto !important;
+        overflow-y: hidden !important;
+        -webkit-overflow-scrolling: touch !important;
+        display: block !important;
+        border-radius: 16px !important;
+        background: #ffffff !important;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06) !important;
+        padding-bottom: 0 !important;
+    }
+
+    /* Tabela real (display: table) para preservar bordas e evitar sobreposição */
+    #tool-pipeline-leads .excel-table,
+    .excel-table {
+        display: table !important;
+        width: 980px !important;
+        min-width: 980px !important;
+        max-width: none !important;
+        overflow: visible !important;
+        white-space: nowrap !important;
+        border-radius: 0 !important;
+        box-shadow: none !important;
+        border-collapse: collapse !important;
+    }
+
+    #tool-pipeline-leads .excel-table thead,
+    .excel-table thead {
+        display: table-header-group !important;
+    }
+
+    #tool-pipeline-leads .excel-table tbody,
+    .excel-table tbody {
+        display: table-row-group !important;
+    }
+
+    #tool-pipeline-leads .excel-table tr,
+    .excel-table tr {
+        display: table-row !important;
+    }
+
+    #tool-pipeline-leads .excel-table th,
+    #tool-pipeline-leads .excel-table td,
+    .excel-table th,
+    .excel-table td {
+        display: table-cell !important;
+        padding: 10px 10px !important;
+        font-size: 0.78rem !important;
+        white-space: nowrap !important;
+        vertical-align: middle !important;
+    }
+
+    /* Espaço seguro para Característica / Status (coluna 7) e Ações (coluna 8) */
+    #tool-pipeline-leads .excel-table th:nth-child(7),
+    #tool-pipeline-leads .excel-table td:nth-child(7) {
+        min-width: 220px !important;
+        width: 220px !important;
+    }
+
+    #tool-pipeline-leads .excel-table th:nth-child(8),
+    #tool-pipeline-leads .excel-table td:nth-child(8) {
+        min-width: 95px !important;
+        width: 95px !important;
+        text-align: center !important;
+    }
+
+    #tool-pipeline-leads .excel-table input,
+    #tool-pipeline-leads .excel-table select,
+    .excel-table input,
+    .excel-table select {
+        min-width: 0 !important;
+        width: 100% !important;
+        font-size: 0.78rem !important;
+        padding: 6px 8px !important;
+    }
+
+    #tool-pipeline-leads .btn-delete-row,
+    .btn-delete-row {
+        display: inline-block !important;
+        width: auto !important;
+        padding: 6px 10px !important;
+        font-size: 0.75rem !important;
+        background: #fee2e2 !important;
+        color: #dc2626 !important;
+        border-radius: 8px !important;
+        white-space: nowrap !important;
+    }
+}
+
+s
