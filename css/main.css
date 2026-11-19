@@ -912,3 +912,33 @@ body {
         white-space: nowrap !important;
     }
 }
+
+/* Remove o destaque/quadrado azul ao tocar em elementos no mobile */
+* {
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* Evita que nome/cargo encostem no botão "Entrar" ou "Gerenciar" */
+.team-member-header-info {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 14px !important;
+    width: 100%;
+}
+
+.team-member-info {
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+}
+
+.team-member-info h4,
+.team-member-info p {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+.team-member-header-info .btn-small-action {
+    flex-shrink: 0 !important;
+    margin-left: auto;
+}
