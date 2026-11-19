@@ -369,3 +369,52 @@
         display: inline-block !important;
     }
 }
+
+/* ==========================================
+   VACINA DEFINITIVA MOBILE (TABELA E TÍTULO)
+   ========================================== */
+@media (max-width: 768px) {
+
+    /* Diminui o título "Planilha de Clientes e Contatos" para não encostar no botão */
+    #vendas #tool-pipeline-leads h2 {
+        font-size: 1.25rem !important;
+        line-height: 1.2 !important;
+        max-width: 55% !important;
+    }
+
+    /* Obriga o container da tabela a rolar horizontalmente */
+    #vendas #tool-pipeline-leads>div {
+        width: 100% !important;
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+        display: block !important;
+    }
+
+    /* Obriga a tabela a ser uma TABELA real e anula qualquer 'display: block' perdido */
+    #vendas #tool-pipeline-leads table.excel-table {
+        display: table !important;
+        width: 850px !important;
+        min-width: 850px !important;
+        border-collapse: collapse !important;
+    }
+
+    #vendas #tool-pipeline-leads table.excel-table thead {
+        display: table-header-group !important;
+    }
+
+    #vendas #tool-pipeline-leads table.excel-table tbody {
+        display: table-row-group !important;
+    }
+
+    #vendas #tool-pipeline-leads table.excel-table tr {
+        display: table-row !important;
+    }
+
+    #vendas #tool-pipeline-leads table.excel-table th,
+    #vendas #tool-pipeline-leads table.excel-table td {
+        display: table-cell !important;
+        white-space: nowrap !important;
+        padding: 10px 8px !important;
+        width: auto !important;
+    }
+}
