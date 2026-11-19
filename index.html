@@ -13,11 +13,11 @@
     <script src="https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js"></script>
 
     <!-- CSS Modulares -->
-    <link rel="stylesheet" href="css/main.css?v=24">
-    <link rel="stylesheet" href="css/header.css?v=24">
-    <link rel="stylesheet" href="css/marketing.css?v=24">
-    <link rel="stylesheet" href="css/vendas.css?v=24">
-    <link rel="stylesheet" href="css/perfil.css?v=24">
+    <link rel="stylesheet" href="css/main.css?v=26">
+    <link rel="stylesheet" href="css/header.css?v=26">
+    <link rel="stylesheet" href="css/marketing.css?v=26">
+    <link rel="stylesheet" href="css/vendas.css?v=26">
+    <link rel="stylesheet" href="css/perfil.css?v=26">
     <!-- Ícone padrão para a aba do navegador (Favicon) -->
     <link rel="icon" type="image/jpeg" href="imagens/logo-biomev.jpeg">
     <!-- Ícone para dispositivos Apple (iPhone/iPad) ao salvar na Tela Inicial -->
@@ -56,6 +56,49 @@
         .biomev-header-top .notification-btn-minimal svg {
             pointer-events: none !important;
         }
+
+        .modal-field-group {
+            margin-bottom: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .modal-field-group label {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .modal-field-group input,
+        .modal-field-group select,
+        .modal-field-group textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            color: var(--text-dark);
+            background: #f8fafc;
+        }
+
+        .modal-actions-row {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 18px;
+        }
+
+        .btn-modal-secondary {
+            background: #e2e8f0;
+            color: var(--text-dark);
+            border: none;
+            padding: 10px 16px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+        }
     </style>
 </head>
 
@@ -87,8 +130,8 @@
         <!-- Navegação de Abas -->
         <nav class="tab-nav" id="mainTabNav">
             <button type="button" class="tab-button marketing-tab active"
-                onclick="openTab('marketing')">Marketing</button>
-            <button type="button" class="tab-button vendas-tab" onclick="openTab('vendas')">Vendas</button>
+                onclick="openTab('marketing', this)">Marketing</button>
+            <button type="button" class="tab-button vendas-tab" onclick="openTab('vendas', this)">Vendas</button>
         </nav>
 
         <main>
@@ -255,8 +298,7 @@
                 <!-- Gestão de Conhecimento Marketing -->
                 <div id="tool-knowledge-marketing" class="tool-container">
                     <button type="button" class="tool-header-back" onclick="closeKnowledgeTool('marketing')">Voltar para
-                        o
-                        Painel</button>
+                        o Painel</button>
                     <h2 id="knowledgeTitleMkt"
                         style="font-size: 1.6rem; font-weight: 700; color: var(--vanilla); margin-bottom: 24px;">Gestão
                         de Conhecimento</h2>
@@ -406,8 +448,7 @@
                     <div
                         style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
                         <button type="button" class="tool-header-back" style="margin-bottom:0;"
-                            onclick="closeKanbanTool()">Voltar
-                            para as Ferramentas</button>
+                            onclick="closeKanbanTool()">Voltar para as Ferramentas</button>
                         <div style="display: flex; gap: 12px; align-items: center;">
                             <span id="pipelineTotalValue"
                                 style="font-weight: 700; color: var(--moss-green); background: var(--vanilla); padding: 8px 14px; border-radius: 12px; font-size: 0.9rem;">Pipeline:
@@ -491,19 +532,189 @@
     </div>
 
     <!-- MODAIS NECESSÁRIOS -->
-    <div class="auth-modal-overlay" id="calEventModal">...</div>
-    <div class="auth-modal-overlay" id="selectProfileModal">...</div>
-    <div class="auth-modal-overlay" id="passwordModal">...</div>
-    <div class="auth-modal-overlay" id="authModal">...</div>
-    <div class="auth-modal-overlay" id="taskModal">...</div>
-    <div class="auth-modal-overlay" id="teamModal">...</div>
-    <div class="auth-modal-overlay" id="memberActionModal">...</div>
-    <div class="auth-modal-overlay" id="notificationsModal">...</div>
+    <div class="auth-modal-overlay" id="calEventModal">
+        <div class="auth-modal-box">
+            <h3 id="calModalTitle">Adicionar Evento</h3>
+            <div class="modal-field-group">
+                <label for="calTaskTitle">Título</label>
+                <input type="text" id="calTaskTitle" placeholder="Ex.: Reunião de pauta">
+            </div>
+            <div class="modal-field-group">
+                <label for="calTaskDesc">Descrição</label>
+                <textarea id="calTaskDesc" rows="2" placeholder="Detalhes da tarefa ou evento..."></textarea>
+            </div>
+            <div class="modal-field-group">
+                <label for="calTaskMember">Responsável</label>
+                <select id="calTaskMember"></select>
+            </div>
+            <div class="modal-actions-row">
+                <button type="button" class="btn-modal-secondary" onclick="closeCalendarModal()">Cancelar</button>
+                <button type="button" class="btn-small-action" onclick="saveCalendarTask()">Salvar</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="auth-modal-overlay" id="selectProfileModal">
+        <div class="auth-modal-box">
+            <h3>Selecionar Perfil</h3>
+            <div id="selectProfileList" style="max-height: 260px; overflow-y: auto; margin-bottom: 14px;"></div>
+            <div class="modal-actions-row" style="justify-content: space-between;">
+                <button type="button" class="btn-small-action" onclick="openRegisterModalFromSelect()">Novo
+                    Cadastro</button>
+                <button type="button" class="btn-modal-secondary"
+                    onclick="toggleSelectProfileModal(false)">Fechar</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="auth-modal-overlay" id="passwordModal">
+        <div class="auth-modal-box">
+            <h3 id="loginProfileTitle">Senha de Acesso</h3>
+            <div class="modal-field-group">
+                <label for="loginPasswordInput">Digite sua senha</label>
+                <input type="password" id="loginPasswordInput" placeholder="••••••">
+            </div>
+            <div class="modal-actions-row">
+                <button type="button" class="btn-modal-secondary" onclick="closePasswordModal()">Voltar</button>
+                <button type="button" class="btn-small-action" onclick="verifyProfilePassword()">Entrar</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="auth-modal-overlay" id="authModal">
+        <div class="auth-modal-box">
+            <h3 id="authModalTitle">Cadastre-se no Painel</h3>
+            <div class="modal-field-group">
+                <label for="inputName">Nome Completo</label>
+                <input type="text" id="inputName" placeholder="Seu nome">
+            </div>
+            <div class="modal-field-group">
+                <label for="inputRole">Cargo / Setor</label>
+                <select id="inputRole">
+                    <option value="Gerente de Marketing">Gerente de Marketing</option>
+                    <option value="Gerente de Vendas">Gerente de Vendas</option>
+                    <option value="Diretor de Marketing e Vendas">Diretor de Marketing e Vendas</option>
+                    <option value="Membro">Membro</option>
+                </select>
+            </div>
+            <div class="modal-field-group">
+                <label id="passwordLabel" for="inputPassword">Senha de Acesso</label>
+                <input type="password" id="inputPassword" placeholder="Crie ou altere sua senha">
+            </div>
+            <div class="modal-field-group">
+                <label for="inputPhotoFile">Foto de Perfil (opcional)</label>
+                <input type="file" id="inputPhotoFile" accept="image/*">
+            </div>
+            <div class="modal-actions-row">
+                <button type="button" class="btn-modal-secondary" onclick="toggleAuthModal(false)">Cancelar</button>
+                <button type="button" class="btn-small-action" onclick="saveProfileData()">Salvar</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="auth-modal-overlay" id="taskModal">
+        <div class="auth-modal-box">
+            <h3>Nova Tarefa</h3>
+            <div class="modal-field-group">
+                <label for="taskTitle">Título da Tarefa</label>
+                <input type="text" id="taskTitle" placeholder="Ex.: Revisar campanha">
+            </div>
+            <div class="modal-field-group">
+                <label for="taskDesc">Descrição</label>
+                <textarea id="taskDesc" rows="2" placeholder="O que precisa ser feito..."></textarea>
+            </div>
+            <div class="modal-field-group">
+                <label for="taskDate">Data Limite (DD/MM/AAAA)</label>
+                <input type="text" id="taskDate" placeholder="25/11/2026">
+            </div>
+            <div class="modal-field-group">
+                <label for="taskMemberSelect">Atribuir a</label>
+                <select id="taskMemberSelect"></select>
+            </div>
+            <div class="modal-actions-row">
+                <button type="button" class="btn-modal-secondary" onclick="toggleTaskModal(false)">Cancelar</button>
+                <button type="button" class="btn-small-action" onclick="saveNewTask()">Criar Tarefa</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="auth-modal-overlay" id="teamModal">
+        <div class="auth-modal-box">
+            <h3>Equipe BIOMEV</h3>
+            <div id="teamMemberList" style="max-height: 280px; overflow-y: auto; margin-bottom: 14px;"></div>
+            <div class="modal-actions-row">
+                <button type="button" class="btn-modal-secondary" onclick="toggleTeamModal(false)">Fechar</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="auth-modal-overlay" id="memberActionModal">
+        <div class="auth-modal-box">
+            <h3>Gerenciar Membro</h3>
+            <div class="modal-tabs-header">
+                <button type="button" class="modal-tab-btn active" id="tabBtnMsg"
+                    onclick="switchMemberTab('msg')">Mensagem</button>
+                <button type="button" class="modal-tab-btn" id="tabBtnTask" onclick="switchMemberTab('task')">Nova
+                    Tarefa</button>
+                <button type="button" class="modal-tab-btn" id="tabBtnList"
+                    onclick="switchMemberTab('list')">Tarefas</button>
+            </div>
+
+            <div class="modal-tab-pane active" id="paneMsg">
+                <div class="modal-field-group">
+                    <label for="memberMessage">Enviar mensagem</label>
+                    <textarea id="memberMessage" rows="3" placeholder="Escreva uma mensagem..."></textarea>
+                </div>
+                <div class="modal-actions-row">
+                    <button type="button" class="btn-modal-secondary" onclick="closeMemberActionModal()">Voltar</button>
+                    <button type="button" class="btn-small-action" onclick="submitMemberMessage()">Enviar</button>
+                </div>
+            </div>
+
+            <div class="modal-tab-pane" id="paneTask">
+                <div class="modal-field-group">
+                    <label for="memberTaskTitle">Título da Tarefa</label>
+                    <input type="text" id="memberTaskTitle" placeholder="Título">
+                </div>
+                <div class="modal-field-group">
+                    <label for="memberTaskDesc">Descrição</label>
+                    <textarea id="memberTaskDesc" rows="2" placeholder="Descrição"></textarea>
+                </div>
+                <div class="modal-field-group">
+                    <label for="memberTaskDate">Data Limite (DD/MM/AAAA)</label>
+                    <input type="text" id="memberTaskDate" placeholder="25/11/2026">
+                </div>
+                <div class="modal-actions-row">
+                    <button type="button" class="btn-modal-secondary" onclick="closeMemberActionModal()">Voltar</button>
+                    <button type="button" class="btn-small-action" onclick="submitMemberTask()">Atribuir</button>
+                </div>
+            </div>
+
+            <div class="modal-tab-pane" id="paneList">
+                <div id="memberTasksListContainer"
+                    style="max-height: 200px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px;"></div>
+                <div class="modal-actions-row">
+                    <button type="button" class="btn-modal-secondary" onclick="closeMemberActionModal()">Voltar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="auth-modal-overlay" id="notificationsModal">
+        <div class="auth-modal-box">
+            <h3>Notificações</h3>
+            <div id="notificationsList" style="max-height: 280px; overflow-y: auto; margin-bottom: 14px;"></div>
+            <div class="modal-actions-row">
+                <button type="button" class="btn-modal-secondary"
+                    onclick="toggleNotificationsModal(false)">Fechar</button>
+            </div>
+        </div>
+    </div>
 
     <!-- Scripts -->
-    <script src="Js/marketing.js?v=26"></script>
-    <script src="Js/vendas.js?v=26"></script>
-    <script src="Js/main.js?v=26"></script>
+    <script src="Js/marketing.js?v=27"></script>
+    <script src="Js/vendas.js?v=27"></script>
+    <script src="Js/main.js?v=27"></script>
 </body>
 
 </html>
