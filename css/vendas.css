@@ -420,54 +420,124 @@
 }
 
 /* ==========================================
-   SOLUÇÃO DEFINITIVA DE SCROLL E ESPAÇAMENTO MOBILE
+   RESOLUÇÃO DEFINITIVA: TABELA MOBILE SEM SOBREPOSIÇÃO E COM CANTOS ARREDONDADOS
    ========================================== */
 @media (max-width: 768px) {
-
-    /* Força o container da tabela a aceitar transbordo horizontal e toque suave */
-    #tool-pipeline-leads {
+    #vendas #tool-pipeline-leads {
         width: 100% !important;
-        overflow-x: hidden !important;
-        padding: 15px 5px !important;
+        padding: 16px 12px !important;
+        box-sizing: border-box !important;
     }
 
-    #tool-pipeline-leads>div:not(.section-header-row) {
+    /* Wrapper com rolagem lateral suave e cantos arredondados preservados */
+    #vendas #tool-pipeline-leads>div:not(.section-header-row) {
         width: 100% !important;
+        max-width: 100% !important;
         overflow-x: auto !important;
+        overflow-y: hidden !important;
         -webkit-overflow-scrolling: touch !important;
-        display: block !important;
-        padding-bottom: 15px !important;
+        border-radius: 16px !important;
+        background: #ffffff !important;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08) !important;
     }
 
-    /* Trava a tabela em 850px fixos para que ela obrigue o scroll lateral a aparecer */
-    #tool-pipeline-leads .excel-table {
-        width: 850px !important;
-        min-width: 850px !important;
-        table-layout: auto !important;
+    /* Tabela larga o suficiente para todas as colunas respirarem */
+    #vendas #tool-pipeline-leads table.excel-table {
+        display: table !important;
+        width: 960px !important;
+        min-width: 960px !important;
+        table-layout: fixed !important;
+        border-collapse: separate !important;
+        border-spacing: 0 !important;
+        margin: 0 !important;
+        border-radius: 16px !important;
+        overflow: hidden !important;
     }
 
-    /* Dá respiro e largura segura para as colunas de Status e Ações não colidirem */
-    #tool-pipeline-leads .excel-table td:nth-child(7),
-    #tool-pipeline-leads .excel-table th:nth-child(7) {
-        min-width: 220px !important;
-        max-width: 250px !important;
+    #vendas #tool-pipeline-leads table.excel-table thead {
+        display: table-header-group !important;
     }
 
-    #tool-pipeline-leads .excel-table td:nth-child(8),
-    #tool-pipeline-leads .excel-table th:nth-child(8) {
-        min-width: 110px !important;
+    #vendas #tool-pipeline-leads table.excel-table tbody {
+        display: table-row-group !important;
+    }
+
+    #vendas #tool-pipeline-leads table.excel-table tr {
+        display: table-row !important;
+    }
+
+    #vendas #tool-pipeline-leads table.excel-table th,
+    #vendas #tool-pipeline-leads table.excel-table td {
+        display: table-cell !important;
+        white-space: nowrap !important;
+        vertical-align: middle !important;
+        padding: 12px 10px !important;
+        font-size: 0.78rem !important;
+        box-sizing: border-box !important;
+    }
+
+    /* Larguras dedicadas para evitar qualquer colisão entre campos, status e botão */
+    #vendas #tool-pipeline-leads table.excel-table th:nth-child(1),
+    #vendas #tool-pipeline-leads table.excel-table td:nth-child(1) {
+        width: 150px !important;
+    }
+
+    #vendas #tool-pipeline-leads table.excel-table th:nth-child(2),
+    #vendas #tool-pipeline-leads table.excel-table td:nth-child(2) {
+        width: 115px !important;
+    }
+
+    #vendas #tool-pipeline-leads table.excel-table th:nth-child(3),
+    #vendas #tool-pipeline-leads table.excel-table td:nth-child(3) {
+        width: 140px !important;
+    }
+
+    #vendas #tool-pipeline-leads table.excel-table th:nth-child(4),
+    #vendas #tool-pipeline-leads table.excel-table td:nth-child(4) {
+        width: 130px !important;
+    }
+
+    #vendas #tool-pipeline-leads table.excel-table th:nth-child(5),
+    #vendas #tool-pipeline-leads table.excel-table td:nth-child(5) {
+        width: 115px !important;
+    }
+
+    #vendas #tool-pipeline-leads table.excel-table th:nth-child(6),
+    #vendas #tool-pipeline-leads table.excel-table td:nth-child(6) {
+        width: 115px !important;
+    }
+
+    #vendas #tool-pipeline-leads table.excel-table th:nth-child(7),
+    #vendas #tool-pipeline-leads table.excel-table td:nth-child(7) {
+        width: 175px !important;
+    }
+
+    #vendas #tool-pipeline-leads table.excel-table th:nth-child(8),
+    #vendas #tool-pipeline-leads table.excel-table td:nth-child(8) {
+        width: 100px !important;
         text-align: center !important;
     }
 
-    /* Isola o botão de excluir para garantir clique fácil e sem sobreposição */
-    #tool-pipeline-leads .btn-delete-row {
-        background: #fee2e2 !important;
-        color: #dc2626 !important;
+    #vendas #tool-pipeline-leads table.excel-table input,
+    #vendas #tool-pipeline-leads table.excel-table select {
+        width: 100% !important;
+        min-width: 0 !important;
+        padding: 6px 8px !important;
+        font-size: 0.78rem !important;
+        box-sizing: border-box !important;
+    }
+
+    #vendas #tool-pipeline-leads .btn-delete-row {
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        width: auto !important;
         padding: 6px 12px !important;
         border-radius: 8px !important;
+        background: #fee2e2 !important;
+        color: #dc2626 !important;
         font-size: 0.75rem !important;
         font-weight: 700 !important;
-        display: inline-block !important;
         white-space: nowrap !important;
     }
 }
