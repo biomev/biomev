@@ -13,11 +13,11 @@
     <script src="https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js"></script>
 
     <!-- CSS Modulares -->
-    <link rel="stylesheet" href="css/main.css?v=16">
-    <link rel="stylesheet" href="css/header.css?v=16">
-    <link rel="stylesheet" href="css/marketing.css?v=16">
-    <link rel="stylesheet" href="css/vendas.css?v=16">
-    <link rel="stylesheet" href="css/perfil.css?v=16">
+    <link rel="stylesheet" href="css/main.css?v=18">
+    <link rel="stylesheet" href="css/header.css?v=18">
+    <link rel="stylesheet" href="css/marketing.css?v=18">
+    <link rel="stylesheet" href="css/vendas.css?v=18">
+    <link rel="stylesheet" href="css/perfil.css?v=18">
     <!-- Ícone padrão para a aba do navegador (Favicon) -->
     <link rel="icon" type="image/jpeg" href="imagens/logo-biomev.jpeg">
     <!-- Ícone para dispositivos Apple (iPhone/iPad) ao salvar na Tela Inicial -->
@@ -339,79 +339,62 @@
                 <!-- Ferramenta Planilha de Clientes -->
                 <div id="tool-pipeline-leads" class="tool-container">
                     <style>
+                        /* Ajustes exclusivos para celular (<= 768px) sem alterar o PC */
                         @media (max-width: 768px) {
+                            #tool-pipeline-leads .section-header-row {
+                                display: flex;
+                                flex-direction: row;
+                                flex-wrap: nowrap;
+                                align-items: center;
+                                justify-content: space-between;
+                                gap: 8px;
+                            }
+
+                            #tool-pipeline-leads .section-header-row h2 {
+                                font-size: 0.92rem;
+                                line-height: 1.2;
+                                margin: 0;
+                                flex: 1 1 auto;
+                                min-width: 0;
+                            }
+
+                            #tool-pipeline-leads .section-header-row .btn-action {
+                                flex: 0 0 auto;
+                                width: auto;
+                                padding: 8px 10px;
+                                font-size: 0.72rem;
+                                white-space: nowrap;
+                            }
+
                             #tool-pipeline-leads .vendas-table-scroll-box {
                                 width: 100%;
                                 overflow-x: auto;
                                 -webkit-overflow-scrolling: touch;
                                 border-radius: 16px;
-                                background: #ffffff;
-                                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
                             }
 
                             #tool-pipeline-leads #leadsTable {
                                 display: table;
-                                width: 1040px;
-                                min-width: 1040px;
-                                table-layout: fixed;
-                                border-collapse: collapse;
+                                width: 980px;
+                                min-width: 980px;
                                 white-space: nowrap;
                             }
 
-                            #tool-pipeline-leads #leadsTable th,
-                            #tool-pipeline-leads #leadsTable td {
-                                display: table-cell;
-                                vertical-align: middle;
-                                padding: 10px 12px;
-                                white-space: nowrap;
-                                overflow: visible;
+                            #tool-pipeline-leads #btnExportLeadsExcelWrapper {
+                                justify-content: flex-start;
                             }
 
-                            #tool-pipeline-leads #leadsTable th:nth-child(6),
-                            #tool-pipeline-leads #leadsTable td:nth-child(6) {
-                                width: 140px;
-                                padding-right: 18px;
-                            }
-
-                            #tool-pipeline-leads #leadsTable th:nth-child(7),
-                            #tool-pipeline-leads #leadsTable td:nth-child(7) {
-                                width: 250px;
-                                padding-left: 18px;
-                                padding-right: 18px;
-                            }
-
-                            #tool-pipeline-leads #leadsTable th:nth-child(8),
-                            #tool-pipeline-leads #leadsTable td:nth-child(8) {
-                                width: 110px;
-                                padding-left: 16px;
-                                text-align: center;
-                            }
-
-                            #tool-pipeline-leads #leadsTable td:nth-child(8)>*,
-                            #tool-pipeline-leads #leadsTable .btn-delete-row {
-                                position: static;
-                                float: none;
-                                margin: 0 auto;
-                                display: inline-flex;
-                                align-items: center;
-                                justify-content: center;
+                            #tool-pipeline-leads #btnExportLeadsExcel {
                                 width: auto;
-                                padding: 6px 12px;
-                                border-radius: 8px;
-                                background: #fee2e2;
-                                color: #dc2626;
-                                font-size: 0.75rem;
-                                font-weight: 700;
-                                white-space: nowrap;
+                                font-size: 0.8rem;
+                                padding: 10px 16px;
                             }
                         }
                     </style>
                     <button class="tool-header-back" onclick="closeTool('pipeline-leads')">Voltar para as
                         Ferramentas</button>
-                    <div class="section-header-row"
-                        style="margin-top: 10px; margin-bottom: 20px; flex-wrap: wrap; gap: 12px;">
-                        <h2 style="font-size: 1.35rem; font-weight: 700; color: var(--text-dark); margin: 0;">Planilha
-                            de Clientes e
+                    <div class="section-header-row" style="margin-top: 10px; margin-bottom: 20px;">
+                        <h2 style="font-size: 1.5rem; font-weight: 700; color: var(--text-dark);">Planilha de Clientes e
                             Contatos</h2>
                         <button class="btn-action"
                             style="width: auto; padding: 10px 20px; margin-top: 0; background: var(--moss-green);"
@@ -533,9 +516,9 @@
     <div class="auth-modal-overlay" id="notificationsModal">...</div>
 
     <!-- Scripts -->
-    <script src="Js/marketing.js?v=17"></script>
-    <script src="Js/vendas.js?v=17"></script>
-    <script src="Js/main.js?v=17"></script>
+    <script src="Js/marketing.js?v=18"></script>
+    <script src="Js/vendas.js?v=18"></script>
+    <script src="Js/main.js?v=18"></script>
 </body>
 
 </html>
