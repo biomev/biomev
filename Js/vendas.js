@@ -62,21 +62,25 @@ function renderLeadsTable() {
         const statusClass = calculateLeadStatus(lead.nextContact);
         const tr = document.createElement('tr');
         tr.innerHTML = `
-            <td><input type="text" value="${escapeHtml(lead.name)}" onchange="updateLead(${index}, 'name', this.value)"></td>
-            <td><input type="date" value="${lead.date || ''}" onchange="updateLead(${index}, 'date', this.value)"></td>
-            <td><input type="text" value="${escapeHtml(lead.service)}" onchange="updateLead(${index}, 'service', this.value)"></td>
-            <td><input type="text" value="${escapeHtml(lead.contact)}" onchange="updateLead(${index}, 'contact', this.value)"></td>
-            <td><input type="date" value="${lead.lastContact || ''}" onchange="updateLead(${index}, 'lastContact', this.value)"></td>
-            <td><input type="date" value="${lead.nextContact || ''}" onchange="updateLead(${index}, 'nextContact', this.value)"></td>
-            <td>
-                <select onchange="updateLead(${index}, 'type', this.value)">
-                    <option value="Follow-up" ${lead.type === 'Follow-up' ? 'selected' : ''}>Follow-up</option>
-                    <option value="Cliente sem retorno" ${lead.type === 'Cliente sem retorno' ? 'selected' : ''}>Cliente sem retorno</option>
-                    <option value="Reativação de clientes" ${lead.type === 'Reativação de clientes' ? 'selected' : ''}>Reativação de clientes</option>
-                </select>
-                <div class="status-badge ${statusClass.class}" style="margin-top: 4px;">${statusClass.text}</div>
+            <td style="min-width: 170px; padding: 12px 14px;"><input type="text" value="${escapeHtml(lead.name)}" onchange="updateLead(${index}, 'name', this.value)"></td>
+            <td style="min-width: 135px; padding: 12px 14px;"><input type="date" value="${lead.date || ''}" onchange="updateLead(${index}, 'date', this.value)"></td>
+            <td style="min-width: 160px; padding: 12px 14px;"><input type="text" value="${escapeHtml(lead.service)}" onchange="updateLead(${index}, 'service', this.value)"></td>
+            <td style="min-width: 145px; padding: 12px 14px;"><input type="text" value="${escapeHtml(lead.contact)}" onchange="updateLead(${index}, 'contact', this.value)"></td>
+            <td style="min-width: 135px; padding: 12px 14px;"><input type="date" value="${lead.lastContact || ''}" onchange="updateLead(${index}, 'lastContact', this.value)"></td>
+            <td style="min-width: 145px; padding: 12px 18px 12px 14px;"><input type="date" value="${lead.nextContact || ''}" onchange="updateLead(${index}, 'nextContact', this.value)"></td>
+            <td style="min-width: 240px; padding: 12px 20px;">
+                <div style="display: flex; flex-direction: column; gap: 6px; align-items: flex-start;">
+                    <select style="width: 100%; min-width: 185px;" onchange="updateLead(${index}, 'type', this.value)">
+                        <option value="Follow-up" ${lead.type === 'Follow-up' ? 'selected' : ''}>Follow-up</option>
+                        <option value="Cliente sem retorno" ${lead.type === 'Cliente sem retorno' ? 'selected' : ''}>Cliente sem retorno</option>
+                        <option value="Reativação de clientes" ${lead.type === 'Reativação de clientes' ? 'selected' : ''}>Reativação de clientes</option>
+                    </select>
+                    <span class="status-badge ${statusClass.class}" style="white-space: nowrap;">${statusClass.text}</span>
+                </div>
             </td>
-            <td><button class="btn-delete-row" onclick="deleteLeadRow(${index})">Excluir</button></td>
+            <td style="min-width: 110px; padding: 12px 16px; text-align: center;">
+                <button type="button" class="btn-delete-row" style="position: static; display: inline-flex; align-items: center; justify-content: center; padding: 7px 12px; border-radius: 8px; background: #fee2e2; color: #dc2626; font-size: 0.78rem; font-weight: 700; white-space: nowrap;" onclick="deleteLeadRow(${index})">Excluir</button>
+            </td>
         `;
         tbody.appendChild(tr);
     });
@@ -271,7 +275,72 @@ async function exportLeadsToExcel() {
         alert("Não há clientes na planilha para exportar.");
         return;
     }
-    // Lógica de exportação mantida idêntica...
+
+    if (typeof ExcelJS !== 'undefined') {
+        const workbook = new ExcelJS.Workbook();
+        const worksheet = workbook.addWorksheet('Clientes e Pipeline');
+
+        worksheet.columns = [
+            { header: 'Nome do Cliente', key: 'name', width: 28 },
+            { header: 'Data', key: 'date', width: 15 },
+            { header: 'Serviço', key: 'service', width: 24 },
+            { header: 'Contato', key: 'contact', width: 20 },
+            { header: 'Último Contato', key: 'lastContact', width: 18 },
+            { header: 'Próximo Contato', key: 'nextContact', width: 18 },
+            { header: 'Característica / Tipo', key: 'type', width: 24 },
+            { header: 'Status do Prazo', key: 'status', width: 22 },
+            { header: 'Etapa do Funil', key: 'stage', width: 18 },
+            { header: 'Valor (R$)', key: 'value', width: 15 }
+        ];
+
+        leadsData.forEach(lead => {
+            const st = calculateLeadStatus(lead.nextContact);
+            worksheet.addRow({
+                name: lead.name || '',
+                date: formatDateBr(lead.date),
+                service: lead.service || '',
+                contact: lead.contact || '',
+                lastContact: formatDateBr(lead.lastContact),
+                nextContact: formatDateBr(lead.nextContact),
+                type: lead.type || '',
+                status: st.text,
+                stage: lead.stage || '',
+                value: parseFloat(lead.value) || 0
+            });
+        });
+
+        const buffer = await workbook.xlsx.writeBuffer();
+        const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'BIOMEV_Planilha_Clientes.xlsx';
+        a.click();
+        URL.revokeObjectURL(url);
+        return;
+    }
+
+    if (typeof XLSX !== 'undefined') {
+        const rows = leadsData.map(lead => {
+            const st = calculateLeadStatus(lead.nextContact);
+            return {
+                'Nome do Cliente': lead.name || '',
+                'Data': formatDateBr(lead.date),
+                'Serviço': lead.service || '',
+                'Contato': lead.contact || '',
+                'Último Contato': formatDateBr(lead.lastContact),
+                'Próximo Contato': formatDateBr(lead.nextContact),
+                'Característica / Tipo': lead.type || '',
+                'Status do Prazo': st.text,
+                'Etapa do Funil': lead.stage || '',
+                'Valor (R$)': parseFloat(lead.value) || 0
+            };
+        });
+        const ws = XLSX.utils.json_to_sheet(rows);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'Clientes');
+        XLSX.writeFile(wb, 'BIOMEV_Planilha_Clientes.xlsx');
+    }
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
