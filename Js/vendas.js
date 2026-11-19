@@ -37,41 +37,62 @@ function applyResponsiveKanbanLayout() {
 
     const isMobile = window.innerWidth <= 768;
     const columns = board.querySelectorAll('.kanban-column');
+    const kanbanTool = document.getElementById('tool-kanban-vendas');
 
     if (isMobile) {
+        if (kanbanTool) {
+            kanbanTool.style.setProperty('max-width', '100%', 'important');
+            kanbanTool.style.setProperty('overflow-x', 'visible', 'important');
+        }
+
         board.style.setProperty('display', 'flex', 'important');
         board.style.setProperty('flex-direction', 'row', 'important');
         board.style.setProperty('flex-wrap', 'nowrap', 'important');
-        board.style.setProperty('overflow-x', 'auto', 'important');
+        board.style.setProperty('align-items', 'flex-start', 'important');
+        board.style.setProperty('justify-content', 'flex-start', 'important');
+        board.style.setProperty('overflow-x', 'scroll', 'important');
         board.style.setProperty('overflow-y', 'hidden', 'important');
         board.style.setProperty('-webkit-overflow-scrolling', 'touch', 'important');
-        board.style.setProperty('scroll-snap-type', 'x proximity', 'important');
+        board.style.setProperty('scroll-snap-type', 'none', 'important');
+        board.style.setProperty('touch-action', 'pan-x pan-y', 'important');
         board.style.setProperty('gap', '14px', 'important');
-        board.style.setProperty('padding-bottom', '14px', 'important');
+        board.style.setProperty('padding', '4px 4px 16px 4px', 'important');
         board.style.setProperty('width', '100%', 'important');
-        board.style.setProperty('grid-template-columns', 'unset', 'important');
+        board.style.setProperty('max-width', '100%', 'important');
+        board.style.setProperty('grid-template-columns', 'none', 'important');
 
         columns.forEach(col => {
-            col.style.setProperty('flex', '0 0 82vw', 'important');
-            col.style.setProperty('min-width', '270px', 'important');
-            col.style.setProperty('max-width', '320px', 'important');
-            col.style.setProperty('scroll-snap-align', 'start', 'important');
+            col.style.setProperty('flex', '0 0 280px', 'important');
+            col.style.setProperty('width', '280px', 'important');
+            col.style.setProperty('min-width', '280px', 'important');
+            col.style.setProperty('max-width', '280px', 'important');
+            col.style.setProperty('scroll-snap-align', 'none', 'important');
         });
     } else {
+        if (kanbanTool) {
+            kanbanTool.style.removeProperty('max-width');
+            kanbanTool.style.removeProperty('overflow-x');
+        }
+
         board.style.removeProperty('display');
         board.style.removeProperty('flex-direction');
         board.style.removeProperty('flex-wrap');
+        board.style.removeProperty('align-items');
+        board.style.removeProperty('justify-content');
         board.style.removeProperty('overflow-x');
         board.style.removeProperty('overflow-y');
         board.style.removeProperty('-webkit-overflow-scrolling');
         board.style.removeProperty('scroll-snap-type');
+        board.style.removeProperty('touch-action');
         board.style.removeProperty('gap');
-        board.style.removeProperty('padding-bottom');
+        board.style.removeProperty('padding');
         board.style.removeProperty('width');
+        board.style.removeProperty('max-width');
         board.style.removeProperty('grid-template-columns');
 
         columns.forEach(col => {
             col.style.removeProperty('flex');
+            col.style.removeProperty('width');
             col.style.removeProperty('min-width');
             col.style.removeProperty('max-width');
             col.style.removeProperty('scroll-snap-align');
@@ -200,6 +221,7 @@ function openKanbanTool() {
     if (toolContainer) {
         toolContainer.classList.add('active');
         renderKanbanBoard();
+        setTimeout(applyResponsiveKanbanLayout, 50);
     }
 }
 
@@ -357,7 +379,6 @@ function bindTouchDragEvents(board) {
             touchDragState.startX = touch.clientX;
             touchDragState.startY = touch.clientY;
 
-            // Segurar brevemente ativa o modo arrastar card; deslizar rápido sem segurar rola o carrossel normalmente
             touchDragState.holdTimer = setTimeout(() => {
                 startTouchGhost(card, leadIndex, touch);
             }, 180);
