@@ -31,6 +31,57 @@ function hydrateKanbanLeads() {
     });
 }
 
+function applyMobileLeadsHeaderLayout() {
+    const tool = document.getElementById('tool-pipeline-leads');
+    if (!tool) return;
+    const headerRow = tool.querySelector('.section-header-row');
+    const titleEl = headerRow ? headerRow.querySelector('h2') : null;
+    const addBtn = headerRow ? headerRow.querySelector('button') : null;
+    if (!headerRow || !titleEl || !addBtn) return;
+
+    const isMobile = window.innerWidth <= 768;
+
+    if (isMobile) {
+        headerRow.style.setProperty('display', 'flex', 'important');
+        headerRow.style.setProperty('flex-direction', 'row', 'important');
+        headerRow.style.setProperty('flex-wrap', 'nowrap', 'important');
+        headerRow.style.setProperty('align-items', 'center', 'important');
+        headerRow.style.setProperty('justify-content', 'space-between', 'important');
+        headerRow.style.setProperty('gap', '8px', 'important');
+
+        titleEl.style.setProperty('font-size', '0.92rem', 'important');
+        titleEl.style.setProperty('line-height', '1.2', 'important');
+        titleEl.style.setProperty('margin', '0', 'important');
+        titleEl.style.setProperty('flex', '1 1 auto', 'important');
+        titleEl.style.setProperty('min-width', '0', 'important');
+
+        addBtn.style.setProperty('flex', '0 0 auto', 'important');
+        addBtn.style.setProperty('width', 'auto', 'important');
+        addBtn.style.setProperty('padding', '8px 10px', 'important');
+        addBtn.style.setProperty('font-size', '0.72rem', 'important');
+        addBtn.style.setProperty('white-space', 'nowrap', 'important');
+    } else {
+        headerRow.style.removeProperty('display');
+        headerRow.style.removeProperty('flex-direction');
+        headerRow.style.removeProperty('flex-wrap');
+        headerRow.style.removeProperty('align-items');
+        headerRow.style.removeProperty('justify-content');
+        headerRow.style.removeProperty('gap');
+
+        titleEl.style.removeProperty('font-size');
+        titleEl.style.removeProperty('line-height');
+        titleEl.style.removeProperty('margin');
+        titleEl.style.removeProperty('flex');
+        titleEl.style.removeProperty('min-width');
+
+        addBtn.style.removeProperty('flex');
+        addBtn.style.removeProperty('width');
+        addBtn.style.removeProperty('padding');
+        addBtn.style.removeProperty('font-size');
+        addBtn.style.removeProperty('white-space');
+    }
+}
+
 // Abertura correta do CRM (esconde o menu principal de vendas e ativa o container da ferramenta)
 function openKanbanTool() {
     const vendasMenu = document.getElementById('vendas-menu');
@@ -86,6 +137,7 @@ function renderLeadsTable() {
     });
 
     ensureExcelExportButton();
+    applyMobileLeadsHeaderLayout();
     renderKanbanBoard();
 }
 
@@ -350,4 +402,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
     renderLeadsTable();
     ensureExcelExportButton();
+    applyMobileLeadsHeaderLayout();
 });
+
+window.addEventListener('resize', applyMobileLeadsHeaderLayout);
