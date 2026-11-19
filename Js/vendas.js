@@ -31,54 +31,102 @@ function hydrateKanbanLeads() {
     });
 }
 
-function applyMobileLeadsHeaderLayout() {
+function applyResponsiveLeadsLayout() {
     const tool = document.getElementById('tool-pipeline-leads');
     if (!tool) return;
+
+    const isMobile = window.innerWidth <= 768;
     const headerRow = tool.querySelector('.section-header-row');
     const titleEl = headerRow ? headerRow.querySelector('h2') : null;
     const addBtn = headerRow ? headerRow.querySelector('button') : null;
-    if (!headerRow || !titleEl || !addBtn) return;
+    const table = document.getElementById('leadsTable');
+    const wrapper = table ? (table.closest('div') || table.parentElement) : null;
+    const exportWrapper = document.getElementById('btnExportLeadsExcelWrapper');
+    const exportBtn = document.getElementById('btnExportLeadsExcel');
 
-    const isMobile = window.innerWidth <= 768;
+    if (headerRow && titleEl && addBtn) {
+        if (isMobile) {
+            headerRow.style.setProperty('display', 'flex', 'important');
+            headerRow.style.setProperty('flex-direction', 'row', 'important');
+            headerRow.style.setProperty('flex-wrap', 'nowrap', 'important');
+            headerRow.style.setProperty('align-items', 'center', 'important');
+            headerRow.style.setProperty('justify-content', 'space-between', 'important');
+            headerRow.style.setProperty('gap', '8px', 'important');
 
-    if (isMobile) {
-        headerRow.style.setProperty('display', 'flex', 'important');
-        headerRow.style.setProperty('flex-direction', 'row', 'important');
-        headerRow.style.setProperty('flex-wrap', 'nowrap', 'important');
-        headerRow.style.setProperty('align-items', 'center', 'important');
-        headerRow.style.setProperty('justify-content', 'space-between', 'important');
-        headerRow.style.setProperty('gap', '8px', 'important');
+            titleEl.style.setProperty('font-size', '0.92rem', 'important');
+            titleEl.style.setProperty('line-height', '1.2', 'important');
+            titleEl.style.setProperty('margin', '0', 'important');
+            titleEl.style.setProperty('flex', '1 1 auto', 'important');
+            titleEl.style.setProperty('min-width', '0', 'important');
 
-        titleEl.style.setProperty('font-size', '0.92rem', 'important');
-        titleEl.style.setProperty('line-height', '1.2', 'important');
-        titleEl.style.setProperty('margin', '0', 'important');
-        titleEl.style.setProperty('flex', '1 1 auto', 'important');
-        titleEl.style.setProperty('min-width', '0', 'important');
+            addBtn.style.setProperty('flex', '0 0 auto', 'important');
+            addBtn.style.setProperty('width', 'auto', 'important');
+            addBtn.style.setProperty('padding', '8px 10px', 'important');
+            addBtn.style.setProperty('font-size', '0.72rem', 'important');
+            addBtn.style.setProperty('white-space', 'nowrap', 'important');
+        } else {
+            headerRow.style.removeProperty('display');
+            headerRow.style.removeProperty('flex-direction');
+            headerRow.style.removeProperty('flex-wrap');
+            headerRow.style.removeProperty('align-items');
+            headerRow.style.removeProperty('justify-content');
+            headerRow.style.removeProperty('gap');
 
-        addBtn.style.setProperty('flex', '0 0 auto', 'important');
-        addBtn.style.setProperty('width', 'auto', 'important');
-        addBtn.style.setProperty('padding', '8px 10px', 'important');
-        addBtn.style.setProperty('font-size', '0.72rem', 'important');
-        addBtn.style.setProperty('white-space', 'nowrap', 'important');
-    } else {
-        headerRow.style.removeProperty('display');
-        headerRow.style.removeProperty('flex-direction');
-        headerRow.style.removeProperty('flex-wrap');
-        headerRow.style.removeProperty('align-items');
-        headerRow.style.removeProperty('justify-content');
-        headerRow.style.removeProperty('gap');
+            titleEl.style.removeProperty('font-size');
+            titleEl.style.removeProperty('line-height');
+            titleEl.style.removeProperty('margin');
+            titleEl.style.removeProperty('flex');
+            titleEl.style.removeProperty('min-width');
 
-        titleEl.style.removeProperty('font-size');
-        titleEl.style.removeProperty('line-height');
-        titleEl.style.removeProperty('margin');
-        titleEl.style.removeProperty('flex');
-        titleEl.style.removeProperty('min-width');
+            addBtn.style.removeProperty('flex');
+            addBtn.style.removeProperty('width');
+            addBtn.style.removeProperty('padding');
+            addBtn.style.removeProperty('font-size');
+            addBtn.style.removeProperty('white-space');
+        }
+    }
 
-        addBtn.style.removeProperty('flex');
-        addBtn.style.removeProperty('width');
-        addBtn.style.removeProperty('padding');
-        addBtn.style.removeProperty('font-size');
-        addBtn.style.removeProperty('white-space');
+    if (wrapper && table) {
+        if (isMobile) {
+            wrapper.style.setProperty('width', '100%', 'important');
+            wrapper.style.setProperty('max-width', '100%', 'important');
+            wrapper.style.setProperty('overflow-x', 'auto', 'important');
+            wrapper.style.setProperty('border-radius', '16px', 'important');
+
+            table.style.setProperty('display', 'table', 'important');
+            table.style.setProperty('width', '980px', 'important');
+            table.style.setProperty('min-width', '980px', 'important');
+        } else {
+            wrapper.style.setProperty('width', '100%', 'important');
+            wrapper.style.setProperty('max-width', '100%', 'important');
+            wrapper.style.setProperty('overflow-x', 'auto', 'important');
+            wrapper.style.setProperty('border-radius', '16px', 'important');
+
+            table.style.setProperty('display', 'table', 'important');
+            table.style.setProperty('width', '100%', 'important');
+            table.style.setProperty('min-width', '100%', 'important');
+        }
+    }
+
+    if (exportWrapper) {
+        exportWrapper.style.setProperty('background', 'transparent', 'important');
+        exportWrapper.style.setProperty('background-color', 'transparent', 'important');
+        exportWrapper.style.setProperty('box-shadow', 'none', 'important');
+        exportWrapper.style.setProperty('border', 'none', 'important');
+        exportWrapper.style.setProperty('width', '100%', 'important');
+        exportWrapper.style.setProperty('display', 'flex', 'important');
+        exportWrapper.style.setProperty('justify-content', isMobile ? 'flex-start' : 'flex-end', 'important');
+        exportWrapper.style.setProperty('margin-top', '20px', 'important');
+        exportWrapper.style.setProperty('padding', '0', 'important');
+    }
+
+    if (exportBtn) {
+        exportBtn.style.setProperty('width', 'auto', 'important');
+        exportBtn.style.setProperty('max-width', '100%', 'important');
+        exportBtn.style.setProperty('margin-top', '0', 'important');
+        exportBtn.style.setProperty('background', 'var(--moss-green)', 'important');
+        exportBtn.style.setProperty('padding', isMobile ? '10px 16px' : '12px 24px', 'important');
+        exportBtn.style.setProperty('font-size', isMobile ? '0.8rem' : '0.9rem', 'important');
     }
 }
 
@@ -113,15 +161,15 @@ function renderLeadsTable() {
         const statusClass = calculateLeadStatus(lead.nextContact);
         const tr = document.createElement('tr');
         tr.innerHTML = `
-            <td style="min-width: 170px; padding: 12px 14px;"><input type="text" value="${escapeHtml(lead.name)}" onchange="updateLead(${index}, 'name', this.value)"></td>
-            <td style="min-width: 135px; padding: 12px 14px;"><input type="date" value="${lead.date || ''}" onchange="updateLead(${index}, 'date', this.value)"></td>
-            <td style="min-width: 160px; padding: 12px 14px;"><input type="text" value="${escapeHtml(lead.service)}" onchange="updateLead(${index}, 'service', this.value)"></td>
-            <td style="min-width: 145px; padding: 12px 14px;"><input type="text" value="${escapeHtml(lead.contact)}" onchange="updateLead(${index}, 'contact', this.value)"></td>
-            <td style="min-width: 135px; padding: 12px 14px;"><input type="date" value="${lead.lastContact || ''}" onchange="updateLead(${index}, 'lastContact', this.value)"></td>
-            <td style="min-width: 145px; padding: 12px 18px 12px 14px;"><input type="date" value="${lead.nextContact || ''}" onchange="updateLead(${index}, 'nextContact', this.value)"></td>
-            <td style="min-width: 240px; padding: 12px 20px;">
+            <td style="min-width: 150px; padding: 12px 14px;"><input type="text" value="${escapeHtml(lead.name)}" onchange="updateLead(${index}, 'name', this.value)"></td>
+            <td style="min-width: 130px; padding: 12px 14px;"><input type="date" value="${lead.date || ''}" onchange="updateLead(${index}, 'date', this.value)"></td>
+            <td style="min-width: 150px; padding: 12px 14px;"><input type="text" value="${escapeHtml(lead.service)}" onchange="updateLead(${index}, 'service', this.value)"></td>
+            <td style="min-width: 140px; padding: 12px 14px;"><input type="text" value="${escapeHtml(lead.contact)}" onchange="updateLead(${index}, 'contact', this.value)"></td>
+            <td style="min-width: 130px; padding: 12px 14px;"><input type="date" value="${lead.lastContact || ''}" onchange="updateLead(${index}, 'lastContact', this.value)"></td>
+            <td style="min-width: 140px; padding: 12px 18px 12px 14px;"><input type="date" value="${lead.nextContact || ''}" onchange="updateLead(${index}, 'nextContact', this.value)"></td>
+            <td style="min-width: 220px; padding: 12px 20px;">
                 <div style="display: flex; flex-direction: column; gap: 6px; align-items: flex-start;">
-                    <select style="width: 100%; min-width: 185px;" onchange="updateLead(${index}, 'type', this.value)">
+                    <select style="width: 100%; min-width: 170px;" onchange="updateLead(${index}, 'type', this.value)">
                         <option value="Follow-up" ${lead.type === 'Follow-up' ? 'selected' : ''}>Follow-up</option>
                         <option value="Cliente sem retorno" ${lead.type === 'Cliente sem retorno' ? 'selected' : ''}>Cliente sem retorno</option>
                         <option value="Reativação de clientes" ${lead.type === 'Reativação de clientes' ? 'selected' : ''}>Reativação de clientes</option>
@@ -129,7 +177,7 @@ function renderLeadsTable() {
                     <span class="status-badge ${statusClass.class}" style="white-space: nowrap;">${statusClass.text}</span>
                 </div>
             </td>
-            <td style="min-width: 110px; padding: 12px 16px; text-align: center;">
+            <td style="min-width: 100px; padding: 12px 14px; text-align: center;">
                 <button type="button" class="btn-delete-row" style="position: static; display: inline-flex; align-items: center; justify-content: center; padding: 7px 12px; border-radius: 8px; background: #fee2e2; color: #dc2626; font-size: 0.78rem; font-weight: 700; white-space: nowrap;" onclick="deleteLeadRow(${index})">Excluir</button>
             </td>
         `;
@@ -137,7 +185,7 @@ function renderLeadsTable() {
     });
 
     ensureExcelExportButton();
-    applyMobileLeadsHeaderLayout();
+    applyResponsiveLeadsLayout();
     renderKanbanBoard();
 }
 
@@ -301,7 +349,7 @@ function ensureExcelExportButton() {
 
     const btnWrapper = document.createElement('div');
     btnWrapper.id = 'btnExportLeadsExcelWrapper';
-    btnWrapper.style.cssText = 'display: flex; justify-content: flex-end; margin-top: 20px;';
+    btnWrapper.style.cssText = 'display: flex; justify-content: flex-end; margin-top: 20px; background: transparent;';
 
     const btn = document.createElement('button');
     btn.id = 'btnExportLeadsExcel';
@@ -313,6 +361,7 @@ function ensureExcelExportButton() {
 
     btnWrapper.appendChild(btn);
     wrapper.insertAdjacentElement('afterend', btnWrapper);
+    applyResponsiveLeadsLayout();
 }
 
 function formatDateBr(isoDate) {
@@ -402,7 +451,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
     renderLeadsTable();
     ensureExcelExportButton();
-    applyMobileLeadsHeaderLayout();
+    applyResponsiveLeadsLayout();
 });
 
-window.addEventListener('resize', applyMobileLeadsHeaderLayout);
+window.addEventListener('resize', applyResponsiveLeadsLayout);
