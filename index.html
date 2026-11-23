@@ -711,10 +711,28 @@
         </div>
     </div>
 
+    <!-- Firebase SDK (compatível com scripts globais) -->
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyA16V7-DKUevokd4YQLELunL37Ra_qCKmk",
+            authDomain: "biomev.firebaseapp.com",
+            projectId: "biomev",
+            storageBucket: "biomev.firebasestorage.app",
+            messagingSenderId: "686341838276",
+            appId: "1:686341838276:web:1ab5e797e0b05b58624091",
+            measurementId: "G-6WV0TLS1TR"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+    </script>
+
     <!-- Scripts -->
-    <script src="Js/marketing.js?v=28"></script>
-    <script src="Js/vendas.js?v=28"></script>
-    <script src="Js/main.js?v=28"></script>
+    <script src="Js/marketing.js?v=30"></script>
+    <script src="Js/vendas.js?v=30"></script>
+    <script src="Js/main.js?v=30"></script>
 </body>
 
 </html>

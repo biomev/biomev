@@ -1,5 +1,5 @@
 /* ==========================================
-   PAINEL DE VENDAS E CRM (BIOMEV)
+   PAINEL DE VENDAS E CRM (BIOMEV) - FIRESTORE
    ========================================== */
 
 let leadsData = JSON.parse(localStorage.getItem('biomev_leads')) || [
@@ -679,9 +679,8 @@ async function exportLeadsToExcel() {
     }
 }
 
-document.addEventListener('DOMContentLoaded', async () => {
-    if (typeof loadFromCloud === 'function') {
-        await loadFromCloud(true);
+document.addEventListener('DOMContentLoaded', () => {
+    if (typeof hydrateLeadsFromCloud === 'function') {
         hydrateLeadsFromCloud();
     }
     renderLeadsTable();

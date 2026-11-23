@@ -1,8 +1,8 @@
 /* ==========================================
-   CONFIGURAÇÃO DA NUVEM (JSONbin.io) - BIOMEV
+   CONFIGURAÇÃO DA NUVEM (FIREBASE FIRESTORE) - BIOMEV
    ========================================== */
-const JSONBIN_BIN_ID = "6af3e22bffd5d16053b85278";
-const JSONBIN_MASTER_KEY = "$2a$10$BtD7QMk6q3JClPIfDBURW.ELsEpfP1qijxKujFCc79bRZuu/daHxa";
+const FIRESTORE_COLLECTION = "biomev_store";
+const FIRESTORE_DOC_ID = "main_payload";
 
 // Objeto de dados globais na nuvem
 let cloudData = {
@@ -78,40 +78,49 @@ function syncCurrentUserFromCloud() {
     }
 }
 
-// Sincronização com a Nuvem (Carregar)
+function applyPayloadToState(payload) {
+    if (!payload || typeof payload !== 'object') return;
+    cloudData = payload;
+    teamMembers = Array.isArray(cloudData.team) ? cloudData.team : [];
+    notifications = Array.isArray(cloudData.notifs) ? cloudData.notifs : [];
+    calendarEvents = cloudData.events && typeof cloudData.events === 'object' ? cloudData.events : {};
+    knowledgeData = cloudData.knowledge && typeof cloudData.knowledge === 'object' ? cloudData.knowledge : {};
+
+    if (Array.isArray(cloudData.leads)) {
+        window.leadsData = cloudData.leads;
+        localStorage.setItem('biomev_leads', JSON.stringify(cloudData.leads));
+        if (typeof leadsData !== 'undefined') {
+            leadsData = cloudData.leads;
+        }
+        if (typeof renderLeadsTable === 'function') {
+            renderLeadsTable();
+        }
+    }
+
+    syncCurrentUserFromCloud();
+}
+
+// Sincronização com a Nuvem (Carregar via Firestore)
 async function loadFromCloud(isInitial = false) {
     try {
-        let response = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}/latest`, {
-            cache: "no-store",
-            headers: {
-                "X-Master-Key": JSONBIN_MASTER_KEY
-            }
-        });
-        if (response.ok) {
-            let json = await response.json();
-            if (json.record && json.record.biomev_payload) {
-                cloudData = json.record.biomev_payload;
-                teamMembers = Array.isArray(cloudData.team) ? cloudData.team : [];
-                notifications = Array.isArray(cloudData.notifs) ? cloudData.notifs : [];
-                calendarEvents = cloudData.events && typeof cloudData.events === 'object' ? cloudData.events : {};
-                knowledgeData = cloudData.knowledge && typeof cloudData.knowledge === 'object' ? cloudData.knowledge : {};
+        if (typeof db === 'undefined') {
+            console.error("Firestore (db) não foi inicializado no index.html.");
+            return;
+        }
 
-                if (Array.isArray(cloudData.leads)) {
-                    window.leadsData = cloudData.leads;
-                    localStorage.setItem('biomev_leads', JSON.stringify(cloudData.leads));
-                    if (typeof leadsData !== 'undefined') {
-                        leadsData = cloudData.leads;
-                    }
-                    if (typeof renderLeadsTable === 'function') {
-                        renderLeadsTable();
-                    }
-                }
+        const docRef = db.collection(FIRESTORE_COLLECTION).doc(FIRESTORE_DOC_ID);
+        const docSnap = await docRef.get();
 
-                syncCurrentUserFromCloud();
-            }
+        if (docSnap.exists) {
+            const data = docSnap.data();
+            const payload = data && data.biomev_payload ? data.biomev_payload : data;
+            applyPayloadToState(payload);
+        } else {
+            // Cria o documento inicial caso ainda não exista no Firestore
+            await docRef.set({ biomev_payload: cloudData });
         }
     } catch (e) {
-        console.error("Erro ao carregar da nuvem:", e);
+        console.error("Erro ao carregar do Firestore:", e);
     }
 
     if (currentUser.isLoggedIn && currentUser.name) {
@@ -144,7 +153,7 @@ async function loadFromCloud(isInitial = false) {
     }
 }
 
-// Sincronização com a Nuvem (Salvar)
+// Sincronização com a Nuvem (Salvar via Firestore)
 async function saveToCloud() {
     cloudData.team = teamMembers;
     cloudData.notifs = notifications;
@@ -157,22 +166,17 @@ async function saveToCloud() {
     }
 
     try {
-        let response = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`, {
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json",
-                "X-Master-Key": JSONBIN_MASTER_KEY
-            },
-            body: JSON.stringify({ biomev_payload: cloudData })
-        });
-
-        if (!response.ok) {
-            let errText = await response.text();
-            console.error("Erro ao salvar no JSONbin:", response.status, errText);
-            alert(`Erro ao salvar na nuvem (${response.status}): ${errText}`);
+        if (typeof db === 'undefined') {
+            console.error("Firestore (db) não foi inicializado no index.html.");
+            alert("Erro: banco de dados Firebase não inicializado.");
+            return;
         }
+
+        const docRef = db.collection(FIRESTORE_COLLECTION).doc(FIRESTORE_DOC_ID);
+        await docRef.set({ biomev_payload: cloudData }, { merge: true });
     } catch (e) {
-        console.error("Erro de rede ao salvar na nuvem:", e);
+        console.error("Erro ao salvar no Firestore:", e);
+        alert(`Erro ao salvar na nuvem: ${e.message || e}`);
     }
 }
 
@@ -185,7 +189,7 @@ function saveSessionLocal() {
     localStorage.setItem("biomev_logged", currentUser.isLoggedIn ? "true" : "false");
 }
 
-// Redimensionar e comprimir imagem para caber perfeitamente no JSON
+// Redimensionar e comprimir imagem para caber perfeitamente no documento Firestore
 function compressImage(file, callback) {
     const reader = new FileReader();
     reader.onload = function (e) {
@@ -1332,7 +1336,7 @@ function toggleNotificationsModal(show) {
     }
 }
 
-// Inicialização e sincronização contínua (a cada 5 segundos)
+// Inicialização e sincronização periódica com Firestore
 document.addEventListener("DOMContentLoaded", async () => {
     await loadFromCloud(true);
 
@@ -1340,5 +1344,5 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     setInterval(async () => {
         await loadFromCloud(false);
-    }, 5000);
+    }, 60000);
 });
