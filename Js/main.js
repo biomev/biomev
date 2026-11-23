@@ -169,7 +169,7 @@ async function saveToCloud() {
         if (!response.ok) {
             let errText = await response.text();
             console.error("Erro ao salvar no JSONbin:", response.status, errText);
-            alert(`Erro ao salvar na nuvem (${response.status})`);
+            alert(`Erro ao salvar na nuvem (${response.status}): ${errText}`);
         }
     } catch (e) {
         console.error("Erro de rede ao salvar na nuvem:", e);
