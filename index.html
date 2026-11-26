@@ -218,13 +218,13 @@
                             <div class="form-row-3">
                                 <div class="form-group">
                                     <label>Nome do Participante</label>
-                                    <input type="text" id="studentName" value="Fulana da Silva"
+                                    <input type="text" id="studentName" value="Fulana da Silva" autocomplete="off"
                                         oninput="renderCertificate()">
                                 </div>
                                 <div class="form-group">
                                     <label>Tam. Fonte</label>
                                     <input type="number" id="nameFontSize" value="100" min="20" max="250"
-                                        oninput="renderCertificate()">
+                                        autocomplete="off" oninput="renderCertificate()">
                                 </div>
                                 <div class="form-group">
                                     <label>Ajustar Nome</label>
@@ -236,7 +236,8 @@
                             </div>
                             <div class="form-group">
                                 <label>Papel / Atuação</label>
-                                <select id="roleSelect" onchange="updateTemplateText(); renderCertificate()">
+                                <select id="roleSelect" autocomplete="off"
+                                    onchange="updateTemplateText(); renderCertificate()">
                                     <option value="Foi o ministrante">Foi o ministrante</option>
                                     <option value="Participou da" selected>Participou da</option>
                                     <option value="Foi o Professor auxiliar">Foi o Professor auxiliar</option>
@@ -246,37 +247,37 @@
                             <div class="form-row">
                                 <div class="form-group">
                                     <label>Tipo</label>
-                                    <input type="text" id="eventType" value="capacitação"
+                                    <input type="text" id="eventType" value="capacitação" autocomplete="off"
                                         oninput="updateTemplateText(); renderCertificate()">
                                 </div>
                                 <div class="form-group">
                                     <label>Nome da Atividade</label>
-                                    <input type="text" id="eventName" value="Gestão de Vendas"
+                                    <input type="text" id="eventName" value="Gestão de Vendas" autocomplete="off"
                                         oninput="updateTemplateText(); renderCertificate()">
                                 </div>
                             </div>
                             <div class="form-row">
                                 <div class="form-group">
                                     <label>Data</label>
-                                    <input type="text" id="eventDate" value="15 de novembro de 2026"
+                                    <input type="text" id="eventDate" value="15 de novembro de 2026" autocomplete="off"
                                         oninput="updateTemplateText(); renderCertificate()">
                                 </div>
                                 <div class="form-group">
                                     <label>Carga Horária</label>
-                                    <input type="text" id="eventHours" value="10"
+                                    <input type="text" id="eventHours" value="10" autocomplete="off"
                                         oninput="updateTemplateText(); renderCertificate()">
                                 </div>
                             </div>
                             <div class="form-row-3">
                                 <div class="form-group">
                                     <label>Texto do Certificado (Editável)</label>
-                                    <textarea id="certDetails" rows="3"
+                                    <textarea id="certDetails" rows="3" autocomplete="off"
                                         oninput="renderCertificate()">Participou da capacitação "Gestão de Vendas"</textarea>
                                 </div>
                                 <div class="form-group">
                                     <label>Tam. Fonte Texto</label>
                                     <input type="number" id="textFontSize" value="24" min="10" max="120"
-                                        oninput="renderCertificate()">
+                                        autocomplete="off" oninput="renderCertificate()">
                                 </div>
                                 <div class="form-group">
                                     <label>Ajustar Texto</label>
@@ -308,6 +309,7 @@
                                 <h3>Adicionar uma nova pasta</h3>
                                 <div style="display: flex; gap: 10px; margin-top: 10px;">
                                     <input type="text" id="newFolderNameMkt" placeholder="Nome da pasta"
+                                        autocomplete="off"
                                         style="flex: 1; padding: 12px 16px; border-radius: 12px; background: rgba(255,255,255,0.8);">
                                     <button type="button" class="btn-action"
                                         style="margin-top:0; width: auto; background: var(--glaucous);"
@@ -477,6 +479,7 @@
                                 <h3>Adicionar uma nova pasta</h3>
                                 <div style="display: flex; gap: 10px; margin-top: 10px;">
                                     <input type="text" id="newFolderNameVds" placeholder="Nome da pasta"
+                                        autocomplete="off"
                                         style="flex: 1; padding: 12px 16px; border-radius: 12px; background: rgba(255,255,255,0.8);">
                                     <button type="button" class="btn-action"
                                         style="margin-top:0; width: auto; background: var(--moss-green);"
@@ -537,15 +540,16 @@
             <h3 id="calModalTitle">Adicionar Evento</h3>
             <div class="modal-field-group">
                 <label for="calTaskTitle">Título</label>
-                <input type="text" id="calTaskTitle" placeholder="Ex.: Reunião de pauta">
+                <input type="text" id="calTaskTitle" placeholder="Ex.: Reunião de pauta" autocomplete="off">
             </div>
             <div class="modal-field-group">
                 <label for="calTaskDesc">Descrição</label>
-                <textarea id="calTaskDesc" rows="2" placeholder="Detalhes da tarefa ou evento..."></textarea>
+                <textarea id="calTaskDesc" rows="2" placeholder="Detalhes da tarefa ou evento..."
+                    autocomplete="off"></textarea>
             </div>
             <div class="modal-field-group">
                 <label for="calTaskMember">Responsável</label>
-                <select id="calTaskMember"></select>
+                <select id="calTaskMember" autocomplete="off"></select>
             </div>
             <div class="modal-actions-row">
                 <button type="button" class="btn-modal-secondary" onclick="closeCalendarModal()">Cancelar</button>
@@ -572,7 +576,7 @@
             <h3 id="loginProfileTitle">Senha de Acesso</h3>
             <div class="modal-field-group">
                 <label for="loginPasswordInput">Digite sua senha</label>
-                <input type="password" id="loginPasswordInput" placeholder="••••••">
+                <input type="password" id="loginPasswordInput" placeholder="••••••" autocomplete="current-password">
             </div>
             <div class="modal-actions-row">
                 <button type="button" class="btn-modal-secondary" onclick="closePasswordModal()">Voltar</button>
@@ -586,11 +590,11 @@
             <h3 id="authModalTitle">Cadastre-se no Painel</h3>
             <div class="modal-field-group">
                 <label for="inputName">Nome Completo</label>
-                <input type="text" id="inputName" placeholder="Seu nome">
+                <input type="text" id="inputName" placeholder="Seu nome" autocomplete="name">
             </div>
             <div class="modal-field-group">
                 <label for="inputRole">Cargo / Setor</label>
-                <select id="inputRole">
+                <select id="inputRole" autocomplete="off">
                     <option value="Gerente de Marketing">Gerente de Marketing</option>
                     <option value="Gerente de Vendas">Gerente de Vendas</option>
                     <option value="Diretor de Marketing e Vendas">Diretor de Marketing e Vendas</option>
@@ -599,7 +603,8 @@
             </div>
             <div class="modal-field-group">
                 <label id="passwordLabel" for="inputPassword">Senha de Acesso</label>
-                <input type="password" id="inputPassword" placeholder="Crie ou altere sua senha">
+                <input type="password" id="inputPassword" placeholder="Crie ou altere sua senha"
+                    autocomplete="new-password">
             </div>
             <div class="modal-field-group">
                 <label for="inputPhotoFile">Foto de Perfil (opcional)</label>
@@ -617,19 +622,19 @@
             <h3>Nova Tarefa</h3>
             <div class="modal-field-group">
                 <label for="taskTitle">Título da Tarefa</label>
-                <input type="text" id="taskTitle" placeholder="Ex.: Revisar campanha">
+                <input type="text" id="taskTitle" placeholder="Ex.: Revisar campanha" autocomplete="off">
             </div>
             <div class="modal-field-group">
                 <label for="taskDesc">Descrição</label>
-                <textarea id="taskDesc" rows="2" placeholder="O que precisa ser feito..."></textarea>
+                <textarea id="taskDesc" rows="2" placeholder="O que precisa ser feito..." autocomplete="off"></textarea>
             </div>
             <div class="modal-field-group">
                 <label for="taskDate">Data Limite (DD/MM/AAAA)</label>
-                <input type="text" id="taskDate" placeholder="25/11/2026">
+                <input type="text" id="taskDate" placeholder="25/11/2026" autocomplete="off">
             </div>
             <div class="modal-field-group">
                 <label for="taskMemberSelect">Atribuir a</label>
-                <select id="taskMemberSelect"></select>
+                <select id="taskMemberSelect" autocomplete="off"></select>
             </div>
             <div class="modal-actions-row">
                 <button type="button" class="btn-modal-secondary" onclick="toggleTaskModal(false)">Cancelar</button>
@@ -663,7 +668,8 @@
             <div class="modal-tab-pane active" id="paneMsg">
                 <div class="modal-field-group">
                     <label for="memberMessage">Enviar mensagem</label>
-                    <textarea id="memberMessage" rows="3" placeholder="Escreva uma mensagem..."></textarea>
+                    <textarea id="memberMessage" rows="3" placeholder="Escreva uma mensagem..."
+                        autocomplete="off"></textarea>
                 </div>
                 <div class="modal-actions-row">
                     <button type="button" class="btn-modal-secondary" onclick="closeMemberActionModal()">Voltar</button>
@@ -674,15 +680,15 @@
             <div class="modal-tab-pane" id="paneTask">
                 <div class="modal-field-group">
                     <label for="memberTaskTitle">Título da Tarefa</label>
-                    <input type="text" id="memberTaskTitle" placeholder="Título">
+                    <input type="text" id="memberTaskTitle" placeholder="Título" autocomplete="off">
                 </div>
                 <div class="modal-field-group">
                     <label for="memberTaskDesc">Descrição</label>
-                    <textarea id="memberTaskDesc" rows="2" placeholder="Descrição"></textarea>
+                    <textarea id="memberTaskDesc" rows="2" placeholder="Descrição" autocomplete="off"></textarea>
                 </div>
                 <div class="modal-field-group">
                     <label for="memberTaskDate">Data Limite (DD/MM/AAAA)</label>
-                    <input type="text" id="memberTaskDate" placeholder="25/11/2026">
+                    <input type="text" id="memberTaskDate" placeholder="25/11/2026" autocomplete="off">
                 </div>
                 <div class="modal-actions-row">
                     <button type="button" class="btn-modal-secondary" onclick="closeMemberActionModal()">Voltar</button>
@@ -727,12 +733,15 @@
 
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
+        db.settings({
+            experimentalForceLongPolling: true
+        });
     </script>
 
     <!-- Scripts -->
-    <script src="Js/marketing.js?v=30"></script>
-    <script src="Js/vendas.js?v=30"></script>
-    <script src="Js/main.js?v=30"></script>
+    <script src="Js/marketing.js?v=31"></script>
+    <script src="Js/vendas.js?v=31"></script>
+    <script src="Js/main.js?v=31"></script>
 </body>
 
 </html>
