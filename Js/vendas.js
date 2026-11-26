@@ -281,7 +281,7 @@ const kanbanStages = [
     { id: 'proposta', name: 'Proposta Enviada' },
     { id: 'negociacao', name: 'Em Negociação' },
     { id: 'fechado', name: 'Fechado' },
-    { id: 'perdido', name: 'Perdido' }
+    { id: 'Stand by', name: 'Stand by' }
 ];
 
 // Suporte a segurar e arrastar (Touch Drag & Drop) no celular
@@ -442,7 +442,7 @@ function renderKanbanBoard() {
     kanbanStages.forEach(stage => {
         const columnLeads = leadsData.filter(l => l.stage === stage.id);
         columnLeads.forEach(l => {
-            if (stage.id !== 'perdido') totalPipeline += (parseFloat(l.value) || 0);
+            if (stage.id !== 'Stand by') totalPipeline += (parseFloat(l.value) || 0);
         });
 
         let cardsHtml = '';
